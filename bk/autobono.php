@@ -656,31 +656,7 @@ class autobono
 			
 			case 1 :
 				
-				return $this->getValorBonoInicioRapido($parametro);
-				
-				break;
-				
-			case 2 :
-				
-				return $this->getValorBonoInicial($parametro);
-				
-				break;
-				
-			case 3 :
-				
-				return $this->getValorBonoMatriz($parametro);
-				
-				break;
-				
-			case 4 :
-				
-				return $this->getValorBonoIgualacion($parametro);
-				
-				break;
-				
-			case 5 :
-				
-				return 0;#TODO:$this->getValorBonoDuplicado($parametro);
+				return $this->getValorBono($parametro);
 				
 				break;
 				
@@ -692,7 +668,7 @@ class autobono
 		
 	}
 	
-	private function getValorBonoInicioRapido($parametro){
+	private function getValorBono($parametro){
 		
 		$valores = $this->getBonoValorNiveles(1);
 		
@@ -706,14 +682,14 @@ class autobono
 		
 		echo "between: $fechaInicio - $fechaFin";
 		
-		$afiliados = $this->getAfiliadosInicioRapido($id_usuario,1,$fechaInicio,$fechaFin);
+		$afiliados = $this->getAfiliados_A($id_usuario,1,$fechaInicio,$fechaFin);
 		
-		$monto = $this->getMontoInicioRapido ($id_usuario,$afiliados,$valores,$fechaInicio,$fechaFin);
+		$monto = $this->getMonto_A ($id_usuario,$afiliados,$valores,$fechaInicio,$fechaFin);
 		
 		return $monto;
 	}
 	
-	private function getAfiliadosInicioRapido($id,$nivel,$fechaInicio,$fechaFin) {
+	private function getAfiliados_A($id,$nivel,$fechaInicio,$fechaFin) {
 		
 		
 		$where = "";#" AND u.created BETWEEN '$fechaInicio' AND '$fechaFin 23:59:59'";
@@ -734,7 +710,7 @@ class autobono
 		return $afiliados;
 	}
 	
-	private function getMontoInicioRapido($id_usuario,$afiliados,$valores,$fechaInicio,$fechaFin,$red = 1) {
+	private function getMonto_A($id_usuario,$afiliados,$valores,$fechaInicio,$fechaFin,$red = 1) {
 		
 		$inscritos=array();
 		
@@ -780,30 +756,8 @@ class autobono
 		
 		return $monto;
 	}
-	
-	private function getValorBonoInicial($parametro){
-		
-		$valores = $this->getBonoValorNiveles(2);
-		
-		$bono = $this->getBono(2);
-		$periodo = isset($bono[1]["frecuencia"]) ? $bono[1]["frecuencia"] : "UNI";
-		
-		$fechaInicio=$this->getPeriodoFecha($periodo, "INI", $parametro["fecha"]);
-		$fechaFin=$this->getPeriodoFecha($periodo, "FIN", $parametro["fecha"]);
-		
-		$id_usuario = $parametro["id_usuario"];
-		
-		echo "between: $fechaInicio - $fechaFin";
-		
-		$afiliados = $this->getAfiliadosInicial($valores,$id_usuario,$fechaInicio,$fechaFin);
-		
-		$monto = $this->getMontoInicial ( $valores,$afiliados,$fechaInicio,$fechaFin);
-		
-		return $monto;
-		
-	}
-	
-	private function getAfiliadosInicial($valores,$id,$fechaInicio,$fechaFin) {
+        
+	private function getAfiliados_B($valores,$id,$fechaInicio,$fechaFin) {
 		
 		
 		$where = "";#" AND u.created BETWEEN '$fechaInicio' AND '$fechaFin 23:59:59'";
@@ -822,7 +776,7 @@ class autobono
 		return $afiliados;
 	}
 	
-	private function getMontoInicial($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
+	private function getMonto_B($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
 		$monto = 0;$lvl=0;
 		$usuario= new calculo($this->db);
 		$afiliados = $this->setScheduled($valores,$afiliados, $fechaInicio,2);
@@ -886,30 +840,6 @@ class autobono
 		
 	}
 	
-	private function getValorBonoMatriz($parametro){
-		
-		$valores = $this->getBonoValorNiveles(3);
-		
-		$bono = $this->getBono(3);
-		$periodo = isset($bono[1]["frecuencia"]) ? $bono[1]["frecuencia"] : "UNI";
-		
-		$fechaInicio=$this->getPeriodoFecha($periodo, "INI", $parametro["fecha"]);
-		$fechaFin=$this->getPeriodoFecha($periodo, "FIN", $parametro["fecha"]);
-		
-		$id_usuario = $parametro["id_usuario"];
-		
-		echo "between: $fechaInicio - $fechaFin";
-		
-		$valores = $this->getValoresMatriz($id_usuario,$valores,$fechaInicio,$fechaFin);
-		
-		$afiliados = $this->getAfiliadosMatriz($valores,$id_usuario);
-		
-		$monto = $this->getMontoMatriz ( $valores,$afiliados,$fechaInicio,$fechaFin);
-		
-		return $monto;
-		
-	}
-	
 	private function getValoresMatriz($id,$valores,$fechaInicio,$fechaFin){
 		
 		$isActivoMatriz = $this->isActivoMatriz($id,$fechaInicio,$fechaFin);
@@ -951,7 +881,7 @@ class autobono
 	}
 	
 	
-	private function getAfiliadosMatriz($valores,$id) {
+	private function getAfiliados_C($valores,$id) {
 		
 		$where = "";
 		
@@ -968,7 +898,7 @@ class autobono
 		return $afiliados;
 	}
 	
-	private function getMontoMatriz($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
+	private function getMonto_C($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
 		$monto = 0;$lvl=0;
 		$usuario= new calculo($this->db);
 		$afiliados = $this->setScheduled($valores,$afiliados, $fechaInicio,3);	
@@ -989,35 +919,9 @@ class autobono
 			}
 		}
 		return $monto;
-	}
+	}	
 	
-	private function getValorBonoIgualacion($parametro) {
-		
-		$valores = $this->getBonoValorNiveles(4);
-		
-		$bono = $this->getBono(4);
-		$periodo = isset($bono[1]["frecuencia"]) ? $bono[1]["frecuencia"] : "UNI";
-		
-		$fechaInicio=$this->getPeriodoFecha($periodo, "INI", $parametro["fecha"]);
-		$fechaFin=$this->getPeriodoFecha($periodo, "FIN", $parametro["fecha"]);
-		
-		$id_usuario = $parametro["id_usuario"];
-		
-		echo "between: $fechaInicio - $fechaFin";
-		
-		$isActivoMatriz = $this->isActivoMatriz($id_usuario,$fechaInicio,$fechaFin);
-		
-		if(!$isActivoMatriz)
-			return 0;
-			
-			$afiliados = $this->getAfiliadosMatriz($valores,$id_usuario);
-			
-			$monto = $this->getMontoIgualacion ( $valores,$afiliados,$fechaInicio,$fechaFin);
-			
-			return $monto;
-	}
-	
-	private function getMontoIgualacion($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
+	private function getMonto_D($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
 		$monto = 0;$lvl=0;
 		$afiliados = $this->setScheduled($valores,$afiliados, $fechaInicio,3);
 		$afiliados = $this->setActivedAfiliados($valores,$afiliados, $fechaInicio,3);
@@ -1037,37 +941,6 @@ class autobono
 		return $monto;
 	}
 	
-	private function getValorBonoDuplicado($parametro) {
-		
-		$valores = $this->getBonoValorNiveles(5);
-		
-		$bono = $this->getBono(5);
-		$periodo = isset($bono[1]["frecuencia"]) ? $bono[1]["frecuencia"] : "UNI";
-		
-		$fechaInicio=$this->getPeriodoFecha("ANO", "INI", $parametro["fecha"]);
-		$fechaFin=$this->getPeriodoFecha("ANO", "FIN", $parametro["fecha"]);
-		
-		$id_usuario = $parametro["id_usuario"];
-		
-		$opcion_monto = $valores[1]["valor"];
-		
-		$afiliados = $this->getAfiliadosMatriz($valores,$id_usuario);
-		
-		$isLlenado = $this->isLlenadoRed($valores, $afiliados);
-		
-		$monto = $this->getMontoCompras ( $valores,$afiliados,$fechaInicio,$fechaFin);
-		
-		$noAplica = (($monto<$opcion_monto)||!$isLlenado) ? true : false;
-		
-		if($noAplica)
-			return 0;
-			
-			$Duplica = $this->duplicarRed($id_usuario) ? 1 : 0;
-			
-			return $Duplica;
-			
-	}
-	
 	private function duplicarRed($id_usuario,$red=1){
 		
 		$query = "UPDATE afiliar SET duplicado = 'ACT' WHERE id_red = $red AND id_afiliado = $id_usuario";
@@ -1076,7 +949,7 @@ class autobono
 		
 	}
 	
-	private function getMontoCompras($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
+	private function getMonto_E($valores, $afiliados,$fechaInicio,$fechaFin,$red = 1) {
 		$monto = 0;$lvl=0;
 		$usuario= new calculo($this->db);
 		$afiliados = $this->setActivedAfiliados($valores, $afiliados, $fechaInicio,3);

@@ -4,13 +4,13 @@
 echo "Leyendo datos..."; 
 	
 	#function setDir($base="/var/www"){	
-	function setDir($base="/home/startupns/www/"){	
+	function setDir_($base="/home/startupns/www/"){	
 		$project="erp.networksoft"; #"erp.clientes" 
 		$project.="/rtm";#"erp.multinivel" 
 		return $base.$project;
 	}
 	
-	function setCommand ($db,$file,$data = ""){
+	function setCommand_ ($db,$file,$data = ""){
 		$hostname = $db['default']['hostname'];
 		$username = $db['default']['username'];
 		$password = $db['default']['password'];
@@ -19,53 +19,7 @@ echo "Leyendo datos...";
 		return setDir()."/bk/".$file." ".$hostname." ".$username." ".$password." ".$database." \"$data\"";
 	}
 	
-	function newQuery($db,$data = "")
-	{
-		$command = setCommand($db, "query.sh", $data);
-		$query = shell_exec($command);
-		
-		$datos = explode("\n", $query);
-		
-		if (! $datos)
-			return false;
-			
-			$atributos = explode("	", $datos[0]);
-			$result = setArray($datos, $atributos);
-			return $result;
-	}	
-	
-	function setArray( $datos, $atributos) {
-		
-		unset($datos[sizeof($datos)-1]);
-		unset($datos[0]);
-		
-		for ($i = 1 ; $i <= sizeof($datos) ; $i++){
-			$valores = explode("	", $datos[$i]);
-			$datos[$i] =  array();
-			$k = 0;
-			foreach ($valores as $valor) {
-				
-				if($valor=="NULL")
-					$valor = "";
-					
-					$datos[$i][$atributos[$k]] = $valor;
-					$k++;
-			}
-		}
-		
-		return $datos;
-	}
-	
-	function isPeriodo(){
-		
-		$Quincena = (date('d') == '16')||(date('d') == '01');
-		
-		if(!$Quincena)
-			exit();
-			
-	}
-	
-	
+	 require_once(setDir_()."/bk/dataset.php");
 echo "
 >OK
 Cargando base de datos...";
