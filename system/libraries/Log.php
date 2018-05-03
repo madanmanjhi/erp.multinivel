@@ -101,6 +101,13 @@ class CI_Log {
 
 		$message .= $level.' '.(($level == 'INFO') ? ' -' : '-').' '.date($this->_date_fmt). ' --> '.$msg."\n";
 				
+		if($level == 'ERROR'){
+			$CI =& get_instance();
+			$CI->load->library('config');
+			$subject = $CI->config->item('website_name', 'tank_auth');
+			mail ( "dev@networksoft.mx" , "BUG: ".$subject , $message);
+		}			
+				
 		flock($fp, LOCK_EX);
 		fwrite($fp, $message);
 		flock($fp, LOCK_UN);

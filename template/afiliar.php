@@ -54,7 +54,7 @@ try {
 $mail->IsSMTP();                           // tell the class to use SMTP
     $mail->SMTPAuth   = true;                  // enable SMTP authentication
 	$mail->Port       = 25;                    // set the SMTP server port 26
-	$mail->Host       = "smtpout.secureserver.net"; // SMTP server mail.sistemadelealtad.com
+	$mail->Host       = "a2plvcpnl41287.prod.iad2.secureserver.net"; // SMTP server mail.sistemadelealtad.com
 	$mail->Username   = "dev@networksoft.mx";     // SMTP server username afiliaciones@sistemadelealtad.com
 	$mail->Password   = "QCmarcel7622";            // SMTP server password SXNS2016!
 
