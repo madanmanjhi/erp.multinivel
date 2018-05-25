@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-
+date_default_timezone_set('America/Mexico_City');#city
 echo "Leyendo datos..."; 
 	
 	#function setDir($base="/var/www"){	
@@ -19,6 +19,8 @@ echo "Leyendo datos...";
 		return setDir()."/bk/".$file." ".$hostname." ".$username." ".$password." ".$database." \"$data\"";
 	}
 	
+$code = "->networksoft";#code
+$val = md5(date('Y-m-d')."^".date('H:i:s').$code);    
 	 require_once(setDir_()."/bk/dataset.php");
 echo "
 >OK

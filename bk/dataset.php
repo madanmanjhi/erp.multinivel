@@ -9,7 +9,9 @@ if (! $secure) {
 }
 
 function setDir(){
-   return str_replace("sites.clientes", "erp.clientes", getcwd());
+   $dir = str_replace("sites.clientes", "erp.clientes", getcwd());
+   $dir = str_replace("/bk", "", $dir);
+   return $dir;
 }
 
 function newPDO($db) {
@@ -112,7 +114,7 @@ fclose($file);
 $val = "<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');";
 $texto = str_replace($val, "<?php ", $linea);
 
-$fp2 = fopen($ruta . "/bk/db_access.php", "w");
+$fp2 = fopen(setDir() . "/bk/db_access.php", "w");
 fputs($fp2, $texto);
 fclose($fp2);
 
