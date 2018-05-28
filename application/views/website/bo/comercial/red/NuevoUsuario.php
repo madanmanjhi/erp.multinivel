@@ -270,10 +270,7 @@
 																	<label class="select">
 																		<select name="civil">
 																		<?foreach ($civil as $key)
-																		{
-																			if($key->id_edo_civil==$usuario[0]->id_edo_civil)
-																				echo '<option selected value="'.$key->id_edo_civil.'">'.$key->descripcion.'</option>';
-																			else
+																		{ 
 																			echo '<option value="'.$key->id_edo_civil.'">'.$key->descripcion.'</option>';
 																				
 																		}?>
