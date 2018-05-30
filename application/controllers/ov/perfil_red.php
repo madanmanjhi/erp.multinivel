@@ -21,7 +21,7 @@ class perfil_red extends CI_Controller
 		$this->load->model('ov/modelo_dashboard');
 		$this->load->model('bo/model_tipo_usuario');		
 		$this->load->model('bo/bonos/titulo');
-		if (!$this->tank_auth->is_logged_in()&&!$_POST['token'])
+		if (!$this->tank_auth->is_logged_in()&&!isset($_POST['token']))
 		{																		// logged in
 		redirect('/auth');
 		}	
@@ -1041,9 +1041,10 @@ class perfil_red extends CI_Controller
 	
 	function afiliar_nuevo()
 	{
-		$this->load->model('ov/modelo_afiliado');	//pruebas
-		isset($_POST['token']) ? $this->model_perfil_red->trash_token($_POST['token']) : '';
-		$resultado = $this->modelo_afiliado->crearUsuario();
+		$this->load->model('ov/modelo_afiliado');	//pruebas $this->modelo_afiliado
+		if(isset($_POST['token']))
+			$this->model_perfil_red->trash_token($_POST['token']);
+		$resultado = $this->model_afiliado->crearUsuario();
 		#echo $resultado;
 		//$resultado=$this->model_perfil_red->afiliar_nuevo($id);
 		

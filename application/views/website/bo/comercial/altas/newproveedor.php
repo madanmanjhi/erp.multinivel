@@ -313,9 +313,7 @@
 									<section class="col col-3">
 										<label class="select">Impuesto 
 										<select name="impuesto" id="impuesto">
-									<?foreach ($paisImpuesto as $key){?>
-									<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>
-									<?}?>
+									<option value="">Selecciona primero el País</option>
 								</select>
 										</label>
 									</section>
