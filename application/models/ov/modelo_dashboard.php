@@ -16,10 +16,33 @@ class modelo_dashboard extends CI_Model
 		return $q->result();
 	}
 	function get_images($id)
-	{
-		$q=$this->db->query('select (select nombre_completo from cat_img b where a.id_img=b.id_img) img, (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = '.$id);
-		return $q->result();
-	}
+  {
+    $q=$this->db->query('select id_img url from cross_img_user  where id_user = '.$id);
+    $q = $q->result();
+
+    if(!$q){ 
+      $dato_img=array(
+          "url"   => "/template/img/empresario.jpg",
+          "nombre_completo"   => "empresario.jpg",
+          "nombre"    => "empresario",
+          "extencion"   => "jpg",
+          "estatus"   => "ACT",
+      );
+      
+      $this->db->insert("cat_img",$dato_img);
+      $id_img = $this->db->insert_id();
+      
+      $dato_cross=array(
+          "id_user" => $id,
+          "id_img"  => $id_img
+      );
+      $this->db->insert("cross_img_user",$dato_cross);
+    }
+
+    $q=$this->db->query('select (select nombre_completo from cat_img b where a.id_img=b.id_img) img, 
+      (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = '.$id);
+    return $q->result();
+  }
 	function get_red($id)
 	{
 		$q=$this->db->query('select id_red, directo id_usuario from afiliar where id_afiliado ='.$id.'');

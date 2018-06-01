@@ -179,12 +179,18 @@ class registro {
     
     
     private function Permiso($id){
+         
+         $fields = array(
+                "id_user",
+                "id_perfil"
+            );
+
         $dato_permiso=array(
             $id,
             2
         );
-        
-        return $dato_permiso;
+         
+        return $this->insertDatos("cross_perfil_usuario",$fields, $dato_permiso);
     }
     
     private function Coaplicante($id){
@@ -287,7 +293,7 @@ class registro {
         
         $dato_perfil=$this->Perfil($id); # USER_PROFILES
         $dato_afiliar=$this->dato_afiliar ( $id, $mi_red, $id_debajo, $lado, $directo ); # AFILIAR
-        //$dato_permiso=$this->Perfil($id); # USER_PERMISSIONS
+        $dato_permiso=$this->Permiso($id); # USER_PERMISSIONS
         $dato_estilo=$this->EstiloUsuario($id);	# ESTILO_USUARIO
         $dato_coaplicante=$this->Coaplicante($id);# COAPLICANTE
         #$dato_red=$this->dato_red ( $id );# RED	#!DEPRECATED
@@ -326,7 +332,7 @@ class registro {
         
         $this->insertDatos("cat_img",$fields, $dato_img);
         
-        $query = "insert into last(id_img) id from cat_img";              
+        $query = "SELECT last(id_img) id from cat_img";              
         $lastid = newQuery($this->db, $query);
         $id_img = $lastid[1]["id"];
         
