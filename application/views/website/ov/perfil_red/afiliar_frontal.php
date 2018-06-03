@@ -611,14 +611,17 @@ function codpos_red()
 																	</label>
 																</section>
 															</div>
-															<section class="col col-3">
-																<button type="button" onclick="agregar('1')" class="btn btn-primary">
-																	&nbsp;Agregar <i class="fa fa-mobile"></i>&nbsp;
-																</button>
-																<button type="button" onclick="agregar('2')" class="btn btn-primary">
-																	&nbsp;Agregar <i class="fa fa-phone"></i>&nbsp;
-																</button>
-															</section>
+															<div id="" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+																<section class="col col-3">
+																	<button type="button" onclick="agregar('1')" class="btn btn-primary">
+																		&nbsp;Agregar <i class="fa fa-mobile"></i>&nbsp;
+																	</button>
+																	<button type="button" onclick="agregar('2')" class="btn btn-primary">
+																		&nbsp;Agregar <i class="fa fa-phone"></i>&nbsp;
+																	</button>
+																</section>
+															</div>
 															</div>
 														</fieldset>
 														

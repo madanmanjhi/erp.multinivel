@@ -20,24 +20,8 @@ class modelo_dashboard extends CI_Model
     $q=$this->db->query('select id_img url from cross_img_user  where id_user = '.$id);
     $q = $q->result();
 
-    if(!$q){ 
-      $dato_img=array(
-          "url"   => "/template/img/empresario.jpg",
-          "nombre_completo"   => "empresario.jpg",
-          "nombre"    => "empresario",
-          "extencion"   => "jpg",
-          "estatus"   => "ACT",
-      );
-      
-      $this->db->insert("cat_img",$dato_img);
-      $id_img = $this->db->insert_id();
-      
-      $dato_cross=array(
-          "id_user" => $id,
-          "id_img"  => $id_img
-      );
-      $this->db->insert("cross_img_user",$dato_cross);
-    }
+    if(!$q)
+      $this->model_perfil_red->new_img_user($id);
 
     $q=$this->db->query('select (select nombre_completo from cat_img b where a.id_img=b.id_img) img, 
       (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = '.$id);

@@ -21,7 +21,8 @@ $porcentajeContador=0;
 					<!-- widget div-->
 					
 						<div class="widget-body">
-							<form method="POST" enctype="multipart/form-data"   action="/bo/admin/update_mercancia" class="smart-form">
+							<form class='smart-form' id='update_merc' name='update_merc' method='post' action='/bo/admin/update_mercancia' enctype='multipart/form-data' role="form" >  
+			<h3><center><b>Editar mercancía :: <?=$nombre_merc?> </b></center></h3>
 							
 							<section class="col col-6" style="display:none;">
 						            <label class="select"> 
