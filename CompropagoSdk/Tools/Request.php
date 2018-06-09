@@ -4,73 +4,89 @@ namespace CompropagoSdk\Tools;
 
 class Request
 {
-    private static function validateResponse($response)
-    {
-        if (!empty($response)) {
-            $aux = json_decode($response, true);
+    const GET = 'GET';
+    const POST = 'POST';
+    const PUT = 'PUT';
+    const DELETE = 'DELETE';
 
-            if (isset($aux['type']) && $aux['type'] == 'error') {
-                throw new \Exception('Error: '.$aux['message']);
-            } else {
-                return true;
-            }
-        } else {
-            throw new \Exception('Empty response');
-        }
-    }
-
-    public static function get($url, $auth=array(), $headers=array())
+    /**
+     * Execute Get request
+     * @param string $url
+     * @param array $auth
+     * @param array $headers
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public static function get($url, $headers=array(), $auth=array())
     {
         $http = new Http($url);
         $http->setAuth($auth);
-        $http->setMethod('GET');
-        $http->setExtraHeaders($headers);
+        $http->setMethod(self::GET);
+        $http->setHeaders($headers);
         $res = $http->executeRequest();
-
-        self::validateResponse($res);
-
-        return $res;
-
-    }
-
-    public static function post($url, $data=array(), $auth=array(), $headers=array())
-    {
-        $http = new Http($url);
-        $http->setAuth($auth);
-        if (!empty($data)) : $http->setData($data); endif;
-        $http->setMethod('POST');
-        $http->setExtraHeaders($headers);
-        $res = $http->executeRequest();
-
-        self::validateResponse($res);
 
         return $res;
     }
 
-    public static function put($url, $data=array(), $auth=array(), $headers=array())
+    /**
+     * Execute Post request
+     * @param string $url
+     * @param array $data
+     * @param array $auth
+     * @param array $headers
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public static function post($url, $data=array(), $headers=array(), $auth=array())
     {
         $http = new Http($url);
         $http->setAuth($auth);
-        if (!empty($data)) : $http->setData($data); endif;
-        $http->setMethod('PUT');
-        $http->setExtraHeaders($headers);
+        $http->setJsonData($data);
+        $http->setMethod(self::POST);
+        $http->setHeaders($headers);
         $res = $http->executeRequest();
-
-        self::validateResponse($res);
 
         return $res;
     }
 
-    public static function delete($url, $data=array(), $auth=array(), $headers=array())
+    /**
+     * Execute Put request
+     * @param string $url
+     * @param array $data
+     * @param array $auth
+     * @param array $headers
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public static function put($url, $data=array(), $headers=array(), $auth=array())
     {
         $http = new Http($url);
         $http->setAuth($auth);
-        if (!empty($data)) : $http->setData($data); endif;
-        $http->setMethod('DELETE');
-        $http->setExtraHeaders($headers);
+        $http->setJsonData($data);
+        $http->setMethod(self::PUT);
+        $http->setHeaders($headers);
         $res = $http->executeRequest();
 
-        self::validateResponse($res);
+        return $res;
+    }
+
+    /**
+     * Execute Delete request
+     * @param string $url
+     * @param array $data
+     * @param array $auth
+     * @param array $headers
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public static function delete($url, $data=array(), $headers=array(), $auth=array())
+    {
+        $http = new Http($url);
+        $http->setAuth($auth);
+        $http->setJsonData($data);
+        $http->setMethod(self::DELETE);
+        $http->setHeaders($headers);
+        $res = $http->executeRequest();
 
         return $res;
     }
