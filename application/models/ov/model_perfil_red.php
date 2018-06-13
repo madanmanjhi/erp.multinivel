@@ -698,6 +698,7 @@ order by (U.id);");
 		$q=$this->db->query("select * from cross_dir_user where id_user=".$id);
 		return $q->result();
 	}
+
 	function new_img_user($id){
 		$dato_img=array(
 			          "url"   => "/template/img/empresario.jpg",
@@ -730,7 +731,7 @@ order by (U.id);");
 		}else{
 			$img_id = $id_img[0]->id_img;
 		}
-		
+
 		$explode=explode(".",$data["file_name"]);
 		$nombre=$explode[0];
 		$extencion=$explode[1];
@@ -749,6 +750,13 @@ order by (U.id);");
 
 		$q = $this->db->query("select ci.id_img from cat_img ci, cross_img_user ciu where ci.id_img = ciu.id_img and ciu.id_user = ".$id);
 		$id_img = $q->result();
+
+		if(!$id_img){
+			$img_id = $this->new_img_user($id);
+		}else{
+			$img_id = $id_img[0]->id_img;
+		}
+
 		$dato_img=array(
                 "url"				=>	"/media/".$id."/user.png",
                 "nombre_completo"	=> "user.png",
@@ -756,7 +764,7 @@ order by (U.id);");
                 "extencion"			=>	"png",
                 "estatus"			=>	"ACT"
             );
-		$this->db->update("cat_img",$dato_img,"id_img = ".$id_img[0]->id_img);
+		$this->db->update("cat_img",$dato_img,"id_img = ".$img_id);
 
 	}
 	function del($id,$tipo)

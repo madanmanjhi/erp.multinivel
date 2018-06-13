@@ -20,9 +20,8 @@ class modelo_dashboard extends CI_Model
     $q=$this->db->query('select id_img url from cross_img_user  where id_user = '.$id);
     $q = $q->result();
 
-    if(!$q) 
-      $img_id = $this->model_perfil_red->new_img_user($id);
-    
+    if(!$q)
+      $this->model_perfil_red->new_img_user($id);
 
     $q=$this->db->query('select (select nombre_completo from cat_img b where a.id_img=b.id_img) img, 
       (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = '.$id);

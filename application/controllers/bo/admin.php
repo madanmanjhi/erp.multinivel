@@ -358,9 +358,16 @@ class admin extends CI_Controller
 		
 		
 		$this->template->set("grupos",$grupos);
-		echo '<div class="row">
-				<form class="smart-form" id="update_merc" name="update_merc" method="post" action="/bo/admin/update_mercancia" enctype="multipart/form-data" >  
-			<h3><center><b>Editar mercancía '.$data_merc[0]->nombre.'</b></center></h3>';
+		
+		if(!isset($data_merc)){		
+			echo "Vuelve a intentar...";	
+			exit();
+		}
+
+		$nombre_merc = isset($data_merc)&&isset($data_merc[0]->nombre) ? $data_merc[0]->nombre : "?";
+
+		$this->template->set("nombre_merc",$nombre_merc);
+		
 		if($id_merc==1)
 		{
 			
