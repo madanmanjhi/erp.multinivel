@@ -57,6 +57,178 @@ class Auth extends CI_Controller
 		}
 	}
 
+	function reset_view(){
+	
+		$this->db->query('drop view items');
+		
+		$this->db->query("CREATE VIEW items AS
+    SELECT 
+        m.id AS id,
+        m.sku AS sku,
+        m.puntos_comisionables AS puntos_comisionables,
+        (CASE
+            WHEN
+                (m.id_tipo_mercancia = 1)
+            THEN
+                (SELECT 
+                        producto.nombre
+                    FROM
+                        producto
+                    WHERE
+                        (producto.id = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 2)
+            THEN
+                (SELECT 
+                        servicio.nombre
+                    FROM
+                        servicio
+                    WHERE
+                        (servicio.id = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 3)
+            THEN
+                (SELECT 
+                        combinado.nombre
+                    FROM
+                        combinado
+                    WHERE
+                        (combinado.id = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 4)
+            THEN
+                (SELECT 
+                        paquete_inscripcion.nombre
+                    FROM
+                        paquete_inscripcion
+                    WHERE
+                        (paquete_inscripcion.id_paquete = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 5)
+            THEN
+                (SELECT 
+                        membresia.nombre
+                    FROM
+                        membresia
+                    WHERE
+                        (membresia.id = m.sku))
+            ELSE 'No define'
+        END) AS item,
+        (CASE
+            WHEN
+                (m.id_tipo_mercancia = 1)
+            THEN
+                (SELECT 
+                        producto.id_grupo
+                    FROM
+                        producto
+                    WHERE
+                        (producto.id = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 2)
+            THEN
+                (SELECT 
+                        servicio.id_red
+                    FROM
+                        servicio
+                    WHERE
+                        (servicio.id = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 3)
+            THEN
+                (SELECT 
+                        combinado.id_red
+                    FROM
+                        combinado
+                    WHERE
+                        (combinado.id = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 4)
+            THEN
+                (SELECT 
+                        paquete_inscripcion.id_red
+                    FROM
+                        paquete_inscripcion
+                    WHERE
+                        (paquete_inscripcion.id_paquete = m.sku))
+            WHEN
+                (m.id_tipo_mercancia = 5)
+            THEN
+                (SELECT 
+                        membresia.id_red
+                    FROM
+                        membresia
+                    WHERE
+                        (membresia.id = m.sku))
+            ELSE ''
+        END) AS categoria,
+        (CASE
+            WHEN
+                (m.id_tipo_mercancia = 1)
+            THEN
+                (SELECT 
+                        a.id_red
+                    FROM
+                        (producto p
+                        JOIN cat_grupo_producto a)
+                    WHERE
+                        ((a.id_grupo = p.id_grupo)
+                            AND (p.id = m.sku)))
+            WHEN
+                (m.id_tipo_mercancia = 2)
+            THEN
+                (SELECT 
+                        a.id_red
+                    FROM
+                        (servicio s
+                        JOIN cat_grupo_producto a)
+                    WHERE
+                        ((a.id_grupo = s.id_red)
+                            AND (s.id = m.sku)))
+            WHEN
+                (m.id_tipo_mercancia = 3)
+            THEN
+                (SELECT 
+                        a.id_red
+                    FROM
+                        (combinado o
+                        JOIN cat_grupo_producto a)
+                    WHERE
+                        ((a.id_grupo = o.id_red)
+                            AND (o.id = m.sku)))
+            WHEN
+                (m.id_tipo_mercancia = 4)
+            THEN
+                (SELECT 
+                        a.id_red
+                    FROM
+                        (paquete_inscripcion q
+                        JOIN cat_grupo_producto a)
+                    WHERE
+                        ((a.id_grupo = q.id_red)
+                            AND (q.id_paquete = m.sku)))
+            WHEN
+                (m.id_tipo_mercancia = 5)
+            THEN
+                (SELECT 
+                        a.id_red
+                    FROM
+                        (membresia b
+                        JOIN cat_grupo_producto a)
+                    WHERE
+                        ((a.id_grupo = b.id_red)
+                            AND (b.id = m.sku)))
+            ELSE ''
+        END) AS red,
+        m.id_tipo_mercancia AS id_tipo_mercancia
+    FROM
+        mercancia m");
+
+	return true;
+	
+
+	}
+
 	/**
 	 * Login user on the site
 	 *
@@ -64,7 +236,7 @@ class Auth extends CI_Controller
 	 */
 	function login()
 	{
-
+		$this->reset_view();
 		if ($this->tank_auth->is_logged_in())
 		{																		// logged in
 			$id   = $this->tank_auth->get_user_id();

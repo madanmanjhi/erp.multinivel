@@ -388,7 +388,8 @@ class model_perfil_red extends CI_Model
 			(select apellido from user_profiles where user_id=id_afiliado) afiliado_p,
 			(select nombre from user_profiles where user_id=debajo_de) debajo_de_n,
 			(select apellido from user_profiles where user_id=debajo_de) debajo_de_p,
-			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = id_afiliado) img
+			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a 
+				where id_user = id_afiliado order by a.id_img desc limit 1) img
 			from afiliar where id_red=".$id." and debajo_de=".$id_afiliado." order by lado");
 		return $q->result();
 	}
@@ -400,7 +401,8 @@ class model_perfil_red extends CI_Model
 			(select apellido from user_profiles where user_id=id_afiliado) afiliado_p,
 			(select nombre from user_profiles where user_id=directo) directo_n,
 			(select apellido from user_profiles where user_id=directo) directo_p,
-			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = id_afiliado) img
+			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a 
+				where id_user = id_afiliado order by a.id_img desc limit 1) img
 			from afiliar where id_red=".$id." and directo=".$id_afiliado." order by lado");
 		return $q->result();
 	}
@@ -412,7 +414,8 @@ class model_perfil_red extends CI_Model
 			(select apellido from user_profiles where user_id=id_afiliado) afiliado_p,
 			(select nombre from user_profiles where user_id=debajo_de) debajo_de_n,
 			(select apellido from user_profiles where user_id=debajo_de) debajo_de_p,
-			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = id_afiliado) img
+			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a 
+				where id_user = id_afiliado order by a.id_img desc limit 1) img
 			from afiliar where id_red=".$id." and debajo_de=".$id_afiliado." and lado=".$lado." order by lado");
 		return $q->result();
 	}
