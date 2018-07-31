@@ -46,7 +46,10 @@ $(document).ready(function() {
 					);
 					var validacion_=valida_espacios(idss,mensajess);
 					var validacion=valida_vacios(ids,mensajes);
-					if(validacion&&validacion_)
+					var terminos = $('#terminos').is(':checked');
+					if(!terminos)
+						$('#terminos').parent().addClass('state-error');
+					if(validacion&&validacion_&&terminos)
 					{
 						iniciarSpinner();
 						$( ".steps" ).slideUp();
@@ -101,7 +104,7 @@ $(document).ready(function() {
 					}
 			    
 			  });
-	
+	$('#pais').val("MEX");
 	pageSetUp();
 });
 
@@ -532,6 +535,9 @@ function codpos_red()
 											<div class="form-horizontal" id="fuelux-wizard" >
 												<div class="step-pane active" id="step1">
 													<form id="register" class="smart-form">
+														
+														 
+
 														<fieldset>
 														
 															<legend>Información de cuenta</legend>
@@ -560,6 +566,21 @@ function codpos_red()
 												</div>
 												<div class="step-pane" id="step2">
 													<form method="POST" action="/perfil_red/afiliar_nuevo" id="checkout-form" class="smart-form" novalidate="novalidate">
+
+														<fieldset class="">
+															<legend class="">Condiciones del Servicio</legend>
+															<section class="col col-1">
+																<label class="checkbox pull-right"> <input
+																	id="terminos" required name="agreement" type="checkbox">
+																	<i></i>
+																</label>
+															</section>
+															<section class="col col-10" style="text-align: justify">
+																Acepto los <a href='/media/archivos/TERMINOS.pdf'
+																 target="_blank">términos y condiciones del servicio</a>.
+																</section>
+														</fieldset>
+														
 														<fieldset>
 															<legend>Datos personales del afiliado</legend>
 															<div class="row">
@@ -611,14 +632,18 @@ function codpos_red()
 																	</label>
 																</section>
 															</div>
-															<section class="col col-3">
-																<button type="button" onclick="agregar('1')" class="btn btn-primary">
-																	&nbsp;Agregar <i class="fa fa-mobile"></i>&nbsp;
-																</button>
-																<button type="button" onclick="agregar('2')" class="btn btn-primary">
-																	&nbsp;Agregar <i class="fa fa-phone"></i>&nbsp;
-																</button>
-															</section>
+
+															<div id="tel" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+																<section class="col col-3">
+																	<button type="button" onclick="agregar('1')" class="btn btn-primary">
+																		&nbsp;Agregar <i class="fa fa-mobile"></i>&nbsp;
+																	</button>
+																	<button type="button" onclick="agregar('2')" class="btn btn-primary">
+																		&nbsp;Agregar <i class="fa fa-phone"></i>&nbsp;
+																	</button>
+																</section>
+															</div>
 															</div>
 														</fieldset>
 														
@@ -704,9 +729,7 @@ function codpos_red()
 																		<select name="civil">
 																		<?foreach ($civil as $key)
 																		{
-																			if($key->id_edo_civil==$usuario[0]->id_edo_civil)
-																				echo '<option selected value="'.$key->id_edo_civil.'">'.$key->descripcion.'</option>';
-																			else
+																			
 																			echo '<option value="'.$key->id_edo_civil.'">'.$key->descripcion.'</option>';
 																				
 																		}?>

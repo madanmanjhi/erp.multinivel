@@ -18,7 +18,7 @@ class billetera2 extends CI_Controller
 		$this->load->model('bo/model_bonos');
 		$this->load->model('model_tipo_red');
 		$this->load->model('ov/model_perfil_red');
-		
+		$this->load->model('bo/bonos/clientes/korak/korakbonos');
 		if (!$this->tank_auth->is_logged_in())
 		{																		// logged in
 		redirect('/auth');
@@ -40,7 +40,9 @@ class billetera2 extends CI_Controller
 
 		$id              = $this->tank_auth->get_user_id();
 		
-		if($this->general->isActived($id)!=0){
+		$isActived = $this->general->isActived($id)!=0;
+		$inscripcion = $this->korakbonos->getInscripcionUsuario ($id,false,"AND m.id not in (4)");
+		if(!$inscripcion){
 			redirect('/ov/compras/carrito');
 		}
 
@@ -68,7 +70,9 @@ class billetera2 extends CI_Controller
 	
 		$id              = $this->tank_auth->get_user_id();
 		
-		if($this->general->isActived($id)!=0){
+		$isActived = $this->general->isActived($id)!=0;
+		$inscripcion = $this->korakbonos->getInscripcionUsuario ($id,false,"AND m.id not in (4)");
+		if(!$inscripcion){
 			redirect('/ov/compras/carrito');
 		}
 	 
@@ -96,7 +100,9 @@ class billetera2 extends CI_Controller
 	
 		$id              = $this->tank_auth->get_user_id();
 		
-		if($this->general->isActived($id)!=0){
+		$isActived = $this->general->isActived($id)!=0;
+		$inscripcion = $this->korakbonos->getInscripcionUsuario ($id,false,"AND m.id not in (4)");
+		if(!$inscripcion){
 			redirect('/ov/compras/carrito');
 		}
 	
@@ -139,7 +145,9 @@ class billetera2 extends CI_Controller
 	
 		$id              = $this->tank_auth->get_user_id();
 		
-		if($this->general->isActived($id)!=0){
+		$isActived = $this->general->isActived($id)!=0;
+		$inscripcion = $this->korakbonos->getInscripcionUsuario ($id,false,"AND m.id not in (4)");
+		if(!$inscripcion){
 			redirect('/ov/compras/carrito');
 		}
 	
@@ -180,7 +188,9 @@ class billetera2 extends CI_Controller
 	
 		$id              = $this->tank_auth->get_user_id();
 		
-		if($this->general->isActived($id)!=0){
+		$isActived = $this->general->isActived($id)!=0;
+		$inscripcion = $this->korakbonos->getInscripcionUsuario ($id,false,"AND m.id not in (4)");
+		if(!$inscripcion){
 			redirect('/ov/compras/carrito');
 		}	
 	
@@ -310,7 +320,9 @@ class billetera2 extends CI_Controller
 	
 		$id              = $this->tank_auth->get_user_id();
 		
-		if($this->general->isActived($id)!=0){
+		$isActived = $this->general->isActived($id)!=0;
+		$inscripcion = $this->korakbonos->getInscripcionUsuario ($id,false,"AND m.id not in (4)");
+		if(!$inscripcion){
 			redirect('/ov/compras/carrito');
 		}
 	

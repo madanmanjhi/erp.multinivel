@@ -45,8 +45,11 @@ $(document).ready(function() {
 					);
 					var validacion_=valida_espacios(idss,mensajess);
 					var validacion=valida_vacios(ids,mensajes);
-					if(validacion&&validacion_)
-					{
+					var terminos = $('#terminos').is(':checked');
+					if(!terminos)
+						$('#terminos').parent().addClass('state-error');
+					if (validacion && validacion_ && terminos) {
+
 						$( ".steps" ).slideUp();
 						$( ".steps" ).remove();
 						$( ".actions" ).slideUp();
@@ -98,6 +101,7 @@ $(document).ready(function() {
 					}
 			    
 			  });
+	$('#pais').val("MEX");
 	
 	pageSetUp(); 
 });
@@ -295,6 +299,19 @@ function botbox(nombre, id, lado)
 				+'</div>'
 				+'<div class="step-pane" id="step2_r">'
 					+'<form method="POST" action="/perfil_red/afiliar_nuevo_r/'+id+'" id="afiliar_red" class="smart-form" novalidate="novalidate">'
+						+'<fieldset class="">'
+        				+'<legend class="">Condiciones del Servicio</legend>'
+        					+'<section class="col col-1">'
+        						+'<label class="checkbox pull-right"> <input '
+        							+'id="terminos" required name="agreement" type="checkbox">'
+        							+'<i></i>'
+        						+'</label>'
+        					+'</section>'
+        					+'<section class="col col-10" style="text-align: justify">'
+        						+'Acepto los <a href="/media/archivos/TERMINOS.pdf"'
+        						 +'target="_blank">términos y condiciones del servicio</a>.'
+        						+'</section>'
+        				+'</fieldset> '
 						+'<fieldset>'
 							+'<legend>Datos personales del afiliado</legend>'
 							+'<div class="row">'
@@ -337,10 +354,12 @@ function botbox(nombre, id, lado)
 										+'</label>'
 									+'</section>'
 								+'</div>'
+								+'<div id="" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
 								+'<section class="col col-12">'
 									+'<button type="button" onclick="agregar_red(1)" class="btn btn-primary">&nbsp;Agregar <i class="fa fa-mobile"></i>&nbsp;</button>&nbsp;'
 									+'<button type="button" onclick="agregar_red(2)" class="btn btn-primary">&nbsp;Agregar <i class="fa fa-phone"></i>&nbsp;</button>'
 								+'</section>'
+								+'</div>'
 							+'</div>'
 						+'</fieldset>'
 						+'<fieldset>'
@@ -459,135 +478,12 @@ function botbox(nombre, id, lado)
 						+'<input type="text" class="hide" name="id" value="<?php echo $id; ?>" placeholder="">'
 					+'</form>'
 				+'</div>'
-				+'<div class="step-pane" id="step3_r">'
-					+'<div class="row">'
-						+'<br />'
-					+'</div>'
-					+'<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'
-						+'<div class="row">'
-					        +'<div id="planuno_r" class="col-xs-12 col-sm-6 col-md-6">'
-					            +'<div class="panel panel-success pricing-big">'
-					                +'<div class="panel-heading">'
-					                    +'<h3 class="panel-title">'
-					                       +'<i class="fa fa-plane"></i> Plan despegue</h3>'
-					                +'</div>'
-					                +'<div class="panel-body no-padding text-align-center">'
-					                    +'<div class="the-price">'
-					                        +'<h1>'
-					                            +'<strong>$85.25 USD</strong></h1>'
-					                    +'</div>'
-										+'<div class="price-features">'
-											+'<ul class="list-unstyled text-left">'
-									          	+'<li><h1><i class="fa fa-check text-success"></i> <strong>8%</strong> de ganancia</h1></li>'
-									        	+'<li><h1><i class="fa fa-check text-success"></i> <strong>60</strong> puntos de comisión</h1></li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>1</strong> Aloe Detox (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>1</strong> Vita Live (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>1</strong> Linea Gala</li>'
-									        +'</ul>'
-										+'</div>'
-					                +'</div>'
-					                +'<div class="panel-footer text-align-center">'
-					                    +'<a id="plan1_r" href="#" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>'
-					                +'</div>'
-					            +'</div>'
-					        +'</div>'
-					        +'<div id="plandos_r" class="col-xs-12 col-sm-6 col-md-6">'
-					            +'<div class="panel panel-teal pricing-big">'
-					            	
-					                +'<div class="panel-heading">'
-					                    +'<h3 class="panel-title">'
-					                        +'<i class="fa fa-bar-chart-o"></i> Plan avance</h3>'
-					                +'</div>'
-					                +'<div class="panel-body no-padding text-align-center">'
-					                    +'<div class="the-price">'
-					                        +'<h1>'
-					                            +'<strong>$164.00 USD</strong></h1>'
-					                    +'</div>'
-										+'<div class="price-features">'
-											+'<ul class="list-unstyled text-left">'
-									          	+'<li><h1><i class="fa fa-check text-success"></i> <strong>10%</strong> de ganancia</h1></li>'
-									        	+'<li><h1><i class="fa fa-check text-success"></i> <strong>135</strong> puntos de comisión</h1></li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>4</strong> Aloe Detox (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>3</strong> Vita Live (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>1</strong> Linea Gala</li>'
-									        +'</ul>'
-										+'</div>'
-					                +'</div>'
-					                +'<div class="panel-footer text-align-center">'
-					                    +'<a id="plan2_r" href="#" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>'
-					                +'</div>'
-					            +'</div>'
-					        +'</div>'
-					        
-					        +'<div id="plantres_r" class="col-xs-12 col-sm-6 col-md-6">'
-					            +'<div class="panel panel-primary pricing-big">'
-					            	+'<img src="/template/img/ribbon.png" class="ribbon" alt="">'
-					                +'<div class="panel-heading">'
-					                    +'<h3 class="panel-title">'
-					                        +'<i class="fa fa-suitcase"></i> Plan empresarial</h3>'
-					                +'</div>'
-					                +'<div class="panel-body no-padding text-align-center">'
-					                    +'<div class="the-price">'
-					                        +'<h1>'
-					                            +'<strong>$454.25 USD</strong></h1>'
-					                    +'</div>'
-										+'<div class="price-features">'
-											+'<ul class="list-unstyled text-left">'
-									          	+'<li><h1><i class="fa fa-check text-success"></i> <strong>12%</strong> de ganancia</h1></li>'
-									        	+'<li><h1><i class="fa fa-check text-success"></i> <strong>420</strong> puntos de comisión</h1></li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>10</strong> Aloe Detox (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>9</strong> Vita Live (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>4</strong> Linea Gala</li>'
-									        +'</ul>'
-										+'</div>'
-					               +'</div>'
-					                +'<div class="panel-footer text-align-center">'
-					                    +'<a id="plan3_r" href="#" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>'
-					                +'</div>'
-					            +'</div>'
-					        +'</div>'
-					        +'<div id="plancuatro_r" class="col-xs-12 col-sm-6 col-md-6">'
-					            +'<div class="panel panel-darken pricing-big">'
-					                +'<div class="panel-heading">'
-					                    +'<h3 class="panel-title">'
-					                        +'<i class="fa fa-signal"></i> <i class="fa fa-male"></i> Plan inversionista</h3>'
-					                +'</div>'
-					                +'<div class="panel-body no-padding text-align-center">'
-					                    +'<div class="the-price">'
-					                        +'<h1>'
-					                            +'<strong>$920.00 USD</strong></h1>'
-					                    +'</div>'
-										+'<div class="price-features">'
-											+'<ul class="list-unstyled text-left">'
-									          	+'<li><h1><i class="fa fa-check text-success"></i> <strong>15%</strong> de ganancia</h1></li>'
-									        	+'<li><h1><i class="fa fa-check text-success"></i> <strong>850</strong> puntos de comisión</h1></li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>20</strong> Aloe Detox (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>20</strong> Vita Live (6 pack)</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <strong>8</strong> Linea Gala</li>'
-									        	+'<li><i class="fa fa-check text-success"></i> <small>Podrás modificar la cantidad de producto que tengan el mismo precio que no insida en el valor y puntaje del plan</small></li>'
-									        +'</ul>'
-										+'</div>'
-					                +'</div>'
-					                +'<div class="panel-footer text-align-center">'
-					                    +'<a id="plan4_r" href="#" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>'
-					                +'</div>'
-					            +'</div>'
-					        +'</div>'		    	
-			    		+'</div>'
-			    		+'<br />'
-			    		+'<a id="remove_step_r" href="#" class="btn btn-primary btn-block" role="button">Comprar el plan después</span></a>'
-			    	+'</div>'
-				+'</div>'
-				+'<div class="step-pane" id="step4_r">'
-				+'<div class="well">'
-					+'<p>El pago se realizara despues en la enttrega de su primer pedido</p>'
-				+'</div>'
-				+'</div>'
+				
 
 			+'</div>'
 		+'</div>'
 		+'</div>'
-		+'<script>'
+		+'<script> $("#pais_red").val("MEX");'
 		+' $(function()'
 		+ '{'
 		 +	'a = new Date();'
@@ -603,6 +499,8 @@ function botbox(nombre, id, lado)
 		title: "Afiliar a "+nombre,
 	});
 	
+	
+
 	$('.wizard_r').on('finished.fu.wizard', function (e, data) {
 
 		  $( ".invalid" ).remove();
@@ -637,8 +535,11 @@ function botbox(nombre, id, lado)
 					);
 					var validacion_=valida_espacios(idss,mensajess);
 					var validacion=valida_vacios(ids,mensajes);
-					if(validacion&&validacion_)
-					{
+					var terminos = $('#terminos').is(':checked');
+					if(!terminos)
+						$('#terminos').parent().addClass('state-error');
+					if (validacion && validacion_ && terminos) {
+						
 						setiniciarSpinner();
 						$('.btn-next').attr('disabled','disabled');
 						$('.btn-prev').attr('disabled','disabled');
@@ -685,6 +586,7 @@ function botbox(nombre, id, lado)
 				}
 			    
 			  });
+
 
 }
 function check_keyword()

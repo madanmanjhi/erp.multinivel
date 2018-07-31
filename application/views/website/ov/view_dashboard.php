@@ -55,9 +55,10 @@
                                 </div>
 																</li>
 																<li>
-																	<p class="text-muted">
-																		<i class="fa fa-phone"></i>&nbsp;&nbsp;(<span class="txt-color-darken"><?=$telefono?></span>)</span>
-																	</p>
+																	<h5 class="text-muted">
+																		<i class="fa fa-globe"></i> LINK PERSONAL:<br/></h5>
+																		<a href="<?=$link_personal;?>" ><?=$link_personal;?></a>
+																	<hr/>
 																</li>
 																<li>
 																	<p class="text-muted">
@@ -88,7 +89,10 @@
                                 									<div class="row">
 																	<br>
 																	<div class="col-xs-2 col-sm-1">
-																			<strong class="<?php if($actividad) echo "label label-success";else echo "label label-default";?>" style="font-size: 2rem;"> <?php if($actividad) echo "<i class='fa fa-smile-o'></i> Activo";else echo "<i class='fa fa-frown-o'></i> Inactivo";?></strong>
+																			<strong class="<?php if($actividad) echo "label label-success";
+																			else echo "label label-default";?>" style="font-size: 2rem;"> 
+																			<?php if($actividad) echo "<i class='fa fa-smile-o'></i> $actividad";
+																			else echo "<i class='fa fa-frown-o'></i> Inactivo";?></strong>
 																	</div>
 																	<div class="col-sm-12">
 																		<br>
@@ -111,7 +115,8 @@
 															</ul>
 															<br>
 														</div>
-														<div class="col-sm-4">
+														<div class="hide ">
+                                                                                                                    <!--col-sm-4-->
 														<h1><small>Puntos Comisionables Personales</small>  <i class='fa fa-user'></i></h1>
 															<ul class="list-inline friends-list">
 																<li><span class="font-md"><i>Semana :</i></span> <?=intval($puntos_semana)?>
@@ -129,7 +134,8 @@
 																</li>
 																<li><span class="font-md"><i>Total :</i></span> <?=$puntos_red_total?>
 																</li>
-															</ul>
+															</ul></div>
+														<div class="col-sm-4">
 														<h1><small>Últimos Auspiciados</small></h1>
 															<ul class="list-inline friends-list">
 																<?php 
@@ -862,3 +868,4 @@ function detalles(id)
 	});
 }
 </script>
+

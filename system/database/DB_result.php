@@ -120,7 +120,7 @@ class CI_DB_result {
 		{
 			$this->result_object[] = $row;
 		}
-
+		#log_message('DEV',"R___$> ".json_encode($this->result_object));
 		return $this->result_object;
 	}
 

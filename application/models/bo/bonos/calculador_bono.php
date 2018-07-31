@@ -24,7 +24,7 @@ class calculador_bono extends CI_Model
 		$this->load->model('/bo/bonos/activacion_bono');
 		$this->load->model('/bo/bonos/repartidor_comision_bono');
 		$this->load->model('/bo/bonos/afiliado');
-		$this->load->model('/bo/bonos/clientes/mobileMoney/bono_mobile_money'); /** Segun Cliente : Reemplazar Folder y File*/ 
+		$this->load->model('/bo/bonos/clientes/korak/korakbonos'); /** Segun Cliente : Reemplazar Folder y File*/ 
 		
 		$this->setFechaCalculoBono(date('Y-m-d'));
 	}
@@ -234,7 +234,7 @@ class calculador_bono extends CI_Model
 		
 		/* (Bono a la medida) Repartir valor total de igualaciones dividido numero de compras por puntos (Money Mobile) */
 		else if($verticalidad=="RDESC"){
-			#$bonoMoneyMobile=$this->bono_mobile_money;
+			#$bonoMoneyMobile=$this->korakbonos;
 			#$this->repartirComisionesBonoPorIgualacionesPorCompras ($bonoMoneyMobile, $id_bono,$id_bono_historial,$id_usuario,$red,$nivel,$valor,$condicion_red,$verticalidad,$fecha);
 		}
 	}
@@ -367,7 +367,7 @@ class calculador_bono extends CI_Model
 			$condicion1=$condicionBono->getCondicionBono1();
 			$condicion2=$condicionBono->getCondicionBono2();
 
-			$Activo = $this->bono_mobile_money->isActived($id_usuario,$id_bono,$red,$fechaActual);
+			$Activo = $this->korakbonos->isActived($id_usuario,$id_bono,$red,$fechaActual);
 			
 			if(!$Activo)
 			    return false;	
@@ -389,7 +389,7 @@ class calculador_bono extends CI_Model
 						"valor" => $valor,
 						"fecha" => $fechaActual
 			);
-			$getValorBonoBy = $this->bono_mobile_money->getValorBonoBy($id_bono,$valor);
+			$getValorBonoBy = $this->korakbonos->getValorBonoBy($id_bono,$valor);
 			$this->setValorCondicion($getValorBonoBy);
 				
 			if($getValorBonoBy>0)
@@ -464,6 +464,8 @@ class calculador_bono extends CI_Model
 			return $this->getInicioAno($fechaActual);
 		else if($frecuencia=="UNI")
 			return "2016-01-01";
+		
+	   return $fechaActual;
 	}
 	
 	public function getFechaFinPagoDeBono($frecuencia,$fechaActual){
@@ -477,6 +479,8 @@ class calculador_bono extends CI_Model
 			return $this->getFinAno($fechaActual);
 		else if($frecuencia=="UNI")
 			return "2090-01-01";
+		
+		return $fechaActual;
 	}
 	
 	private function getValorCondicionUsuario($id_bono,$esUnPlanBinario,$tipoDeCondicion,$id_usuario,$red,$tipoDeAfiliados,$tipoDeBusquedaEnLaRed,$profundidadRed,$fechaInicio,$fechaFin,$condicion1,$condicion2) {

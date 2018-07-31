@@ -463,7 +463,7 @@
                                 <div class="tab-pane fade in active" id="s1">
                                     <div id="uno" class="row fuelux">
 
-                                        <? if ($contar < $red_frontales[0]->frontal || $premium == '2') { ?>
+                                        <?php if ($contar < $red_frontales[0]->frontal || $premium == '2') { ?>
 
 
                                             <div class="step-content">
@@ -502,7 +502,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        <? } elseif ($premium == '0') { ?> 
+                                        <?php } elseif ($premium == '0') { ?> 
                                             <script type="text/javascript">
                                                 window.onload = function () {
                                                     SelecionarFase();

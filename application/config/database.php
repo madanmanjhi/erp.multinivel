@@ -48,16 +48,14 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-
-$db['default']['hostname'] = 'DemoSio.db.11569157.hostedresource.com';
-$db['default']['username'] = 'DemoSio';
-$db['default']['password'] = 'DemoSio#12345';
-$db['default']['database'] = 'DemoSio';
+$db['default']['hostname'] = 'localhost';
+$db['default']['username'] = 'startnetworksoft';
+$db['default']['password'] = 'NStm2017#';
 
 #$db['default']['hostname'] = '127.0.0.1';
 #$db['default']['username'] = 'root';
 #$db['default']['password'] = '';
-#$db['default']['database'] = 'erpMultinivel';
+$db['default']['database'] = 'erpkorak';
 $db['default']['port'] = '';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';

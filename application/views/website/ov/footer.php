@@ -3,8 +3,8 @@
 			<div class="row">
 				<div class="col-xs-8 col-sm-8">
 					<span class="txt-color-white">
-			Copyright © <?=date('Y')?> EMPRESA Todos los derechos reservados.
-		<a href="http://www.networksoft.com.mx/" target="_BLANK">NetworkSoft MLM</a></span>
+			Copyright © <?=date('Y');?> Korak ® Todos los derechos reservados.
+		<a href="http://www.korak.mx/" target="_BLANK">Korak ®</a></span>
 				</div>
 				<div class="col-xs-4 col-sm-4">
 					<span class="txt-color-white">
@@ -15,7 +15,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- END PAGE FOOTER -->
 
 		<script type="text/javascript">
 
@@ -44,6 +43,8 @@
 		}	
 
 		</script>
+
+		<!-- END PAGE FOOTER -->
 
 		<!-- SHORTCUT AREA : With large tiles (activated via clicking user name tag)
 		Note: These tiles are completely responsive,

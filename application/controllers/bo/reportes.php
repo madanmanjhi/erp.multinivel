@@ -1152,14 +1152,14 @@ class reportes extends CI_Controller {
 		$totalCobros = 0;
 		echo "<table id='datatable_fixed_column1' class='table table-striped table-bordered table-hover' width='100%'>
 				<thead id='tablacabeza'>
-					<th>ID Venta</th>
-					<th>Afiliado</th>
-					<th>Email</th>
-					<th>Banco</th>
-					<th>N° Cuenta</th>
-					<th>Valor</th>
-					<th>Fecha</th>
-					<th>Estado</th>
+					<th data-class='expand'>ID Venta</th>
+					<th data-hide='phone,tablet'>Afiliado</th>
+					<th data-hide='phone,tablet'>Email</th>
+					<th data-hide='phone,tablet'>Banco</th>
+					<th data-hide='phone,tablet'>N° Cuenta</th>
+					<th >Valor</th>
+					<th >Fecha</th>
+					<th data-hide='phone,tablet'>Estado</th>
 				</thead>
 				<tbody>";
 		
@@ -1899,3 +1899,5 @@ class reportes extends CI_Controller {
 		$objWriter->save ( 'php://output' );
 	}
 }
+
+

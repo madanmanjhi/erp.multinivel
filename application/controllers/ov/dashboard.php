@@ -18,7 +18,8 @@ class dashboard extends CI_Controller
 		$this->load->model('model_tipo_red');
 		$this->load->model('bo/model_admin');
 		$this->load->model('bo/bonos/titulo');
-		
+		$this->load->model('bo/bonos/clientes/korak/korakbonos');
+		$this->load->model('web_personal');		
 		
 	}
 
@@ -136,7 +137,7 @@ class dashboard extends CI_Controller
 	    
 	    $cuentasPorPagar=$this->modelo_dashboard->get_cuentas_por_pagar_banco($id);
 	    $notifies = $this->model_admin->get_notify_activos();
-
+            
 
 	     $name_sponsor= ($id_sponsor) ? $this->general->get_username($id_sponsor[0]->id_usuario) : '';
 
@@ -152,9 +153,13 @@ class dashboard extends CI_Controller
 		}
 		
 		$style=$this->modelo_dashboard->get_style($id);
-		
+                
+		$link_personal = $this->web_personal->val_web_personal($id);
+                $this->template->set("link_personal",$link_personal);
+                
 		$actividad=$this->modelo_compras->is_afiliado_activo($id,date('Y-m-d'));
-
+		$actividad=$this->korakbonos->getActivacion($id);
+		
 		$puntos_semana=$this->modelo_dashboard->get_puntos_personales_semana($id);
 		$puntos_mes=$this->modelo_dashboard->get_puntos_personales_mes($id);
 		$puntos_total=$this->modelo_dashboard->get_puntos_personales_total($id);
@@ -165,7 +170,8 @@ class dashboard extends CI_Controller
 		
 		$ultimos_auspiciados=$this->modelo_dashboard->get_ultimos_auspiciados($id);
 		
-		$titulo=$this->titulo->getNombreTituloAlcanzadoAfiliado($id,date('Y-m-d'));
+		$titulo=$this->korakbonos->getTituloAfiliado($id);
+		#TODO : $this->titulo->getNombreTituloAlcanzadoAfiliado($id,date('Y-m-d'));
 		
 		$this->template->set("id",$id);
 		$this->template->set("usuario",$usuario);

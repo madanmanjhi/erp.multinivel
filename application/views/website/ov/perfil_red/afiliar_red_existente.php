@@ -167,7 +167,7 @@
                                                 <li><a style="background: url('<?= $img_perfil ?>'); background-size: cover; background-position: center;" href="#"><div
                                                             class="nombre">Tú</div></a>
                                                     <ul>
-                                                        <?
+                                                        <?php
                                                         $aux = 0;
                                                         foreach ($afiliados as $key) {
                                                             $aux ++;
@@ -178,7 +178,7 @@
                                                                     <div onclick="detalles(<?= $key->id_afiliado ?>)"
                                                                          class="<?= ($key->directo == $id) ? 'todo1' : 'todo' ?>"><?= $key->afiliado ?> <?= $key->afiliado_p ?><br />Detalles
                                                                     </div></li>
-                                                                <?
+                                                                <?php
                                                             }
                                                         }
 
@@ -196,7 +196,7 @@
                                                                         onclick='botbox("<?php echo 'Tu'; ?>", "<?php echo $id; ?>", "<?php echo $i; ?> ")'
                                                                         href='javascript:void(0)'>Afiliar Aqui</a>
                                                                 </li>
-                                                            <? } ?>
+                                                            <?php } ?>
 
 <?php } ?>
                                                     </ul></li>

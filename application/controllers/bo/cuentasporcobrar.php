@@ -62,11 +62,13 @@ class cuentasporcobrar extends compras{
 	
 			$datosCuentaPagar = $this->modelo_historial_consignacion->getDatosPagoBanco($id_venta);
 
-			if(!$datosCuentaPagar)
+			if(!$datosCuentaPagar){
 				echo  "No se ha podido realizar el cambio de estado de la peticion.";
+				exit();
+			}
 			
-			$id_afiliado_comprador=$datosCuentaPagar[0]->id_usuario;
-			$id_historial=$datosCuentaPagar[0]->id;			
+			$id_afiliado_comprador=$datosCuentaPagar->id_usuario;
+			$id_historial=$datosCuentaPagar->id;			
 			
 			$embarque = $this->modelo_logistico->setPedido($id_venta);
 			
@@ -77,7 +79,7 @@ class cuentasporcobrar extends compras{
 			
 			$this->pagarComisionVenta($id_venta,$id_afiliado_comprador);
 			
-			$this->modelo_historial_consignacion->CambiarEstadoPago($id_venta, $datosCuentaPagar[0]->id);
+			$this->modelo_historial_consignacion->CambiarEstadoPago($id_venta, $datosCuentaPagar->id);
 			
 			$datos = $this->modelo_historial_consignacion->Datos_Email($id_historial);
 			

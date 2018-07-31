@@ -1260,7 +1260,7 @@ BONO AUTOCOMPRA
 	}
 	
 	function actualizar_comisiones(){
-		if(isset($_POST['categoria'])){
+		if(isset($_POST['categoria'])&&isset($_POST['configuracion'])){
 			$porcentaje = 0;
 			foreach ($_POST['configuracion'] as $valor){
 				$porcentaje = $porcentaje + $valor;

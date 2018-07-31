@@ -2,7 +2,7 @@
 <div class="well">
     <fieldset>
         <div class="row">
-            <? foreach ($providers as $provider) { ?>
+            <?php foreach ($providers as $provider) { ?>
                 <div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
                     <a onclick="Enviar('<?= $provider->internal_name ?>', '<?= $provider->name ?>')">
                         <div class="well well-sm txt-color-white text-center link_dashboard" style="background:#3498db">

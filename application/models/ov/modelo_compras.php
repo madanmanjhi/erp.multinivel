@@ -215,6 +215,7 @@ where A.debajo_de = '.$id.' and A.id_afiliado = UP.user_id and A.id_afiliado = U
 					    b.id,
 					    b.costo,
 					    b.costo_publico,
+                        b.real,
 					    b.fecha_alta,
 					    d.descripcion grupo,
 					    d.id_grupo,
@@ -592,7 +593,12 @@ where a.id_paquete = e.id_paquete and d.sku= a.id_paquete and d.estatus="ACT" an
 		$q=$this->db->query('SELECT a.id_usuario from compras_reportes where id='.$i);
 	}
 
-
+	function get_tipo_item($i)
+	{
+		$q=$this->db->query('SELECT id_tipo_mercancia tipo from mercancia where id='.$i);
+		 $q=$q->result();
+		 return $q ? $q[0]->tipo : 0;
+	}
 
 	function get_estatus($id)
 	{

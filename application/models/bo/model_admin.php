@@ -2194,6 +2194,9 @@ from CountryLanguage CL join Country C on CountryCode=C.Code  join cat_moneda CM
 		$q=$this->db->query('delete from valor_comisiones where id_red = '.$id_grupo);
 		$i = 1;
 		
+		if(!isset($_POST['configuracion']))
+			return false;
+
 			foreach( $_POST['configuracion'] as $profundidad ) {
 				$datos = array(
 						'profundidad' => $i,

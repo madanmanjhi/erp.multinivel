@@ -60,7 +60,6 @@
 									<tr>
 										<th data-hide="phone">ID Venta</th>
 										<th data-class="expand">Afiliado</th>
-										<th data-hide="phone">Email</th>	
 										<th data-hide="phone">Banco</th>
 										<th data-hide="phone,tablet">N° Cuenta</th>
 										<th data-hide="phone,tablet">Titular</th>
@@ -78,8 +77,7 @@
 									<?php foreach ($cobros as $cobro) {?>
 									<tr>
 										<td><?php echo $cobro->id_venta; ?></td>
-										<td><?php echo $cobro->usuario; ?></td>
-										<td><?php echo $cobro->email; ?></td>
+										<td><?php echo $cobro->usuario."<br/>".$cobro->email; ?></td>
 										<td><?php echo $cobro->banco; ?></td>
 										<td><?php echo $cobro->cuenta; ?></td>
 										<td><?php echo $cobro->otro; ?></td>

@@ -7,8 +7,8 @@
 | These details are used in emails sent by authentication library.
 |--------------------------------------------------------------------------
 */
-$config['website_name'] = 'NetworkSoft MLM';
-$config['webmaster_email'] = 'contacto@networksoft.com.mx';
+$config['website_name'] = 'Korak ®';
+$config['webmaster_email'] = 'contacto@korak.mx';
 
 /*
 |--------------------------------------------------------------------------

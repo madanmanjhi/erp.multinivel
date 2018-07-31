@@ -137,7 +137,7 @@
 															$precioUnidad=0;
 															$cantidad=$items['qty'];
 															
-															$precioUnidad=$compras[$contador]['costos'][0]->costo;
+															$precioUnidad=$items['price'];#TODO: $compras[$contador]['costos'][0]->costo;
 															
 															foreach ($compras[$contador]['costos'] as $impuesto){
 																$costoImpuesto+=$impuesto->costoImpuesto;

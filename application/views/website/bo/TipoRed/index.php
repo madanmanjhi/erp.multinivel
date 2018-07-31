@@ -36,7 +36,7 @@
         <fieldset>
             <legend>Red</legend>
             <div class="row">
-<? foreach ($redes as $red) { ?>
+<?php foreach ($redes as $red) { ?>
                     <div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
                         <a href="/bo/capacidadRed/capacidad_de_la_red?id=<?= $red->id ?>">
                             <div class="well well-sm txt-color-white text-center link_dashboard" style="background:<?= $style[0]->btn_2_color ?>">

@@ -131,7 +131,7 @@
 
                     <label class="select"> País
                         <select id="pais" required name="pais" onChange="ImpuestosPais()"> 
-                            <? foreach ($pais as $key) { ?>
+                            <?php foreach ($pais as $key) { ?>
 
                                 <?php if ($key->Code == $datosProveedor[0]->pais) { ?>
 
@@ -141,7 +141,7 @@
 
                                     <option value="<?= $key->Code ?>"> <?= $key->Name ?></option>
 
-                                <? }
+                                <?php }
                             } ?>
                         </select>
                     </label>
@@ -182,7 +182,7 @@
 
                     <label class="select"> Régimen fiscal 
                         <select class="custom-scroll" name="regimen">
-                            <? foreach ($regimen as $key) { ?>
+                            <?php foreach ($regimen as $key) { ?>
 
                                 <?php if ($datosProveedor[0]->id_regimen == $key->id_regimen) { ?>
                                     <option selected value="<?= $key->id_regimen ?>"><?= $key->abreviatura . " " . $key->descripcion ?></option>
@@ -208,13 +208,13 @@
                             <input type="text" class="hide" value="<?php echo $cuentaBanco[$i]->id ?>" name="id_cuenta[]">
                             <label class="select">Bancos 
                                 <select class="custom-scroll" name="banco[]" id="banco" required>
-                                    <? foreach ($bancos as $key) { ?>
+                                    <?php foreach ($bancos as $key) { ?>
                                         <?php if ($key->id_banco == $cuentaBanco[$i]->banco) { ?>							
                                             <option selected value="<?= $key->id_banco ?>"><?= $key->descripcion ?></option>
                                         <?php } else {
                                             ?>
                                             <option value="<?= $key->id_banco ?>"><?= $key->descripcion ?></option>			
-        <? }
+        <?php }
     } ?>
                                 </select>
                             </label>
@@ -242,14 +242,14 @@
             <label class="select"> Zona
                 <select class="custom-scroll"
                         name="zona">
-<? foreach ($zona as $key) { ?>
+<?php foreach ($zona as $key) { ?>
                         <?php if ($datosProveedor[0]->id_zona == $key->id_zona) { ?>
                             <option selected value="<?= $key->id_zona ?>"><?= $key->descripcion ?></option>
 
                         <?php } else { ?>
                             <option value="<?= $key->id_zona ?>"><?= $key->descripcion ?></option>			
 
-    <? }
+    <?php }
 } ?>
                 </select>
             </label>
@@ -325,7 +325,7 @@
 
             <label class="select">Impuesto 
                 <select name="impuesto" id="impuesto">
-                    <? foreach ($impuesto as $key) {
+                    <?php foreach ($impuesto as $key) {
                         if ($key->id_impuesto == $datosProveedor[0]->id_impuesto) {
                             ?>
 
@@ -452,10 +452,10 @@
                                                                                 + '<input type="text" class="hide" value="0" name="id_cuenta[]">'
                                                                                 + '<label class="select"> '
                                                                                 + '<select class="custom-scroll" name="banco[]" id="banco" required>'
-                                                                                + '<? foreach ($bancos as $key) { ?>'
+                                                                                + '<?php foreach ($bancos as $key) { ?>'
                                                                                     + '<option value="<?= $key->id_banco ?>">'
                                                                                     + '<?= $key->descripcion ?></option>'
-                                                                                    + '<? } ?>'
+                                                                                    + '<?php } ?>'
                                                                                 + '</select>'
                                                                                 + '</label>'
                                                                                 + '</section>'
@@ -525,10 +525,10 @@
                                                                                     + '<section class="col col-6">Regimen fiscal'
                                                                                     + '<label class="select">'
                                                                                     + '<select class="custom-scroll" name="regimen">'
-                                                                                    + '<? foreach ($regimen as $key) { ?>'
+                                                                                    + '<?php foreach ($regimen as $key) { ?>'
                                                                                         + '<option value="<?= $key->id_regimen ?>">'
                                                                                         + '<?= $key->abreviatura . " " . $key->descripcion ?></option>'
-                                                                                        + '<? } ?>'
+                                                                                        + '<?php } ?>'
                                                                                     + '</select>'
                                                                                     + '</label>'
                                                                                     + '</section>'
@@ -540,11 +540,11 @@
                                                                                     + 'País'
                                                                                     + '<label class="select">'
                                                                                     + '<select id="pais" required name="pais">'
-                                                                                    + '<? foreach ($pais as $key) { ?>'
+                                                                                    + '<?php foreach ($pais as $key) { ?>'
                                                                                         + '<option value="<?= $key->Code ?>">'
                                                                                         + '<?= $key->Name ?>'
                                                                                         + '</option>'
-                                                                                        + '<? } ?>'
+                                                                                        + '<?php } ?>'
                                                                                     + '</select>'
                                                                                     + '</label>'
                                                                                     + '</section>'

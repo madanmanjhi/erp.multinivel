@@ -21,7 +21,7 @@
                 <fieldset>
                     <legend>Tipos de Red</legend>
                     <div class="row">
-                        <? foreach ($redes as $red) { ?>
+                        <?php foreach ($redes as $red) { ?>
                             <div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
                                     <!-- <a href="/bo/comercial/mi_red?id_red=<? //= $red->id  ?>"> -->
                                 <a href="/bo/configuracion/videos?id_red=<?= $red->id ?>">

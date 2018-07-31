@@ -2,7 +2,7 @@
 <html lang="en-us" id="extr-page">
 	<head>
 		<meta charset="utf-8">
-		<title>BACKOFFICE EMPRESA</title>
+		<title>Korak ®</title>
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -28,8 +28,8 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="/template/css/demo.min.css">
 
 		<!-- #FAVICONS -->
-		<link rel="shortcut icon" href="/template/img/favicon/favicon.ico" type="image/x-icon">
-		<link rel="icon" href="/template/img/favicon/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="/template/img/favicon/favicon.png" type="image/x-icon">
+		<link rel="icon" href="/template/img/favicon/favicon.png" type="image/x-icon">
 
 		<!-- #GOOGLE FONT -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
@@ -57,11 +57,13 @@
 
 		<header id="header" class="fade in">
 		<br />
-			<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-				<img id="compania" src="/logo.png" alt="">
-			</div>
-			<div class="hidden-xs col-sm-6 col-md-6 col-lg-6">
-				<h1>BACKOFFICE EMPRESA &reg;</h1>
+			<div class="col-xs-12 col-md-12">
+			<!--<div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+				<img id="compania" src="/logo.png" alt=""> 
+			 </div>
+			<div class="hidden-xs col-sm-6 col-md-6 col-lg-6"> -->
+				<img id="compania" src="/template/logo.png" alt="">
+
 			</div>
 		</header>
 
@@ -71,14 +73,14 @@
 			<div id="content" class="container">
 
 				<div class="row">
-					<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 hidden-xs hidden-sm">
+					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 hidden-xs hidden-sm">
 					<!--  	<img src="/template/img/login.jpg" class="img2" alt="" >-->
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
 						<div class="hidden-xs header2">
 							<!-- <img id="compania" src="/logo.png" alt=""> -->
 						</div>
-						<div class="well no-padding">
+						<div class="form_login well no-padding">
 							<form id="login-form" method="POST" action="/auth/login" class="smart-form client-form">
 								<header>
 									<h2>Iniciar sesión</h2>
@@ -129,7 +131,7 @@
 												<input required type="password" placeholder="<?php if(isset($pswd)) echo $pswd?>" name="password">
 												<b class="tooltip tooltip-top-right"><i class="fa fa-lock txt-color-teal"></i> Ingrese la contraseña</b> </label>
 											<div class="note">
-												<a href="/auth/forgot_password">Olvidaste tu contraseña?</a>
+												<a class="link_login" href="/auth/forgot_password">Olvidaste tu contraseña?</a>
 											</div>
 										</section>
 									</div>
@@ -150,21 +152,36 @@
 		<div id="footer" class="fade in">
 		<br />
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<small>Copyright © 2018 EMPRESA Todos los derechos reservados. EMPRESA * </small>
+				<small>Copyright © 2018 Korak ® Todos los derechos reservados. Korak ®</small>
 			</div>
 		</div>
 		<!--================================================== -->	
 		<style type="text/css" media="screen">
+			.form_login{
+				background: none !important;
+				border: none;
+				box-shadow: 1px 1px 4px rgba(255,255,255,0.1) ;
+			}	
+			#login-form header{
+				background: none;
+			}
+			.smart-form fieldset{
+				background: none;
+			}
 			#header
-			{
+			{ 
 				text-align: center; 
 				color: #17222d !important;				
-				background: #fff !important;
+				background: rgba(255,255,255,0.1) !important;
 
 			}
-			#compania{width: 80%; margin: -10px auto;}
-			#header h1{margin-top: -5px;font-weight: bold !important;}
-			header h2{text-align: center; color: rgb(41, 124, 255) ;font-weight: bold !important;font-size: 2em;}
+			#header > div, #header{
+				height: 100% !important;
+				background: #1F1E1C !important;
+			}
+			#compania{height: 10em; }
+			#header h1{font-weight: bold !important;}
+			header h2{text-align: center; color: #C4AD0F ;font-weight: bold !important;font-size: 2em;}
 			#login-form{
 				/* -webkit-box-shadow: inset 0px 0px 10px #000;
 				-moz-box-shadow: inset 0px 0px 10px #000;
@@ -175,13 +192,16 @@
 						color: #FFF;
 						font-weight: initial; 
 						height: 2.5em; 
-						background-color: #005ef5;
-						border-color: #004ac2;
+						background-color: #C4AD0F;
+						border-color: #CAB52D;
 						font-size: 1.5em;
 			}			
 			#enviar:hover{							
-						border-bottom: medium solid #00b4dc;
-			}			
+						border-bottom: medium solid #C4AD0F;
+			}	
+			.link_login{							
+				color: #C4AD0F !important;
+			}		
 			.header2{text-align: center; padding-bottom: 10px;}
 			.img2{margin-top: 8%}
 			#footer
@@ -189,10 +209,10 @@
 				height: 5em;
 				text-align: center;
 				color: #FFF !important;
-				background-color: #005ef5;
+				background-color: #C4AD0F;
 			}
 			#extr-page #main{
-				background-image: url('/template/img/login.jpg');
+				background: #1F1E1C;/*-image: url('/template/img/login.jpg')*/;
 				padding: 2% 5% 10% 5%;
 				background-repeat: no-repeat;
 				background-size: cover;
@@ -201,6 +221,7 @@
 			}
 			.smart-form .label {
 				font-size: 1.5em;
+				color: #fff !important;
 			}
 		</style>
 		<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: uses lots of memory on iDevices)-->

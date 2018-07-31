@@ -7,12 +7,11 @@
 					<span class="pull-right txt-color-white">Hola: <?=$nombre?> tu última sesión fue: <?=$sesion?></span>
 					<?}?>
 					<span class="txt-color-white">
-				Copyright © <?=date('Y')?> EMPRESA Todos los derechos reservados.
-		<a href="http://www.networksoft.com.mx/" target="_BLANK">NetworkSoft MLM</a></span>
+			Copyright © <?=date('Y');?> Korak ® Todos los derechos reservados.
+		<a href="http://www.korak.mx/" target="_BLANK">Korak ®</a></span>
 				</div>
 			</div>
 		</div>
-		<!-- END PAGE FOOTER -->
 
 		<script type="text/javascript">
 
@@ -41,6 +40,8 @@
 		}	
 
 		</script>
+		
+		<!-- END PAGE FOOTER -->
 
 		<!-- SHORTCUT AREA : With large tiles (activated via clicking user name tag)
 		Note: These tiles are completely responsive,

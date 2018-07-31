@@ -19,7 +19,7 @@ class model_afiliado extends CI_Model{
 				"btn_2_color"		=> $estilo[0]->btn_2_color
 		);
 		$this->db->insert("estilo_usuario",$dato_style);
-		#return $dato_style;
+		return $dato_style;
 	}
 	
 	function getEstiloUsuario() {
@@ -51,7 +51,7 @@ class model_afiliado extends CI_Model{
 			'id_estatus'         => 1,
 			"id_fiscal"       	 => $_POST['fiscal'],
 			"keyword"            => $_POST['keyword'],
-			"paquete"			 => $_POST['tipo_plan'],
+			"paquete"			 => 0,
 			"nombre"             => $_POST['nombre'],
 			"apellido"           => $_POST['apellido'],
 			"fecha_nacimiento"   => $_POST['nacimiento']
@@ -59,18 +59,18 @@ class model_afiliado extends CI_Model{
 		#array_push($profile, $dato_profile);
 		$this->db->insert("user_profiles",$dato_profile);
 		
-		$perfil=2;
-		/*if($_POST['tipo_plan']==0){
-			$perfil=3;
-// 		}*/
+		return $dato_profile;
+	}
 		
+		
+	private function Permiso($id){ #CrearPerfil
 		$dato_permiso=array(
 			"id_user"   => $id,
-			"id_perfil" => $perfil
+			"id_perfil" => 2//$perfil
 			);
 		$this->db->insert("cross_perfil_usuario",$dato_permiso);
 		#array_push($profile, $dato_permiso);
-		#return $profile;
+		return $dato_permiso;
 	}
 	
 	function CrearCoaplicante($id){ #Coaplicante
@@ -83,12 +83,190 @@ class model_afiliado extends CI_Model{
 				"keyword"   => $_POST['keyword_co']
 				);
 			$this->db->insert("coaplicante",$dato_coaplicante);
-			#return $dato_coaplicante;
+			return $dato_coaplicante;
 			
 		}		
 	}
 	
+	function isVIP($id){
+            $query = "SELECT 
+                            m.id
+                        FROM
+                            cross_venta_mercancia cvm,
+                            mercancia m,
+                            items i,
+                            venta v
+                        WHERE
+                            i.id = m.id AND m.id = cvm.id_mercancia
+                                AND cvm.id_venta = v.id_venta
+                                AND m.id_tipo_mercancia IN (5)
+                                AND v.id_user IN ($id)
+                                AND v.id_estatus = 'ACT'
+                        ORDER BY v.fecha DESC , v.id_venta DESC";
+            
+            $q = $this->db->query($query);
+            $q = $q->result();
+            
+            if(!$q)
+                return false;
+            
+            $result = ($q[0]->id == 4);
+            
+            return $result;
+            
+        }
+        
+        function getDirectos($id){
+            $q =$this->db->query("SELECT distinct id_afiliado as id"
+                    . " FROM afiliar WHERE directo = $id");
+            $q = $q->result();
+            return $q;
+        }
+        
+	function isBonusVIP($id){               
+            $VIP = 0;
+            
+            $directos = $this->getDirectos($id);
+            if($directos){                
+                foreach ($directos as $dato){
+                    $id_vip = $dato->id;
+                    $isVIP = $this->isVIP($id_vip);
+                    if($isVIP)
+                        $VIP++;
+                }
+            }
+            
+            if($VIP<30)
+                return true;
+            
+            return false;            
+        }                
+        
+         private function getMercancia($id)
+        {
+            $q = $this->db->query("SELECT * FROM mercancia WHERE id = $id");        
+            $q = $q->result();
+            return $q  ? $q[0] : false;
+        }         
+        
+        private function insertVentaItem($id_venta,$item,$precio = "",$cantidad = 1)
+        {                    
+            if($precio===""){
+                $merc = $this->getMercancia($item);
+                $precio = $merc ? $merc->costo : 0;
+            }                               
+            
+            $total = $cantidad*$precio;
+
+            $query = "INSERT INTO cross_venta_mercancia 
+                        VALUES ($id_venta,$item,$cantidad,$precio,0,$total,'',null)";
+
+            $this->db->query($query);
+
+            return true;
+
+        }
+        
+         private function insertVenta($id)
+        {                      
+
+                $fecha = date('Y-m-d H:i:s');
+                $dato = array(
+                    "id_user" => $id,
+                    "id_estatus" => "ACT",
+                    "id_metodo_pago" => "BANCO",
+                    "fecha" => $fecha
+                );
+
+                $this->db->insert('venta', $dato);
+                return $this->db->insert_id();
+        }
+                        
+        function newVenta($id,$item,$precio="",$cantidad = 1){
+            
+            $id_venta = $this->insertVenta($id);
+            if(gettype($item)=="array"){
+                $i=0;
+                foreach ($item as $value) {
+                     $this->insertVentaItem($id_venta, $value, $precio[$i],$cantidad[$i]);
+                     $i++;
+                }
+            }else{
+                $this->insertVentaItem($id_venta, $item, $precio,$cantidad);
+            }
+            
+        }
+        
+        function checkVIP($id,$vip){
+            $isVIP = $this->isBonusVIP($id);
+            if($isVIP)
+                $this->newVenta($vip, 4, 0);
+        }
+
 	function crearUsuario(){	
+		
+		$id = $this->obtenrIdUser($_POST['mail_important']);
+		
+		if (!$id){
+			return false;
+		}
+		
+		$mi_red=$_POST['red'];		
+		$id_debajo = $this->definir_debajo ();				
+		$lado = $this->definir_lado ($id_debajo,$mi_red);		
+		$directo = $this->definir_sponsor ($id_debajo);
+		$this->checkVIP($directo, $id);
+		$fijos = isset($_POST["fijo"]) ? $_POST["fijo"] : false;
+		$moviles = isset($_POST["movil"]) ? $_POST["movil"] : false;
+		
+		/*echo "red : ".$mi_red
+		." 	afiliado: ".$_POST['mail_important']
+		."	padre: ".$id_debajo
+		."	sponsor: ".$directo
+		."	lado: ".$lado;
+		
+		return true;*/				
+		
+		$existe_perfil = $this->perfil_existe($id);
+		if($existe_perfil){
+			return true;
+		}
+		
+		if($fijos&&$moviles) 
+			$this->insert_dato_tels($id,$fijos,$moviles) ; 
+		
+		$dato_perfil=$this->CrearPerfil($id); # USER_PROFILES
+		$dato_afiliar=$this->insert_dato_afiliar ( $id, $mi_red, $id_debajo, $lado, $directo ); # AFILIAR 
+		$dato_permiso=$this->Permiso($id); # USER_PERMISSIONS
+		$dato_estilo=$this->EstiloUsuario($id);	# ESTILO_USUARIO
+		$dato_coaplicante=$this->CrearCoaplicante($id);# COAPLICANTE
+		#$dato_red=$this->dato_red ( $id );# RED	#!DEPRECATED			
+		$dato_dir=$this->insert_dato_dir ( $id );# DIRECCION
+		$dato_billetera=$this->insert_dato_billetera ( $id ); # BILLETERA 				
+		$dato_rango=$this->insert_dato_rango ( $id ); # RANGO 				
+		$dato_img=$this->insert_dato_img ( $id ); # IMAGEN 
+		
+		$afiliar = array(
+			$id,
+			$dato_perfil,
+			$dato_afiliar,
+			$dato_estilo,
+			$dato_coaplicante,
+			#$dato_red,
+			#$dato_tels,
+			$dato_dir,
+			$dato_billetera,
+			$dato_rango,
+			$dato_img
+		);	
+		
+		
+		# TELEFONOS $dato_tels dato_tels($id)
+		
+		return $afiliar ? $id /*var_dump()."|".var_dump($_POST["movil"])*/ : null;#; #;
+	}
+
+	function crearUsuario_bk(){	
 		
 		$id = $this->obtenrIdUser($_POST['mail_important']);
 		
@@ -177,7 +355,7 @@ class model_afiliado extends CI_Model{
 				"id_img"	=> $id_img
 		);
 		$this->db->insert("cross_img_user",$dato_cross);
-		#return $dato_img;#true;
+		return $dato_img;#true;
 		#echo "img si|";
 	}
 
@@ -185,13 +363,13 @@ class model_afiliado extends CI_Model{
 	private function insert_dato_rango($id) { #dato_rango
 		$dato_rango=array(
 			"id_user"	=> $id,
-			"id_rango"		=> 1,
+			"id_rango"		=> 0,
 			"entregado"		=> 1,
 			"estatus"		=> "ACT"
 			);
 		
 		$this->db->insert("cross_rango_user",$dato_rango);
-		#return $dato_rango;#true;
+		return $dato_rango;#true;
 		#echo "rango si|";
 	}
 
@@ -204,7 +382,7 @@ class model_afiliado extends CI_Model{
 			"activo"		=> "No"
 			);
 		$this->db->insert("billetera",$dato_billetera);
-		#return $dato_billetera;#true;
+		return $dato_billetera;#true;
 		#echo "bill si|";
 	}
 
@@ -222,42 +400,42 @@ class model_afiliado extends CI_Model{
 			"pais"      =>$_POST['pais']
 			);
 		$this->db->insert("cross_dir_user",$dato_dir);
-		#return $dato_dir;#true;
+		return $dato_dir;#true;
 		#echo "dir si|";
 	}
 
 	
-	private function insert_dato_tels($id) { #dato_tels
+	private function insert_dato_tels($id,$fijos,$moviles) { #dato_tels
 		
 		//tipo_tel 1=fijo 2=movil
-		#$dato_tels =array();
-		if($_POST["fijo"]){
-			foreach ($_POST["fijo"] as $fijo){
+		$dato_tels =array();
+		#if(isset($_POST["fijo"])){
+			foreach ($fijos as $fijo){
 				$dato_tel=array(
 					"id_user"		=> $id,
 					"id_tipo_tel"	=> 1,
-					"numero"		=> $fijo,
+					"numero"		=> $fijo ? $fijo : "",
 					"estatus"		=> "ACT"
 					);
-				#array_push($dato_tels, $dato_tel);
+				array_push($dato_tels, $dato_tel);
 				$this->db->insert("cross_tel_user",$dato_tel);
 			}
-		}
+		#}
 		
-		if($_POST["movil"]){
-			foreach ($_POST["movil"] as $movil){
+		#if(isset($_POST["movil"])){
+			foreach ($moviles as $movil){
 				$dato_tel=array(
 					"id_user"		=> $id,
 					"id_tipo_tel"	=> 2,
-					"numero"		=> $movil,
+					"numero"		=> $movil ? $movil : "",
 					"estatus"		=> "ACT"
 					);
-				#array_push($dato_tels, $dato_tel);
+				array_push($dato_tels, $dato_tel);
 				$this->db->insert("cross_tel_user",$dato_tel);
 			}
-		}
+		#}
 		
-		#return $dato_tels;#true;
+		return $dato_tels;
 		#echo "tels si|";
 	}
 
@@ -273,7 +451,7 @@ class model_afiliado extends CI_Model{
 		
 		//var_dump($dato_afiliar); exit;
  		$this->db->insert("afiliar",$dato_afiliar); 		
- 		#return $dato_afiliar;#true;
+ 		return $dato_afiliar;#true;
  		#echo "afiliar si|";
 	}
 
@@ -346,10 +524,45 @@ class model_afiliado extends CI_Model{
 
 	
 	function obtenrIdUser($email){
-		$id_afiliador= $this->db->query('select id from users where email like "'.$email.'"');
-		
-		$id_afiliador = $id_afiliador->result();
-		return $id_afiliador[0]->id;
+	    
+	    $lastId = $this->obtenrIdLastUser();
+	    
+	    $q= $this->db->query("SELECT
+                                    id
+                                FROM
+                                    users
+                                WHERE
+                                    email LIKE '$email'
+                                        AND id NOT IN
+                                        (SELECT user_id FROM user_profiles)");
+	    $q = $q->result();
+	    
+	    if(!$q)
+	        return $lastId;
+	        
+	        foreach ($q as $dato){
+	            $id_dato = $dato->id;
+	            if($id_dato>0)
+	                return $id_dato;
+	        }
+	        
+	        return $lastId;
+	}
+	
+	function obtenrIdLastUser(){
+	    $q= $this->db->query("SELECT
+                                    id
+                                FROM
+                                    users
+                                WHERE
+                                    id NOT IN
+                                        (SELECT user_id FROM user_profiles)");
+	    $q = $q->result();
+	    
+	    if(!$q)
+	        return false;
+	        
+	        return $q[0]->id;
 	}
 	
 	function obtenrIdUserby($usuario){
@@ -684,7 +897,7 @@ class model_afiliado extends CI_Model{
  		return true;
  	}
 
-	function RedAfiliado($id, $red){
+	function RedAfiliado($id, $red =1){
 		$query = $this->db->query('select * from afiliar where id_red = "'.$red.'" and id_afiliado = "'.$id.'" ');
 		return $query->result();
 	}

@@ -27,12 +27,28 @@ class compras extends CI_Controller
 		$this->load->model('model_carrito_temporal');
 		$this->load->model('model_servicio');
 		$this->load->model('bo/modelo_pagosonline');
-			
+		$this->load->model('bo/bonos/clientes/korak/korakbonos');	
 		$this->load->model('ov/model_web_personal_reporte');
 	}
 	
 	private $afiliados = array();
 	private $afiliadosEstadisticas = array();
+	
+private function AddCart($id, $name,$qty, $price,$prom_id =0)
+	{
+	    
+	    $add_cart = array(
+	        'id' => $id,
+	        'qty' => $qty,
+	        'price' => $price,
+	        'name' => $name,
+	        'options' => array(
+	            'prom_id' => $prom_id,
+	            'time' => time()
+	        )
+	    );
+	    $this->cart->insert($add_cart);
+	}
 	
 function index()
 {
@@ -201,29 +217,21 @@ function index()
 		foreach ($this->cart->contents() as $items)
 		{
 
-		$imagenes=$this->modelo_compras->get_imagenes($items['id']);
+		$id_mercancia = $items['id'];
+        $imagenes=$this->modelo_compras->get_imagenes($id_mercancia);
 		$id_tipo_mercancia=$items['name'];
 		
-		if($id_tipo_mercancia==1)
-			$detalles=$this->modelo_compras->detalles_productos($items['id']);
-		else if($id_tipo_mercancia==2)
-			$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-		else if($id_tipo_mercancia==3)
-			$detalles=$this->modelo_compras->detalles_combinados($items['id']);
-		else if($id_tipo_mercancia==4)
-			$detalles=$this->modelo_compras->detalles_paquete($items['id']);
-		else if($id_tipo_mercancia==5)
-			$detalles=$this->modelo_compras->detalles_membresia($items['id']);
+		$detalles=$this->getDetalleItem($id_mercancia,$id_tipo_mercancia);
 		
-		$costosImpuestos=$this->modelo_compras->getCostosImpuestos($pais[0]->pais,$items['id']);
+		$costosImpuestos=$this->modelo_compras->getCostosImpuestos($pais[0]->pais,$id_mercancia);
 		
 		$cantidad=$items['qty'];
 
 		$info_compras[$contador]=Array(
 				"imagen" => $imagenes[0]->url,
-				"nombre" => $detalles[0]->nombre,
-				"puntos" => $detalles[0]->puntos_comisionables,
-				"descripcion" => $detalles[0]->descripcion,
+				"nombre" => $detalles->nombre,
+				"puntos" => $detalles->puntos_comisionables,
+				"descripcion" => $detalles->descripcion,
 				"costos" => $costosImpuestos,
 				"cantidad" => $cantidad
 		);
@@ -351,6 +359,7 @@ function index()
 			$i++;
 		}
 		
+				
 		$paypal  = $this->modelo_pagosonline->val_paypal();
 		$payulatam  = $this->modelo_pagosonline->val_payulatam();
 		$tucompra  = $this->modelo_pagosonline->val_tucompra();
@@ -375,12 +384,13 @@ function index()
 		{																		// logged in
 		redirect('/auth');
 		}
-		
+		$id_banco = $_POST['banco'] ? $_POST['banco'] : 1;
 		if(!$this->cart->contents()){
 			echo "<script>window.location='/ov/dashboard';</script>";
 			echo "La compra no puedo ser registrada";
 			return 0;
 		}
+		
 	
 		$id = $this->tank_auth->get_user_id();
 		
@@ -399,7 +409,8 @@ function index()
 		
 		$this->cart->destroy();
 
-		$banco = $this->modelo_compras->RegistrarPagoBanco($id, $_POST['banco'],$id_venta,$totalCarrito);
+		
+        $banco = $this->modelo_compras->RegistrarPagoBanco($id, $id_banco,$id_venta,$totalCarrito);
 		$emailPagos = $this->general->emailPagos();
 		
 		if(isset($banco[0]->id_banco)){
@@ -441,6 +452,7 @@ function index()
 				</div>';
 		}	
 	}
+	
 	
 	function RegistrarVentaTucompra(){ //WOWCONEXION
 	
@@ -683,13 +695,23 @@ function index()
 	
 		$key = $this->modelo_pagosonline->cliente_compropago();
 		
+		if(!$key || sizeof($key)<3){
+			echo "MÉTODO DE PAGO NO DISPONIBLE";
+			exit();
+		}
+
 		$v1=$key[0];
 		$v2=$key[1];
 		$v3=$key[2];
 
 		$link = getcwd()."/CompropagoSdk/exec/listProviders.php";
 
-		require_once $link;
+		try{
+			require_once $link;
+		}catch(Exception $e){
+			echo "MÉTODO DE PAGO NO DISPONIBLE";
+			exit();	
+		}
 
 		$passProviders = $providers;
  		
@@ -767,11 +789,16 @@ function index()
 
 		$link = getcwd()."/CompropagoSdk/exec/newCharge.php";
 
-		require_once $link;
+		try{
+			require_once $link;
+		}catch(Exception $e){
+			echo "COMPROPAGO NO PUEDE REGISTRAR ESTA VENTA.";
+			exit();	
+		}
 
 		$Registro = $neworder;
 		
-		if(!$Registro||$Registro->status != "pending"){
+		if(!$Registro||$Registro->type != "charge.pending"){
 			echo "FAIL";
 			$this->db->query("delete from venta where id_venta = ".$id_venta);
 			exit();
@@ -846,7 +873,12 @@ function index()
 
 		$link = getcwd()."/CompropagoSdk/exec/Response.php";
 
-		require_once $link;
+		try{
+			require_once $link;
+		}catch(Exception $e){
+			echo "MÉTODO DE PAGO NO DISPONIBLE";
+			exit();	
+		}
  
 		$fp2 = fopen(getcwd()."/CompropagoSdk/exec/log.log", "a"); 
 		fputs($fp2, ":".$estatus."]");
@@ -1086,7 +1118,7 @@ function index()
 			$precioUnidad=0;
 			$cantidad=$items['qty'];
 			$id_mercancia=$contenidoCarrito['compras'][$contador]['costos'][0]->id;	
-			$precioUnidad=$contenidoCarrito['compras'][$contador]['costos'][0]->costo;
+			$precioUnidad=$items['price'];#TODO: $contenidoCarrito['compras'][$contador]['costos'][0]->costo;
 			
 			foreach ($contenidoCarrito['compras'][$contador]['costos'] as $impuesto){
 				$costoImpuesto+=$impuesto->costoImpuesto;
@@ -1113,7 +1145,7 @@ function index()
 			$precioUnidad=0;
 			$cantidad=$items['qty'];
 			$id_mercancia=$contenidoCarrito['compras'][$contador]['costos'][0]['id'];
-			$precioUnidad=$contenidoCarrito['compras'][$contador]['costos'][0]['costo'];
+			$precioUnidad=$items['price'];#TODO: $contenidoCarrito['compras'][$contador]['costos'][0]['costo'];
 				
 			foreach ($contenidoCarrito['compras'][$contador]['costos'] as $impuesto){
 				$costoImpuesto+=$impuesto['costoImpuesto'];
@@ -1142,7 +1174,7 @@ function index()
 			$precioUnidad=0;
 			$cantidad=$items['qty'];
 		
-			$precioUnidad=$contenidoCarrito['compras'][$contador]['costos'][0]->costo;
+			$precioUnidad=$items['price'];#TODO: $contenidoCarrito['compras'][$contador]['costos'][0]->costo;
 		
 			foreach ($contenidoCarrito['compras'][$contador]['costos'] as $impuesto){
 				$costoImpuesto+=$impuesto->costoImpuesto;
@@ -1531,10 +1563,15 @@ function index()
 	
 	private function getCantidadDeAfiliadosPorPatas($patas,$id_afiliado,$red){
 		$frontalidad=$red->frontal;
+		$usuario=new $this->afiliado;
+		
 		if($red->profundidad==0)
 			$profundidad=0;
 		else
 			$profundidad=($red->profundidad-1);
+		 $usuario->getAfiliadosDebajoDe($id_afiliado,1,"RED",1,1);
+		if($frontalidad==0)
+			$frontalidad =  sizeof($usuario->getIdAfiliadosRed());
 		
 		for ($i=1;$i<=$frontalidad;$i++){
 		
@@ -1555,7 +1592,7 @@ function index()
 			$usuario=new $this->afiliado;
 			$puntosHijo=$usuario->getPuntosTotalesPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0","2016-01-01","2026-01-01");
 			$puntosRedHijo=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,"2016-01-01","2026-01-01",$profundidad,"0","0","PUNTOS");
-			$puntosTotales=$puntosHijo[0]->total+$puntosRedHijo;
+			$puntosTotales=$puntosHijo+$puntosRedHijo;
 				
 			$calculador=new $this->calculador_bono;
 		
@@ -1566,13 +1603,13 @@ function index()
 			$usuario=new $this->afiliado;
 			$puntosHijoMes=$usuario->getPuntosTotalesPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0",$inicioMes,$finMes);
 			$puntosRedHijoMes=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,$inicioMes,$finMes,$profundidad,"0","0","PUNTOS");
-			$puntosTotalesMes=$puntosHijoMes[0]->total+$puntosRedHijoMes;
+			$puntosTotalesMes=$puntosHijoMes+$puntosRedHijoMes;
 		
 			//ventas Totales
 			$usuario=new $this->afiliado;
 			$ventasHijo=$usuario->getValorTotalDelasComprasPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0","2016-01-01","2026-01-01");
 			$ventasRedHijo=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,"2016-01-01","2026-01-01",$profundidad,"0","0","COSTO");
-			$ventasTotales=$ventasHijo[0]->total+$ventasRedHijo;
+			$ventasTotales=$ventasHijo+$ventasRedHijo;
 				
 			$calculador=new $this->calculador_bono;
 		
@@ -1584,7 +1621,7 @@ function index()
 			$ventasHijoMes=$usuario->getValorTotalDelasComprasPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0",$inicioMes,$finMes);
 				
 			$ventasRedHijoMes=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,$inicioMes,$finMes,$profundidad,"0","0","COSTO");
-			$ventasTotalesMes=$ventasHijoMes[0]->total+$ventasRedHijoMes;
+			$ventasTotalesMes=$ventasHijoMes+$ventasRedHijoMes;
 		
 			$pata = array(
 					'id_red' => $red->id,
@@ -3040,6 +3077,13 @@ function index()
 			if(!file_exists(getcwd().$img_item))
 				$img_item = "/template/img/favicon/favicon.png";
 		
+	   $detalle = $detalles[0];
+    $precio_user = $this->setPrecioUsuario($detalle);	
+				
+    $isPublico = '';
+    if($precio_user!=$detalle->costo_publico)
+        $isPublico = '<span class="old-price">$ '.$detalle->costo_publico.'</span>';
+    
 		echo '<div class="product">
           <a data-placement="left" data-original-title="Add to Wishlist" data-toggle="tooltip" class="add-fav tooltipHere">
           <i class="glyphicon glyphicon-heart"></i>
@@ -3049,15 +3093,15 @@ function index()
 				</a>
             </div>
             <div class="description">
-              <h4><a >'.$detalles[0]->nombre.'</a></h4>
+              <h4><a >'.$detalle->nombre.'</a></h4>
               <div class="grid-description">
-                <p>'.$detalles[0]->descripcion.'. </p>
+                <p>'.$detalle->descripcion.'. </p>
               </div>
               <div class="list-description">
                 <p> Sed sed rutrum purus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus lacus, iaculis in ante vitae, viverra hendrerit ante. Aliquam vel fermentum elit. Morbi rhoncus, neque in vulputate facilisis, leo tortor sollicitudin odio, quis pellentesque lorem nisi quis enim. In dolor mi, hendrerit at blandit vulputate, congue a purus. Sed eget turpis sit amet orci euismod accumsan. Praesent sit amet placerat elit. </p>
               </div>
                </div>
-            <div class="price"> <span>$ '.$detalles[0]->costo.'</span> <span class="old-price">$ '.$detalles[0]->costo_publico.'</span> </div><br>
+            <div class="price"> <span>$ '.$precio_user.'</span> '.$isPublico.' </div><br>
             <br>
           </div>';
 		
@@ -3102,320 +3146,66 @@ function index()
 		$id_tipo_mercancia=$data['tipo'];
 		$id_mercancia=$data['id'];
 		
-		if($id_tipo_mercancia==1)
-			$detalles=$this->modelo_compras->detalles_productos($id_mercancia);
-		else if($id_tipo_mercancia==2)
-			$detalles=$this->modelo_compras->detalles_servicios($id_mercancia);
-		else if($id_tipo_mercancia==3)
-			$detalles=$this->modelo_compras->detalles_combinados($id_mercancia);
-		else if($id_tipo_mercancia==4)
-			$detalles=$this->modelo_compras->detalles_paquete($id_mercancia);
-		else if($id_tipo_mercancia==5)
-			$detalles=$this->modelo_compras->detalles_membresia($id_mercancia);
+		$detalles=$this->getDetalleItem($id_mercancia,$id_tipo_mercancia);
 	
+		$cantidad=1;
+		if(isset($data['qty']))
+			 $cantidad=$data['qty'];
 		
-		if(!isset($data['qty']))
-			$cantidad=1;
-		else 
-			$cantidad=$data['qty'];
+		$costo=$this->setPrecioUsuario($detalles);	 
 		
-		$costo=$detalles[0]->costo;
-		
-		$add_cart = array(
-				'id'      => $id_mercancia,
-				'qty'     => $cantidad,
-				'price'   => $costo,
-				'name'    => $id_tipo_mercancia,
-				'options' => array(	'prom_id' => 0, 'time' => time())
-		);
-	
-		$this->cart->insert($add_cart);
-		
-/*		
-		$id = $data['id'];
-		$cantidad = 0;
-		$cantidad_carrito_temporal =0;
-
-		if ($data['tipo'] == '1'){
-			
-			$cantidad_disp = $this->modelo_compras->get_cantidad_almacen($id);
-			$cantidad_carrito_temporal = $this->modelo_compras->get_cantidad_carrito_temporal($id);
-			$limites=$this->modelo_compras->get_limite_prod($id);
-			$min=$limites[0]->min_venta;
-			$max=$limites[0]->max_venta;
-			
-			if (isset($cantidad_disp[0]->cantidad)){
-				if (isset($cantidad_carrito_temporal[0]->cantidad)){
-					$cantidad = $cantidad_disp[0]->cantidad - $cantidad_carrito_temporal[0]->cantidad;
-				}
-				else $cantidad = $cantidad_disp[0]->cantidad ;
-			}else{
-				$cantidad = 0;
-			}
-			
-			if ($cantidad < $data['qty']*1){
-				echo "Error";
-				exit();
-			}
-		}
-			
-			$descuento_por_nivel_actual=$this->modelo_compras->get_descuento_por_nivel_actual($id_user);
-			if ($descuento_por_nivel_actual!=null){
-				$calcular_descuento=(100-$descuento_por_nivel_actual[0]->porcentage_venta)/100;
-			}else{
-				$calcular_descuento=1;
-			}
-			
-
-				switch($data['tipo'])
-				{
-					case 1:
-						$detalles=$this->modelo_compras->detalles_productos($id);
-						$costo_ini=($detalles[0]->costo*$calcular_descuento);
-						$costo_total=$costo_ini;
-					
-						$add_cart = array(
-				           'id'      => $id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => 0, 'time' => time())
-			        		);
-						break;
-						
-					case 2:
-						$detalles=$this->modelo_compras->detalles_servicios($id);
-						$costo_ini=($detalles[0]->costo*$calcular_descuento);
-						$costo_total=$costo_ini;
-			
-						$add_cart = array(
-				           'id'      => $id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => 0, 'time' => time())
-			        		);
-						break;
-						
-					case 3:
-						$detalles=$this->modelo_compras->detalles_combinados($id);
-						$comb=$this->modelo_compras->comb_espec($id);
-						$costo_q=$this->modelo_compras->costo_merc($id);
-						$costo_ini=$costo_q[0]->costo - (($costo_q[0]->costo * $data['desc'])/100);
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-				           'id'      => $id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => 0, 'time' => time())
-			        		);
-						break;
-					case 4:
-						$detalles=$this->modelo_compras->detalles_paquete($id);
-						$comb=$this->modelo_compras->comb_paquete($id);
-						$costo_q=$this->modelo_compras->costo_merc($id);
-						$costo_ini=$costo_q[0]->costo - (($costo_q[0]->costo * $data['desc'])/100);
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-								'id'      => $id,
-								'qty'     => $data['qty'],
-								'price'   => $costo_total,
-								'name'    => $data['tipo'],
-								'options' => array(	'prom_id' => 0, 'time' => time())
-						);
-						break;
-					case 5:
-						$detalles=$this->modelo_compras->detalles_prom_serv($id);
-						$costo_ini=$detalles[0]->costo*(1-($detalles[0]->prom_costo/100));
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-				           'id'      => $detalles[0]->id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    =>	$data['tipo'],
-				           'options' => array(	'prom_id' => $detalles[0]->id_promocion, 'time' => time())
-			        		);
-						break;
-					case 6:
-						$detalles=$this->modelo_compras->detalles_prom_comb($id);
-						$costo_ini=$detalles[0]->costo*(1-($detalles[0]->prom_costo/100));
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-				           'id'      => $detalles[0]->id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => $detalles[0]->id_promocion, 'time' => time())
-			        		);
-						break;
-					default:
-						echo 'LA MERCANCIA YA NO ESTA DISPONIBLE';
-						break;
-				}
-				$this->cart->insert($add_cart);
-				echo ' <div class="navbar-header">
-					      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only"> Toggle navigation </span> <span class="icon-bar"> </span> <span class="icon-bar"> </span> <span class="icon-bar"> </span> </button>
-					      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-cart"> <i class="fa fa-shopping-cart colorWhite fa-2x"> </i> <span class="cartRespons colorWhite"> Cart (<?php echo $this->cart->total_items(); ?> ) </span> </button>
-					      <a style="color :#263569; margin-left:3rem;" class="navbar-brand titulo_carrito" href="/ov/dashboard" > <i class="fa fa-home"></i> Menu &nbsp;</a> 
-					      
-					      <!-- this part for mobile -
-					      <div class="search-box pull-right hidden-lg hidden-md hidden-sm">
-					        <div class="input-group">
-					          <button class="btn btn-nobg getFullSearch" type="button"> <i class="fa fa-search"> </i> </button>
-					        </div>
-					        <!-- /input-group --
-					        
-					      </div> -->
-					    </div>';
-				echo '<div class="navbar-cart  collapse">
-					      <div class="cartMenu  hidden-lg col-xs-12 hidden-md hidden-sm">
-					        <div class="w100 miniCartTable scroll-pane">
-					          <table  >
-					            <tbody>';
-		            	 
-		                  	if($this->cart->contents())
-							{ 
-								foreach ($this->cart->contents() as $items) 
-								{
-									$total=$items['qty']*$items['price'];	
-									$imgn=$this->modelo_compras->get_img($items['id']);
-									switch($items['name'])
-									{
-										case 1:
-											$detalles=$this->modelo_compras->detalles_productos($items['id']);
-											break;
-										case 2:
-											$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-											break;
-										case 3:
-											$detalles=$this->modelo_compras->comb_espec($items['id']);
-											break;
-										case 4:
-											$detalles=$this->modelo_compras->comb_paquete($items['id']);
-											break;
-										case 5:
-											$detalles=$this->modelo_compras->detalles_prom_serv($items['id']);
-											break;
-										case 6:
-											$detalles=$this->modelo_compras->detalles_prom_comb($items['id']);
-											break;
-									}
-									echo '<tr class="miniCartProduct"> 
-											<td style="width:20%" class="miniCartProductThumb"><div> <a href="#"> <img src="'.$imgn[0]->url.'" alt="img"> </a> </div></td>
-											<td style="width:40%"><div class="miniCartDescription">
-						                        <h4> <a href="product-details.html"> '.$detalles[0]->nombre.'</a> </h4>
-						                        <div class="price"> <span>$ '.$items['price'].' </span> </div>
-						                      </div></td>
-						                    <td  style="width:10%" class="miniCartQuantity"><a > X '.$items['qty'].' </a></td>
-						                    <td  style="width:15%" class="miniCartSubtotal"><span>'.$total.'</span></td>
-						                    <td  style="width:5%" class="delete"><a onclick="quitar_producto(\''.$items['rowid'].'\')"> x </a></td>
-										</tr>'; 
-								} 
-							}            
-		         echo   '</tbody>
-		          </table>
-		        </div>
-		        <!--/.miniCartTable-->
-		        
-		        <div class="miniCartFooter  miniCartFooterInMobile text-right">
-		          <h3 class="text-right subtotal"> Subtotal: $'.$this->cart->total().' </h3>
-		          <a class="btn btn-sm btn-danger" onclick="ver_cart()"> <i class="fa fa-shopping-cart"> </i> VER CARRITO </a> <a class="btn btn-sm btn-primary" onclick="a_comprar()"> COMPRAR! </a> </div>
-		        <!--/.miniCartFooter--> 
-		        
-		      </div>';
-				echo '</div>
-		    <!--/.navbar-cart-->
+		$this->AddCart($id_mercancia, $id_tipo_mercancia, $cantidad, $costo); 
+		/** Pack 10 prod */
+		$this->add_merc_Pack($id_mercancia);
 		    
-		    <div class="navbar-collapse collapse">
-		      
-		      <!--- this part will be hidden for mobile version -->
-		      <div class="nav navbar-nav navbar-right hidden-xs" >
-		        <div class="dropdown  cartMenu "> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
-		        	<i class="fa fa-shopping-cart"> </i> 
-		        	<span class="cartRespons"> Cart ('.$this->cart->total_items().') 
-		        	</span> <b class="caret"> </b> </a>
-		          	<div class="dropdown-menu col-lg-4 col-xs-12 col-md-4 ">
-		            	<div class="w100 miniCartTable scroll-pane">
-			              	<table>
-			                	<tbody>';
-			                  
-			                 	foreach ($this->cart->contents() as $items) 
-								{
-									$total=$items['qty']*$items['price'];	
-									$imgn=$this->modelo_compras->get_img($items['id']);
-									if(isset($imgn[0]->url))
-									{
-										$imagen=$imgn[0]->url;
-									}
-									else
-									{
-										$imagen="";
-									}
-									switch($items['name'])
-									{
-										case 1:
-											$detalles=$this->modelo_compras->detalles_productos($items['id']);
-											break;
-										case 2:
-											$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-											break;
-										case 3:
-											$detalles=$this->modelo_compras->comb_espec($items['id']);
-											break;
-										case 4:
-											$detalles=$this->modelo_compras->comb_paquete($items['id']);
-											break;
-										case 5:
-											$detalles=$this->modelo_compras->detalles_prom_serv($items['id']);
-											break;
-										case 6:
-											$detalles=$this->modelo_compras->detalles_prom_comb($items['id']);
-											break;
-									}
-									echo '<tr class="miniCartProduct"> 
-											<td style="width:20%" class="miniCartProductThumb"><div> <a href="#"> <img src="'.$imagen.'" alt="img"> </a> </div></td>
-											<td style="width:40%"><div class="miniCartDescription">
-						                        <h4> <a href="product-details.html"> '.$detalles[0]->nombre.'</a> </h4>
-						                        <div class="price"> <span> '.($items['price']).' </span> </div>
-						                      </div></td>
-						                    <td  style="width:10%" class="miniCartQuantity"><a > X '.$items['qty'].' </a></td>
-						                    <td  style="width:15%" class="miniCartSubtotal"><span>'.$total.'</span></td>
-						                    <td  style="width:5%" class="delete"><a onclick="quitar_producto(\''.$items['rowid'].'\')"> x </a></td>
-										</tr>'; 
-								} 
-			                  
-			                echo '</tbody>
-			              </table>
-		            	</div>
-		            <!--/.miniCartTable-->
-		            
-			            <div class="miniCartFooter text-right">
-			              <h3 class="text-right subtotal"> Subtotal: $ '.$this->cart->total().' </h3>
-			              <a class="btn btn-sm btn-danger" onclick="ver_cart()"> <i class="fa fa-shopping-cart"> </i> VER CARRITO </a> <a class="btn btn-sm btn-primary" onclick="a_comprar()"> COMPRAR! </a> </div>
-			            <!--/.miniCartFooter--> 
-		            
-		          		</div>
-		          <!--/.dropdown-menu--> 
-		        	</div> 
-		        <!--/.cartMenu--> 
-		        
-		        <div class="search-box">
-		          <div class="input-group"> 
-		            <button class="btn btn-nobg getFullSearch" type="button"> <i class="fa fa-search"> </i> </button>
-		          </div>
-		          <!-- /input-group --> 
-		          
-		        </div>
-		        <!--/.search-box --> ';
-			
-		*/
 		
 	}
+    
+	private function add_merc_Pack($id_mercancia)
+    {
+        
+		$isPack = $this->isPack($id_mercancia);
+        if($isPack){
+            $mercPack = $this->getMercanciaPorTipoDeRed(1,2);            
+            $mercPack = $this->korakbonos->grupo_array($mercPack,"existencia","id");            
+            $tope = 10;
+            $proporcion = round($tope/sizeof($mercPack));   
+            $mayor=array();
+            
+            foreach($mercPack as $key => $value){
+                $cant = $value;
+                if($value > $proporcion)
+                    $mayor[$key] = $value;
+                if($value < $proporcion)
+                    $tope+=($proporcion-$value);
+                    
+                if(!$mayor[$key]){
+                    $this->AddCart($key, 1, $cant, 0);     
+                    $tope-=$proporcion;
+                }                                
+            }
+            
+            if($tope>0){
+                $proporcion = round($tope/sizeof($mayor));   
+                foreach($mayor as $key => $value){
+                    $cant = $proporcion;
+                    if($value < $proporcion){
+                        $cant =  $value;
+                        $proporcion+=($proporcion-$value);
+                    }
+                    
+                    $this->AddCart($key, 1, $cant, 0);  
+                }
+            }
+		}
+    }
+
+    
+    private function isPack($id_mercancia)
+    {
+        $isPack = $id_mercancia == 2 || $id_mercancia ==3;
+        return $isPack;
+    }
 	
 	function ver_carrito()
 	{
@@ -3662,7 +3452,7 @@ function index()
 		
 	}
 	
-	function getMercanciaPorTipoDeRed($id_tipo_mercancia,$id_tipo_red,$paisUsuario){
+	function getMercanciaPorTipoDeRed($id_tipo_mercancia,$id_tipo_red = 1,$paisUsuario = "AAA"){
 		$mercancia=array();
 		
 		if($id_tipo_mercancia==1)
@@ -3693,7 +3483,8 @@ function index()
 	}
 	
 	function printMercanciaPorTipoDeRed($mercancia,$tipoMercancia){
-		
+	    
+	    $id_usuario = $this->tank_auth->get_user_id();
 		for($i=0;$i<sizeof($mercancia);$i++)
 		{
 			$id_tipo_mercancia = isset($mercancia[$i]->id_tipo_mercancia) ? $mercancia[$i]->id_tipo_mercancia : 0;
@@ -3702,7 +3493,19 @@ function index()
 			$rows = ($mercancia[$i]->descripcion!='') ? 9.8 : 1;
 			$inventario =  '';
 			
-			if($id_tipo_mercancia == 1){
+			/** Pack 10 prod */
+			$isPack = $this->isPack($mercancia[$i]->id);
+			if($isPack){
+			    $mercPack = $this->getMercanciaPorTipoDeRed(1,2);
+			    $cantidad = $this->korakbonos->sumatoria($mercPack,"existencia");
+			    $mercancia[$i]->max_venta = 1000;
+			    $mercancia[$i]->inventario = 1;
+			    $mercancia[$i]->existencia = round($cantidad/10);
+			    if($cantidad<10)
+			        $mercancia[$i]->existencia = 1;
+			}
+			
+			if($id_tipo_mercancia == 1 || $isPack){
 				$existencia = intval($mercancia[$i]->existencia);			
 				$minimo = intval($mercancia[$i]->inventario);
 				$agotado = (($existencia-$minimo)>0) ? false : true;
@@ -3722,8 +3525,12 @@ function index()
 			
 			if(!file_exists(getcwd().$img_item))
 				$img_item = "/template/img/favicon/favicon.png";
-
-		$imprimir ='	<div class="item col-lg-3 col-md-3 col-sm-3 col-xs-3">
+        
+	       
+	    $precio_user = $this->setPrecioUsuario($mercancia[$i],$id_usuario);		
+		
+		
+        $imprimir ='	<div class="item col-lg-3 col-md-3 col-sm-3 col-xs-3">
 					<div class="producto">
 					<a class="" data-toggle="tooltip" data-original-title="Add to Wishlist"  data-placement="left">
 						<i class=""></i>
@@ -3746,7 +3553,7 @@ function index()
 					</div>
 					<hr/>
 					<div class="price">'.$puntos_comisionables.'<br>
-					<span>$ '.$mercancia[$i]->costo.'</span>
+					<span>$ '.$precio_user.'</span>
 					</div>
 					<br>
 					<div class=""> 
@@ -3761,6 +3568,24 @@ function index()
 
 		}
 	}
+    
+    private function setPrecioUsuario($item,$id_usuario= false)
+    {
+        if(!$id_usuario)
+            $id_usuario = $this->tank_auth->get_user_id();
+
+        $tipo=$this->modelo_compras->get_tipo_item($item->id);
+        if($tipo==5)
+ 			return $item->costo;
+        
+        $plan = $this->korakbonos->getInscripcionUsuario ($id_usuario);		
+        $precio_user = $item->costo_publico;
+		if($plan)
+		   $precio_user = ($plan->id_mercancia == 4 ) ? $item->real : $item->costo;
+		
+        return $precio_user;
+    }
+
 	
 	function printContentCartButton(){
 
@@ -3882,104 +3707,36 @@ function index()
 	}
 	function quitar_producto()
 	{
-		$id=$_POST['id'];
-		$data = array(
+		$id=$_POST['id'];				
+		
+		$carrito = $this->cart->contents();
+        if(!$carrito){
+		    echo 'NO HAY PRODUCTOS EN EL CARRITO';
+		    exit();
+        } 
+		
+		$isPack = $this->isPack($carrito[$id]["id"]);
+		if($isPack){
+		    foreach ($carrito as $key => $data){
+		        if($data['price']==0 && $data['name'] == 1)
+		            $this->del_item($key);
+		    }
+		}
+		
+		$this->del_item($id);
+		
+
+	}
+    
+    private function del_item($id)
+    {
+        $data = array(
            'rowid' => $id,
            'qty'   => 0
         );
 		$this->cart->update($data);
-		if(!$this->cart->contents())
-			echo 'NO HAY PRODUCTOS EN EL CARRITO';
-/*		{
-		echo '
-					<div class="col-lg-12 col-md-12 col-sm-12">
-				      <div class="row userInfo">
-				        <div class="col-xs-12 col-sm-12">
-				          <div class="cartContent w100">
-				            <table class="cartTable table-responsive" style="width:100%">
-				              <tbody>
-				              
-				                <tr class="CartProduct cartTableHeader">
-				                  <td style="width:15%"  > Product </td>
-				                  <td style="width:40%"  >Details</td>
-				                  <td style="width:10%"  class="delete">&nbsp;</td>
-				                  <td style="width:10%" >QNT</td>
-				                  <td style="width:10%" >Discount</td>
-				                  <td style="width:15%" >Total</td>
-				                </tr>';
-				               foreach ($this->cart->contents() as $items) 
-								{
-									
-									$total=$items['qty']*$items['price'];	
-									$imgn=$this->modelo_compras->get_img($items['id']);
-									if(isset($imgn[0]->url))
-									{
-										$imagen=$imgn[0]->url;
-									}
-									else
-									{
-										$imagen="";
-									}
-									switch($items['name'])
-									{
-										case 1:
-											$detalles=$this->modelo_compras->detalles_productos($items['id']);
-											break;
-										case 2:
-											$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-											break;
-										case 3:
-											$detalles=$this->modelo_compras->comb_espec($items['id']);
-											break;
-										case 4:
-											$detalles=$this->modelo_compras->comb_paquete($items['id']);
-											break;
-										case 5:
-											$detalles=$this->modelo_compras->detalles_prom_serv($items['id']);
-											break;
-										case 6:
-											$detalles=$this->modelo_compras->detalles_prom_comb($items['id']);
-											break;
-									}
-									echo '<tr class="CartProduct">
-											<td  class="CartProductThumb">
-												<div> 
-													<a href="#"><img src="'.$imagen.'" alt="img"></a> 
-												</div>
-											</td>
-											<td >
-												<div class="CartDescription">
-							                      <h4> <a href="product-details.html">'.$detalles[0]->nombre.'</a> </h4>
-							                   
-							                      <div class="price"> <span>$'.$items['price'].'</span></div>
-							                    </div>
-							                </td>
-							                <td class="delete"><a title="Delete" onclick="quitar_producto(\''.$items['rowid'].'\')"> <i class="glyphicon glyphicon-trash fa-2x"></i></a></td>
-							                <td >'.$items['qty'].'</td>
-							                <td >0</td>
-							                <td class="price">$'.$total.'</td>
-											
-										</tr>';
-								}
-				                
-				               echo ' </tbody>
-						            </table>
-						          </div>
-						          <!--cartContent-->
-						          
-						        </div>
-						      </div>
-						      <!--/row end--> 
-						      
-						    </div>
-						   ';
-				
-			}						
-		else
-		{
-				
-		}*/
-	}
+    }
+
 	function actualizar_nav()
 	{
 		
@@ -4604,31 +4361,37 @@ function index()
 	
 
 	public function pagarComisionVenta($id_venta,$id_afiliado_comprador){
-		$MATRICIAL='MAT';
-		$UNILEVEL='UNI';	
+		
 		
 		$mercancias = $this->modelo_compras->consultarMercanciaTotalVenta($id_venta);
-	
-		foreach ($mercancias as $mercancia){
-				
-			$id_red_mercancia = $this->modelo_compras->ObtenerCategoriaMercancia($mercancia->id);
-			$tipo_plan_compensacion=$this->modelo_compras->obtenerPlanDeCompensacion($id_red_mercancia);
-			
-			if($tipo_plan_compensacion[0]->plan==$MATRICIAL||$tipo_plan_compensacion[0]->plan==$UNILEVEL){
-
-				$costoVenta=$mercancia->costo_unidad_total;
-				$this->calcularComisionAfiliado($id_venta,$id_red_mercancia,$costoVenta,$id_afiliado_comprador);
-				
-			}
-			
-			
-		}
-	}
+	    $this->korakbonos->calcularBonosVenta($id_afiliado_comprador,$id_venta,$mercancias);
+		
+	    #$this->setComisionDirecta($id_afiliado_comprador,$id_venta,$mercancias);
+	}	
 	
 	
+	function setComisionDirecta($id,$id_venta,$mercancias)	{
+	    
+	    $MATRICIAL='MAT';
+	    $UNILEVEL='UNI';	
+	    
+	    foreach ($mercancias as $mercancia){
+	        
+	        $id_red_mercancia = $this->modelo_compras->ObtenerCategoriaMercancia($mercancia->id);
+	        $tipo_plan_compensacion=$this->modelo_compras->obtenerPlanDeCompensacion($id_red_mercancia);
+	        
+	        if($tipo_plan_compensacion[0]->plan==$MATRICIAL||$tipo_plan_compensacion[0]->plan==$UNILEVEL){
+	            
+	            $costoVenta=$mercancia->costo_unidad_total;
+	            $this->calcularComisionAfiliado($id_venta,$id_red_mercancia,$costoVenta,$id);
+	            
+	        }
+	        
+	        
+	    }
+	}	
 	
-	
-	public function calcularComisionAfiliado($id_venta,$id_red_mercancia,$costoVenta,$id_afiliado){
+public function calcularComisionAfiliado($id_venta,$id_red_mercancia,$costoVenta,$id_afiliado){
 	
 		$valor_comision_por_nivel = $this->modelo_compras->ValorComision($id_red_mercancia);
 		$capacidad_red = $this->model_tipo_red->CapacidadRed($id_red_mercancia);
@@ -4652,6 +4415,357 @@ function index()
 			$id_afiliado=$id_afiliado_padre;
 		}
 	
+}
+	/**TODO: TESTING & REFACTORING */
+	function test(){
+	    
 	}
 	
+	function Add_Carrito_V2(){
+	    
+	    $id = $data['id'];
+	    $tipo_item = $data['tipo'];
+        $qty = $data['qty'];
+        $desc = $data['desc'];
+        
+        $valido = $this->evalQty($id,$tipo_item, $qty);
+        if(!$valido){
+            echo "ERROR en Inventario";
+            exit();
+        }            
+        
+       $calcular_descuento = $this->calcularDescuento();  
+        
+        switch ($tipo_item) {
+            case 1:case 2:                
+                $detalle = $this->getDetalleItem($id,$tipo_item,true); 
+                $costo_ini = ($detalle->costo * $calcular_descuento);
+                $costo_total = $costo_ini;
+                
+                $this->AddCart($id, $tipo_item,$qty, $costo_total);
+                break;                                  
+            
+            case 3: case 4:
+                #$comb =  $this->getDetalleCombinado($id,$tipo_item);                
+                $costo = $this->getCostoQty($id);
+                $costo_ini = $costo->costo - (($costo->costo * $desc) / 100);
+                $costo_total = $costo_ini;
+                
+                $this->AddCart($id, $tipo_item,$qty, $costo_total);
+                
+                break;
+           
+            case 5:case 6:
+                $detalle = $this->getDetalleItem($id,$tipo_item,true); 
+                $costo_ini = $detalle->costo * (1 - ($detalle->prom_costo / 100));
+                $costo_total = $costo_ini;
+               
+                $this->AddCart( $detalle->id, $tipo_item,$qty, $costo_total,$detalle->id_promocion);
+                break;
+            default:
+                echo 'LA MERCANCIA YA NO ESTA DISPONIBLE';
+                break;
+        }
+        
+        $this->printNavTodoCart($funct_tipo, $funct_comb);
+        
+}
+
+private function getCostoQty($id)
+    {
+        $detalles = $this->modelo_compras->costo_merc($id);
+        if($detalles)
+            $detalles = $detalles[0];
+        return $detalles;
+    }
+
+
+private function getDetalleCombinado($id,$tipo_item)
+    {
+        $funct_comb = $this->setFunctComb();
+        
+        if(!isset($funct_comb[$tipo_item]))
+            return $this->getDetalleItem($id,$tipo_item);
+        
+        $comb_funct = "comb_".$funct_comb[$tipo_item];  
+        $comb = $this->modelo_compras->$comb_funct($id);
+        
+        return $comb;
+    }
+
+private function setFunctComb()
+    {
+        $funct_comb = array(
+            3 => "espec",
+            3 => "paquete"
+        );
+        return $funct_comb;
+    }
+
+
+private function getDetalleItem($id,$tipo_item,$prom = false,$add = false)
+    {
+        $funct_tipo = $prom ? $this->setFunctTipo_prom($add) : $this->setFunctTipo($add);       
+        
+        if(!isset($funct_tipo[$tipo_item]))
+            return false;
+        
+        $detalle_funct = "detalles_".$funct_tipo[$tipo_item];
+        $detalles = $this->modelo_compras->$detalle_funct($id);        
+        if($detalles)
+           $detalles = $detalles[0];
+       
+       return $detalles;
+    }
+
+private function setFunctTipo_prom()
+    {
+        $funct_tipo =array(
+            1=>"productos",
+            2=>"servicios",
+            3=>"combinados",
+            4=>"paquete",
+            5=>"prom_serv",
+            6=>"prom_comb",
+        );
+        return $funct_tipo;
+    }
+    
+private function setFunctTipo($add =  false)
+    {
+        $funct_tipo =array(
+            1=>"productos",
+            2=>"servicios",
+            3=>"combinados",
+            4=>"paquete",
+            5=>"membresia"
+        );
+        
+        if($add){
+            foreach ($add as $k => $v)
+                $funct_tipo[$k]=$v;
+        }
+        
+        return $funct_tipo;
+    }
+
+private function evalQty($id,$tipo_item, $qty)
+    {
+    
+        $cantidad = 0;
+        $cantidad_carrito_temporal = 0;  
+        
+        if ($tipo_item == '1') {
+            
+            $cantidad_disp = $this->modelo_compras->get_cantidad_almacen($id);
+            $cantidad_carrito_temporal = $this->modelo_compras->get_cantidad_carrito_temporal($id);
+            $limites = $this->modelo_compras->get_limite_prod($id);
+            $limite = $limites[0];
+            $min = $limite->min_venta;
+            $max = $limite->max_venta;
+            
+            $dispone = $cantidad_disp[0];
+            $temp_carrito = $cantidad_carrito_temporal[0];
+            if (isset($dispone->cantidad)){
+                $cantidad =  $dispone->cantidad;
+                if (isset($temp_carrito->cantidad)) 
+                    $cantidad -= $temp_carrito->cantidad;
+            } 
+            
+            if ($cantidad < $qty * 1) 
+                return false;
+        }
+        
+        return true;
+}
+
+
+private function calcularDescuento($id_usuario = false)
+    {
+    
+        if(!$id_usuario)
+            $id_usuario = $this->tank_auth->get_user_id();
+        
+        $desc_nivel = $this->modelo_compras->get_descuento_por_nivel_actual($id_user); 
+        $descuento = 1;
+        if ($desc_nivel != null) 
+            $descuento = (100 - $desc_nivel[0]->porcentage_venta) / 100;
+        
+        return $descuento;    
+    }
+
+
+private function printNavTodoCart($funct_tipo, $funct_comb)
+    {
+echo '<div class="navbar-header">
+        <button type="button" class="navbar-toggle" 
+                data-toggle="collapse" data-target=".navbar-collapse"> 
+            <span class="sr-only"> Toggle navigation </span>
+                <span class="icon-bar"> </span> 
+                <span class="icon-bar"> </span> 
+                <span class="icon-bar"> </span> 
+            </button>
+        <button type="button" class="navbar-toggle" 
+                data-toggle="collapse" data-target=".navbar-cart"> 
+            <i class="fa fa-shopping-cart colorWhite fa-2x"> </i> 
+            <span class="cartRespons colorWhite">
+                 Cart (<?php echo $this->cart->total_items(); ?> )
+             </span> 
+        </button>
+        <a style="color :#263569; margin-left:3rem;" 
+            class="navbar-brand titulo_carrito" href="/ov/dashboard" > 
+                <i class="fa fa-home"></i> Menu &nbsp;
+        </a>';
+
+ $this->printNavBarCart();
+ $this->printCart2();
+ 
+echo '</div>';
+ 
+}
+
+   
+private function printCart2()
+    {
+echo '<div id="cart_2" class="navbar-collapse collapse">
+        <!--- this part will be hidden for mobile version -->
+        <div class="nav navbar-nav navbar-right hidden-xs" >
+            <div class="dropdown  cartMenu "> 
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-shopping-cart"> </i>
+                    <span class="cartRespons"> Cart (' . $this->cart->total_items() . ')
+                    </span> <b class="caret"> </b> </a>
+                <div class="dropdown-menu col-lg-4 col-xs-12 col-md-4 ">
+                    <div class="w100 miniCartTable scroll-pane">
+                        <table>
+                            <tbody>';
+
+foreach ($this->cart->contents() as $items) {
+    $total = $items['qty'] * $items['price'];
+    $imgn = $this->modelo_compras->get_img($items['id']);
+    $timg = $imgn[0];
+    $imagen = isset($timg->url) ? $timg->url: "";
+    $var_item = $items['name']; 
+    switch ($var_item) {
+        case 1:case 2:case 5:case 6:
+            $detalles = $this->getDetalleItem($items['id'],$var_item,true);
+            break;
+        case 3:case 4:
+            $detalles = $this->getDetalleCombinado($items['id'],$var_item);
+            break;   
+    }
+                            echo '<tr class="miniCartProduct">
+                                    <td style="width:20%" class="miniCartProductThumb"><div>
+                                         <a href="#"> <img src="'.$imagen.'" alt="img"> </a> </div></td>
+                                    <td style="width:40%"><div class="miniCartDescription">
+                                        <h4> <a href="product-details.html"> '.$detalle->nombre.'</a></h4>
+                                     <div class="price"> <span> ' . ($items['price']) . ' </span> </div>
+                                     </div></td>
+                                     <td style="width:10%" class="miniCartQuantity"><a > X '.$items['qty'].'</a></td>
+                                     <td style="width:15%" class="miniCartSubtotal"><span>'.$total.'</span></td>
+                                     <td style="width:5%" class="delete">
+                                        <a onclick="quitar_producto(\''.$items['rowid'].'\')"> x </a>
+                                    </td>
+                                 </tr>';
+}
+
+                    echo '</tbody>
+                        </table>
+                    </div>
+                    <!--/.miniCartTable-->
+                    <div class="miniCartFooter text-right">
+                        <h3 class="text-right subtotal"> Subtotal: $ ' . $this->cart->total() . ' </h3>
+                        <a class="btn btn-sm btn-danger" onclick="ver_cart()"> 
+                            <i class="fa fa-shopping-cart"> </i> VER CARRITO </a> 
+                        <a class="btn btn-sm btn-primary" onclick="a_comprar()"> COMPRAR! </a> 
+                    </div>
+                    <!--/.miniCartFooter-->
+                </div>
+                <!--/.dropdown-menu-->
+            </div>
+            <!--/.cartMenu-->
+            <div class="search-box">
+                 <div class="input-group">
+                 <button class="btn btn-nobg getFullSearch" type="button">
+                     <i class="fa fa-search"> </i> </button>
+                 </div> <!-- /input-group -->
+            </div><!-- /search-box -->
+        </div>
+    </div><!-- /cart_2 -->
+ ';}
+
+    
+private function printNavBarCart( $funct_tipo, $funct_comb)
+    {
+
+echo '<div class="navbar-cart  collapse">
+        <div class="cartMenu  hidden-lg col-xs-12 hidden-md hidden-sm">
+            <div class="w100 miniCartTable scroll-pane">
+                <table  >
+                    <tbody>';
+
+if ($this->cart->contents()) {
+    foreach ($this->cart->contents() as $items) {
+        
+        $total = $items['qty'] * $items['price'];
+        $imgn = $this->modelo_compras->get_img($items['id']);
+        $var_item = $items['name']; 
+        
+        switch ($var_item) {
+            case 1:case 2:case 5:case 6:
+                $detalles = $this->getDetalleItem($items['id'],$var_item,true);
+                break;
+            case 3:case 4:
+                $detalles = $this->getDetalleCombinado($items['id'],$var_item);
+                break;                    
+                
+        }
+                echo '<tr class="miniCartProduct">
+                         <td style="width:20%" class="miniCartProductThumb"><div> <a href="#">
+                         <img src="' . $timg->url . '" alt="img"> </a> </div>
+                        </td>
+                         <td style="width:40%"><div class="miniCartDescription">
+                         <h4> <a href="product-details.html"> ' . $detalle->nombre . '</a> </h4>
+                         <div class="price"> <span>$ ' . $items['price'] . ' </span> </div>
+                         </div></td>
+                         <td  style="width:10%" class="miniCartQuantity"><a > X ' . $items['qty'] . ' </a></td>
+                         <td  style="width:15%" class="miniCartSubtotal"><span>' . $total . '</span></td>
+                         <td  style="width:5%" class="delete">
+                        <a onclick="quitar_producto(\'' . $items['rowid'] . '\')"> x </a>
+                        </td>
+                     </tr>';
+    }
+}
+            
+            echo '</tbody>
+                </table>
+            </div>
+            <!--/.miniCartTable-->
+ 
+             <div class="miniCartFooter  miniCartFooterInMobile text-right">
+                 <h3 class="text-right subtotal"> Subtotal: $' . $this->cart->total() . ' </h3>
+                 <a class="btn btn-sm btn-danger" onclick="ver_cart()"> 
+                    <i class="fa fa-shopping-cart"> </i> VER CARRITO </a> 
+                <a class="btn btn-sm btn-primary" onclick="a_comprar()"> COMPRAR! </a> 
+            </div>
+             <!--/.miniCartFooter-->
+             <!-- this part for mobile -->
+    	     <div class="search-box pull-right hidden-lg hidden-md hidden-sm">
+        	     <div class="input-group">
+        	     <button class="btn btn-nobg getFullSearch" type="button"> 
+                        <i class="fa fa-search"> </i>
+                 </button>                
+        	     </div> <!-- /input-group  -->            
+    	     </div><!--/.search-box --> 
+            <!-- /this part for mobile -->
+        </div>
+    </div>
+    <!--/.navbar-cart-->
+ ';
+   
+    }
+
+   
+
+
 }

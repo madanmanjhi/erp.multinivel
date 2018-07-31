@@ -58,7 +58,8 @@ class Modelo_historial_consignacion extends CI_Model{
 		$q = $this->db->query("SELECT * FROM cuenta_pagar_banco_historial 
 								where id_venta=".$id_venta." 
 								and estatus ='DES'");
-		return  $q->result();
+		$result = $q->result();
+        return  $result ? $result[0] : false;
 	}
 	
 	function PagoBanco($id){
@@ -69,8 +70,8 @@ class Modelo_historial_consignacion extends CI_Model{
 	
 	function getDatosPagoBanco($id_venta){
 		$q = $this->db->query("SELECT * FROM cuenta_pagar_banco_historial where id_venta = ".$id_venta." and estatus='DES'");
-		$historial = $q->result();
-		return $historial;
+		$result = $q->result();
+        return  $result ? $result[0] : false;
 	}
 	
 	function MercanciaPago($id_venta){

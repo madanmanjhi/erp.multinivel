@@ -1,11 +1,13 @@
 <?php 
 
-$link = getcwd()."/CompropagoSdk/UnitTest/autoload.php";
+$link = getcwd()."/CompropagoSdk/Client.php";
 
 require_once $link;
 
-use CompropagoSdk\Factory\Factory;
 use CompropagoSdk\Client;
+Client::register_autoload();
+use CompropagoSdk\Factory\Factory;
+
 
 $request = @file_get_contents('php://input');
 

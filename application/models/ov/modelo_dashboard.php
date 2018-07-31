@@ -17,7 +17,14 @@ class modelo_dashboard extends CI_Model
 	}
 	function get_images($id)
 	{
-		$q=$this->db->query('select (select nombre_completo from cat_img b where a.id_img=b.id_img) img, (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = '.$id);
+		$q=$this->db->query('select id_img url from cross_img_user  where id_user = '.$id);
+		$q = $q->result();
+
+		if(!$q) 
+      $img_id = $this->model_perfil_red->new_img_user($id);
+
+		$q=$this->db->query('select (select nombre_completo from cat_img b where a.id_img=b.id_img) img, 
+			(select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = '.$id);
 		return $q->result();
 	}
 	function get_red($id)
@@ -58,7 +65,7 @@ class modelo_dashboard extends CI_Model
                           and u.id_user='.$id.';
                         ');
     $q=$q->result();
-		return $q[0]->code2;
+		return $q ? $q[0]->code2 :false;
   }
   
   function get_user_country($id){
