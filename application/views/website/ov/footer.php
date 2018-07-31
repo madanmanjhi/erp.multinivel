@@ -3,8 +3,8 @@
 			<div class="row">
 				<div class="col-xs-8 col-sm-8">
 					<span class="txt-color-white">
-			Copyright © <?=date('Y');?> Korak ® Todos los derechos reservados.
-		<a href="http://www.korak.mx/" target="_BLANK">Korak ®</a></span>
+			Copyright © <?=date('Y');?> NetworkSoft® Todos los derechos reservados.
+		<a href="http://www.networksoft.mx/" target="_BLANK">NetworkSoft®</a></span>
 				</div>
 				<div class="col-xs-4 col-sm-4">
 					<span class="txt-color-white">

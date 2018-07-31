@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Korak ®</title>
-		<meta name="description" content="">
-		<meta name="author" content="">
+		<meta name="description" content="Software especializado en Multinivel">
+		<meta name="author" content="NetworkSoft ®">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		
 		<!-- #CSS Links -->
@@ -28,8 +28,8 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="/template/css/demo.min.css">
 
 		<!-- #FAVICONS -->
-		<link rel="shortcut icon" href="/template/img/favicon/favicon.png" type="image/x-icon">
-		<link rel="icon" href="/template/img/favicon/favicon.png" type="image/x-icon">
+		<link rel="shortcut icon" href="/template/img/favicon/favicon.jpg" type="image/jpg">
+		<link rel="icon" href="/template/img/favicon/favicon.jpg" type="image/jpg">
 
 		<!-- #GOOGLE FONT -->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
@@ -158,9 +158,9 @@
 		<!--================================================== -->	
 		<style type="text/css" media="screen">
 			.form_login{
-				background: none !important;
+				background: rgba(0, 90, 110, 0.2) !important;
 				border: none;
-				box-shadow: 1px 1px 4px rgba(255,255,255,0.1) ;
+				box-shadow: 1px 1px 4px rgba(0, 90, 110, 0.5);
 			}	
 			#login-form header{
 				background: none;
@@ -177,11 +177,11 @@
 			}
 			#header > div, #header{
 				height: 100% !important;
-				background: #1F1E1C !important;
+				background: #00B4DC !important;
 			}
 			#compania{height: 10em; }
 			#header h1{font-weight: bold !important;}
-			header h2{text-align: center; color: #C4AD0F ;font-weight: bold !important;font-size: 2em;}
+			header h2{text-align: center; color: #005A6E ;font-weight: bold !important;font-size: 2em;}
 			#login-form{
 				/* -webkit-box-shadow: inset 0px 0px 10px #000;
 				-moz-box-shadow: inset 0px 0px 10px #000;
@@ -192,15 +192,15 @@
 						color: #FFF;
 						font-weight: initial; 
 						height: 2.5em; 
-						background-color: #C4AD0F;
-						border-color: #CAB52D;
+						background-color: #005A6E;
+						border-color: #268498;
 						font-size: 1.5em;
 			}			
 			#enviar:hover{							
-						border-bottom: medium solid #C4AD0F;
+						border-bottom: medium solid #268498;
 			}	
 			.link_login{							
-				color: #C4AD0F !important;
+				color: #005A6E !important;
 			}		
 			.header2{text-align: center; padding-bottom: 10px;}
 			.img2{margin-top: 8%}
@@ -209,10 +209,10 @@
 				height: 5em;
 				text-align: center;
 				color: #FFF !important;
-				background-color: #C4AD0F;
+				background-color: #005A6E;
 			}
 			#extr-page #main{
-				background: #1F1E1C;/*-image: url('/template/img/login.jpg')*/;
+				background: #00B4DC;/*-image: url('/template/img/login.jpg')*/;
 				padding: 2% 5% 10% 5%;
 				background-repeat: no-repeat;
 				background-size: cover;

@@ -7,8 +7,8 @@
 					<span class="pull-right txt-color-white">Hola: <?=$nombre?> tu última sesión fue: <?=$sesion?></span>
 					<?}?>
 					<span class="txt-color-white">
-			Copyright © <?=date('Y');?> Korak ® Todos los derechos reservados.
-		<a href="http://www.korak.mx/" target="_BLANK">Korak ®</a></span>
+			Copyright © <?=date('Y');?> NetworkSoft® Todos los derechos reservados.
+		<a href="http://www.networksoft.mx/" target="_BLANK">NetworkSoft®</a></span>
 				</div>
 			</div>
 		</div>
