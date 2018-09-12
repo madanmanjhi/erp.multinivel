@@ -62,7 +62,7 @@
 		<section class="col col-6">
 			<label class="select">Selecciona la empresa <select id="empresa"
 				required name="empresa">
-								<? foreach ( $empresa as $key ) {
+								<?php foreach ( $empresa as $key ) {
 									echo '<option value="' . $key->id_empresa . '">' . $key->nombre . '</option>';
 								} ?>
 							</select>
@@ -100,11 +100,11 @@
 				País <label class="select"> <select id="pais" required name="pais"
 					onChange="ImpuestosPais()">
 						<option value="-" selected>-- Seleciona un pais --</option>
-													<? foreach ( $pais as $key ) { ?>
+													<?php foreach ( $pais as $key ) { ?>
 													<option value="<?=$key->Code?>">
 														<?=$key->Name?>
 													</option>
-													<?}?>
+													<?php }?>
 												</select>
 				</label>
 			</section>
@@ -129,20 +129,20 @@
 			<section class="col col-6">
 				Regimen fiscal <label class="select"> <select class="custom-scroll"
 					name="regimen">
-											<?foreach ($regimen as $key){?>
+											<?php foreach ($regimen as $key){?>
 											<option value="<?=$key->id_regimen?>">
 												<?=$key->abreviatura." ".$key->descripcion?></option>
-											<?}?>
+											<?php }?>
 										</select>
 				</label>
 			</section>
 			<section class="col col-6">
 				Zona <label class="select"> <select class="custom-scroll"
 					name="zona">
-								<?foreach ($zona as $key){?>
+								<?php foreach ($zona as $key){?>
 								<option value="<?=$key->id_zona?>">
 									<?=$key->descripcion?></option>
-									<?}?>
+									<?php }?>
 								</select>
 				</label>
 			</section>
@@ -152,10 +152,10 @@
 				<section class="col col-6">
 					Banco <label class="select"> <select class="custom-scroll"
 						name="banco[]" id="banco" required>
-												<?foreach ($bancos as $key){?>
+												<?php foreach ($bancos as $key){?>
 												<option value="<?=$key->id_banco ?>">
 													<?=$key->descripcion?></option>
-												<?}?>
+												<?php }?>
 											</select>
 					</label>
 				</section>
@@ -228,9 +228,9 @@
 			</section>
 			<section class="col col-6">
 				<label class="select">Impuesto <select name="impuesto" id="impuesto">
-									<?foreach ($paisImpuesto as $key){?>
+									<?php foreach ($paisImpuesto as $key){?>
 									<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>
-									<?}?>
+									<?php }?>
 								</select>
 				</label>
 			</section>
@@ -283,10 +283,10 @@ function new_empresa()
 						+'<section class="col col-6">Regimen fiscal'
 				            +'<label class="select">'
 				                +'<select class="custom-scroll" name="regimen">'
-				                    +'<?foreach ($regimen as $key){?>'
+				                    +'<?php foreach ($regimen as $key){?>'
 				                        +'<option value="<?=$key->id_regimen?>">'
 				                            +'<?=$key->abreviatura." ".$key->descripcion?></option>'
-				                        +'<?}?>'
+				                        +'<?php }?>'
 				                +'</select>'
 				            +'</label>'
 				        +'</section>'
@@ -298,11 +298,11 @@ function new_empresa()
 									+'País'
 									+'<label class="select">'
 										+'<select id="pais" required name="pais">'
-										+'<?foreach ($pais as $key){?>'
+										+'<?php foreach ($pais as $key){?>'
 											+'<option value="<?=$key->Code?>">'
 												+'<?=$key->Name?>'
 											+'</option>'
-										+'<?}?>'
+										+'<?php }?>'
 										+'</select>'
 									+'</label>'
 								+'</section>'
@@ -390,3 +390,5 @@ function new_empresa()
 	})
 }
 </script>
+
+

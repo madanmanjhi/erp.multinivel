@@ -80,10 +80,10 @@
 												<section class="col col-3">Grupo
 													<label class="select">
 														<select name="grupo">
-															<?foreach ($grupo as $key)
+															<?php foreach ($grupo as $key)
 															{?>
 															<option value="<?=$key->id_grupo?>"><?=$key->descripcion?></option>	
-															<?}?>
+															<?php }?>
 														</select>
 													</label>
 													<a href="#" onclick="new_grupo()">Agregar grupo <i class="fa fa-plus"></i></a>
@@ -179,10 +179,10 @@
 													<section class="col col-3">Proveedor
 														<label class="select">
 															<select name="proveedor">
-																<?foreach ($proveedores as $key)
+																<?php foreach ($proveedores as $key)
 																{?>
 																<option value="<?=$key->id_usuario?>"><?=$key->nombre." ".$key->apellido?> comisión: %<?=$key->comision?></option>	
-																<?}?>
+																<?php }?>
 															</select>
 														</label>
 													</section>
@@ -190,12 +190,12 @@
 													<section class="col col-3">País de la mercancía
 														<label class="select">
 															<select id="pais" required name="pais">
-																<?foreach ($pais as $key)
+																<?php foreach ($pais as $key)
 																{?>
 																<option value="<?=$key->Code?>">
 																	<?=$key->Name?>
 																</option>
-																<?}?>
+																<?php }?>
 															</select>
 														</label>
 													</section>
@@ -208,10 +208,10 @@
 													<section class="col col-3">Impuesto
 														<label class="select">
 															<select name="id_impuesto[]">
-																<?foreach ($impuesto as $key)
+																<?php foreach ($impuesto as $key)
 																{?>
 																<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>	
-																<?}?>
+																<?php }?>
 															</select>
 														</label>
 														<a href="#" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>
@@ -632,9 +632,9 @@ function formulario()
 			+'<section class="col col-3">Grupo'
 			+'<label class="select">'
 			+'<select name="grupo">'
-			+'<?foreach ($grupo as $key){?>'
+			+'<?php foreach ($grupo as $key){?>'
 			+'<option value="<?=$key->id_grupo?>"><?=$key->descripcion?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'<a href="#" onclick="new_grupo()">Agregar grupo <i class="fa fa-plus"></i></a>'
@@ -718,9 +718,9 @@ function formulario()
 			+'<section class="col col-3">Impuesto'
 			+'<label class="select">'
 			+'<select name="id_impuesto[]">'
-			+'<?foreach ($impuesto as $key){?>'
+			+'<?php foreach ($impuesto as $key){?>'
 			+'<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>'	
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'<a href="#" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>'
@@ -730,21 +730,21 @@ function formulario()
 			+'<section class="col col-3">Proveedor'
 			+'<label class="select">'
 			+'<select name="proveedor">'
-			+'<?foreach ($proveedores as $key){?>'
+			+'<?php foreach ($proveedores as $key){?>'
 			+'<option value="<?=$key->id_usuario?>">'
 			+'<?=$key->nombre." ".$key->apellido?> comisión: %'
 			+'<?=$key->comision?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
 			+'<section class="col col-3">País del producto'
 			+'<label class="select">'
 			+'<select id="pais" required name="pais">'
-			+'<?foreach ($pais as $key){?>'
+			+'<?php foreach ($pais as $key){?>'
 			+'<option value="<?=$key->Code?>">'
 			+'<?=$key->Name?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -869,9 +869,9 @@ if(tipo==2)
 		+'<section class="col col-3">Impuesto'
 		+'<label class="select">'
 		+'<select name="id_impuesto[]">'
-		+'<?foreach ($impuesto as $key){?>'
+		+'<?php foreach ($impuesto as $key){?>'
 		+'<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>'	
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'<a href="#" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>'
@@ -881,21 +881,21 @@ if(tipo==2)
 		+'<section class="col col-3">Proveedor'
 		+'<label class="select">'
 		+'<select name="proveedor">'
-		+'<?foreach ($proveedores as $key){?>'
+		+'<?php foreach ($proveedores as $key){?>'
 		+'<option value="<?=$key->id_usuario?>">'
 		+'<?=$key->nombre." ".$key->apellido?> comisión: %'
 		+'<?=$key->comision?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
 		+'<section class="col col-3">País del producto'
 		+'<label class="select">'
 		+'<select id="pais" required name="pais">'
-		+'<?foreach ($pais as $key){?>'
+		+'<?php foreach ($pais as $key){?>'
 		+'<option value="<?=$key->Code?>">'
 		+'<?=$key->Name?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -949,10 +949,10 @@ $("#mymarkdown").markdown({
 			+'<section class="col col-3">Tipo de promocion'
 			+'<label class="select">'
 			+'<select onchange="tipo_promo()" id="tipo" name="tipo">'
-			+'<?foreach ($promo as $key){?>'
+			+'<?php foreach ($promo as $key){?>'
 			+'<option value="<?=$key->id_promo?>">'
 			+'<?=$key->descripcion?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -975,10 +975,10 @@ $("#mymarkdown").markdown({
 			+'<label class="select">'
 			+'<select class="custom-scroll"  name="producto[]">'
 			+'<option value="0">Ninguno</option>'
-			+'<?foreach ($producto as $key){?>'
+			+'<?php foreach ($producto as $key){?>'
 			+'<option value="<?=$key->id_mercancia?>">'
 			+'<?=$key->nombre?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -993,10 +993,10 @@ $("#mymarkdown").markdown({
 			+'<label class="select">'
 			+'<select class="custom-scroll" name="servicio[]">'
 			+'<option value="0">Ninguno</option>'
-			+'<?foreach ($servicio as $key){?>'
+			+'<?php foreach ($servicio as $key){?>'
 			+'<option value="<?=$key->id_mercancia?>">'
 			+'<?=$key->nombre?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -1036,9 +1036,9 @@ $("#mymarkdown").markdown({
 			+'<section class="col col-3">Impuesto'
 			+'<label class="select">'
 			+'<select name="id_impuesto[]">'
-			+'<?foreach ($impuesto as $key){?>'
+			+'<?php foreach ($impuesto as $key){?>'
 			+'<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>'	
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'<a href="#" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>'
@@ -1048,21 +1048,21 @@ $("#mymarkdown").markdown({
 			+'<section class="col col-3">Proveedor'
 			+'<label class="select">'
 			+'<select name="proveedor">'
-			+'<?foreach ($proveedores as $key){?>'
+			+'<?php foreach ($proveedores as $key){?>'
 			+'<option value="<?=$key->id_usuario?>">'
 			+'<?=$key->nombre." ".$key->apellido?> comisión: %'
 			+'<?=$key->comision?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
 			+'<section class="col col-3">País del producto'
 			+'<label class="select">'
 			+'<select id="pais" required name="pais">'
-			+'<?foreach ($pais as $key){?>'
+			+'<?php foreach ($pais as $key){?>'
 			+'<option value="<?=$key->Code?>">'
 			+'<?=$key->Name?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -1113,10 +1113,10 @@ function tipo_promo()
 			+'<label class="select">'
 			+'<select class="custom-scroll"  name="producto[]">'
 			+'<option value="0">Ninguno</option>'
-			+'<?foreach ($producto as $key){?>'
+			+'<?php foreach ($producto as $key){?>'
 			+'<option value="<?=$key->id_mercancia?>">'
 			+'<?=$key->nombre?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -1131,10 +1131,10 @@ function tipo_promo()
 			+'<label class="select">'
 			+'<select class="custom-scroll" name="servicio[]">'
 			+'<option value="0">Ninguno</option>'
-			+'<?foreach ($servicio as $key){?>'
+			+'<?php foreach ($servicio as $key){?>'
 			+'<option value="<?=$key->id_mercancia?>">'
 			+'<?=$key->nombre?></option>'
-			+'<?}?>'
+			+'<?php }?>'
 			+'</select>'
 			+'</label>'
 			+'</section>'
@@ -1171,9 +1171,9 @@ $("#moneda").append('<fieldset id="moneda_field"> '
 	+'<section class="col col-3">Impuesto'
 	+'<label class="select">'
 	+'<select name="id_impuesto[]">'
-	+'<?foreach ($impuesto as $key){?>'
+	+'<?php foreach ($impuesto as $key){?>'
 	+'<option value="<?=$key->id_impuesto?>"><?=$key->descripcion." ".$key->porcentaje."%"?></option>'	
-	+'<?}?>'
+	+'<?php }?>'
 	+'</select>'
 	+'</label>'
 	+'<a href="#" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>'
@@ -1183,21 +1183,21 @@ $("#moneda").append('<fieldset id="moneda_field"> '
 	+'<section class="col col-3">Proveedor'
 	+'<label class="select">'
 	+'<select name="proveedor">'
-	+'<?foreach ($proveedores as $key){?>'
+	+'<?php foreach ($proveedores as $key){?>'
 	+'<option value="<?=$key->id_usuario?>">'
 	+'<?=$key->nombre." ".$key->apellido?> comisión: %'
 	+'<?=$key->comision?></option>'
-	+'<?}?>'
+	+'<?php }?>'
 	+'</select>'
 	+'</label>'
 	+'</section>'
 	+'<section class="col col-3">País del producto'
 	+'<label class="select">'
 	+'<select id="pais" required name="pais">'
-	+'<?foreach ($pais as $key){?>'
+	+'<?php foreach ($pais as $key){?>'
 	+'<option value="<?=$key->Code?>">'
 	+'<?=$key->Name?></option>'
-	+'<?}?>'
+	+'<?php }?>'
 	+'</select>'
 	+'</label>'
 	+'</section>'
@@ -1220,18 +1220,18 @@ if(tipo==2)
 	$("#tipo_promo").append('<section class="col col-3">Mercancia'
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="mercancia">'
-		+'<?foreach ($producto as $key){?>'
+		+'<?php foreach ($producto as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
-		+'<?foreach ($servicio as $key){?>'
+		+'<?php }?>'
+		+'<?php foreach ($servicio as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
-		+'<?foreach ($combinado as $key){?>'
+		+'<?php }?>'
+		+'<?php foreach ($combinado as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1280,10 +1280,10 @@ function new_product()
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="producto[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<?foreach ($producto as $key){?>'
+		+'<?php foreach ($producto as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1299,10 +1299,10 @@ function new_service()
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="servicio[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<?foreach ($servicio as $key){?>'
+		+'<?php foreach ($servicio as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1353,7 +1353,7 @@ function new_grupo()
 function kill_grupo()
 {
 	bootbox.dialog({
-		message: "<form class='smart-form'><label class='select text-center'><select id='imp_sel'><? foreach($grupo as $grp){?><option value='<?=$grp->id_grupo?>'><?=$grp->descripcion?></option><?}?></select></label></form>",
+		message: "<form class='smart-form'><label class='select text-center'><select id='imp_sel'><?php foreach($grupo as $grp){?><option value='<?=$grp->id_grupo?>'><?=$grp->descripcion?></option><?php }?></select></label></form>",
 		title: 'Eliminar grupo',
 		buttons: {
 			success: {
@@ -1430,7 +1430,7 @@ function new_impuesto()
 function kill_impuesto()
 {
 	bootbox.dialog({
-		message: "<form class='smart-form'><label class='select text-center'><select id='imp_sel'><? foreach($impuesto as $imp){?><option value='<?=$imp->id_impuesto?>'><?=$imp->descripcion?> (<?=$imp->porcentaje?> %)</option><?}?></select></label></form>",
+		message: "<form class='smart-form'><label class='select text-center'><select id='imp_sel'><?php foreach($impuesto as $imp){?><option value='<?=$imp->id_impuesto?>'><?=$imp->descripcion?> (<?=$imp->porcentaje?> %)</option><?php }?></select></label></form>",
 		title: 'Eliminar grupo',
 		buttons: {
 			success: {
@@ -1765,10 +1765,10 @@ function new_empresa()
 		+'<section class="col col-6">Regimen fiscal'
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="regimen">'
-		+'<?foreach ($regimen as $key){?>'
+		+'<?php foreach ($regimen as $key){?>'
 		+'<option value="<?=$key->id_regimen?>">'
 		+'<?=$key->abreviatura." ".$key->descripcion?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1780,11 +1780,11 @@ function new_empresa()
 		+'País'
 		+'<label class="select">'
 		+'<select id="pais" required name="pais">'
-		+'<?foreach ($pais as $key){?>'
+		+'<?php foreach ($pais as $key){?>'
 		+'<option value="<?=$key->Code?>">'
 		+'<?=$key->Name?>'
 		+'</option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1976,7 +1976,7 @@ function add_impuesto()
 	var code=	'<section class="col col-3">Impuesto'
 	+'<label class="select">'
 	+'<select name="id_impuesto[]">'
-	<?foreach ($impuesto as $key)
+	<?php foreach ($impuesto as $key)
 	{
 		echo "+'<option value=".$key->id_impuesto.">".$key->descripcion." ".$key->porcentaje."%"."</option>'";
 	}?>
@@ -1990,7 +1990,7 @@ function add_impuesto_boot()
 	var code=	'<section class="col col-6">Impuesto'
 	+'<label class="select">'
 	+'<select name="id_impuesto[]">'
-	<?foreach ($impuesto as $key)
+	<?php foreach ($impuesto as $key)
 	{
 		echo "+'<option value=".$key->id_impuesto.">".$key->descripcion." ".$key->porcentaje."%"."</option>'";
 	}?>
@@ -2264,10 +2264,10 @@ function new_pack()
 		+'<section class="col col-12">Tipo del paquete'
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="tipo_paquete">'
-		+'<?foreach ($tipo_paquete as $key){?>'
+		+'<?php foreach ($tipo_paquete as $key){?>'
 		+'<option value="<?=$key->id_tipo?>">'
 		+'<?=$key->descripcion?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -2302,10 +2302,10 @@ function new_pack()
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="producto[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<?foreach ($producto as $key){?>'
+		+'<?php foreach ($producto as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -2320,10 +2320,10 @@ function new_pack()
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="servicio[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<?foreach ($servicio as $key){?>'
+		+'<?php foreach ($servicio as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -2380,3 +2380,4 @@ function new_pack()
 	})
 }
 </script>
+

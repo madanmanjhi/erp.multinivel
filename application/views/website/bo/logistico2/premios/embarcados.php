@@ -1,43 +1,43 @@
 <table id="datatable_fixed_column" class="table table-striped table-bordered table-hover" width="100%">
-																				<thead>
-																					<tr>
-																						<th data-hide="phone">ID</th>
-																						<th data-class="expand">Usuario</th>
-																						<th data-hide="phone">Nombre y Apellido</th>
-																						<th data-hide="phone">Telefono</th>
-																						<th data-hide="phone">email</th>
-																						<th data-hide="phone">Direción</th>
-																						<th data-class="expand">Premio</th>
-																						<th data-hide="phone,tablet">Fecha Solicitud</th>
-																						<th data-hide="phone,tablet">Fecha Envio</th>
-																						<th data-hide="phone,tablet">Estatus</th>
-															
-																					</tr>
-																				</thead>
-																				<tbody>
-																					<?php foreach ($premios as $premio){?>
-																					<tr>
-																						<td><?php echo $premio->id; ?></td>
-																						<td><?php echo $premio->username;?></td>
-																						<td><?php echo $premio->nombre;?></td>
-																						<td><?php echo $premio->telefono; ?></td>
-																						<td><?php echo $premio->email; ?></td>
-																						<td><?php echo $premio->direccion; ?></td>
-																						<td><?php echo $premio->premio; ?></td>
-																						<td><?php echo $premio->fecha; ?></td>
-																						<td><?php echo $premio->fecha_entrega; ?></td>
-																						<td><?php echo $premio->estado; ?></td>
-																										
-																					</tr>
-																					<?php } ?>
-																				</tbody>
-																			</table>
-																			
+    <thead>
+        <tr>
+            <th data-hide="phone">ID</th>
+            <th data-class="expand">Usuario</th>
+            <th data-hide="phone">Nombre y Apellido</th>
+            <th data-hide="phone">Telefono</th>
+            <th data-hide="phone">email</th>
+            <th data-hide="phone">Direción</th>
+            <th data-class="expand">Premio</th>
+            <th data-hide="phone,tablet">Fecha Solicitud</th>
+            <th data-hide="phone,tablet">Fecha Envio</th>
+            <th data-hide="phone,tablet">Estatus</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($premios as $premio) { ?>
+            <tr>
+                <td><?php echo $premio->id; ?></td>
+                <td><?php echo $premio->username; ?></td>
+                <td><?php echo $premio->nombre; ?></td>
+                <td><?php echo $premio->telefono; ?></td>
+                <td><?php echo $premio->email; ?></td>
+                <td><?php echo $premio->direccion; ?></td>
+                <td><?php echo $premio->premio; ?></td>
+                <td><?php echo $premio->fecha; ?></td>
+                <td><?php echo $premio->fecha_entrega; ?></td>
+                <td><?php echo $premio->estado; ?></td>
+
+            </tr>
+        <?php } ?>
+    </tbody>
+</table>
+
 <script src="/template/js/plugin/datatables/jquery.dataTables.min.js"></script>
-		<script src="/template/js/plugin/datatables/dataTables.colVis.min.js"></script>
-		<script src="/template/js/plugin/datatables/dataTables.tableTools.min.js"></script>
-		<script src="/template/js/plugin/datatables/dataTables.bootstrap.min.js"></script>
-		<script src="/template/js/plugin/datatable-responsive/datatables.responsive.min.js"></script>
+<script src="/template/js/plugin/datatables/dataTables.colVis.min.js"></script>
+<script src="/template/js/plugin/datatables/dataTables.tableTools.min.js"></script>
+<script src="/template/js/plugin/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/template/js/plugin/datatable-responsive/datatables.responsive.min.js"></script>
 <script>
 	$(document).ready(function() {
 			
@@ -268,3 +268,4 @@
 
 		
 </script>
+

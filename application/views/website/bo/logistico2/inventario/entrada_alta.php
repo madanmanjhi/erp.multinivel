@@ -100,9 +100,9 @@ if ($this->session->flashdata ( 'error' )) {
 										<label class="select">Tipo de Entrada <select id="documento"
 											required name="documento">
 												<option value="" >--------Elije un tipo--------------</option>
-                                                           <?foreach ($documento as $key){?>
+                                                           <?php foreach ($documento as $key){?>
 													<option value="<?=$key->id_doc?>"><?=$key->nombre?></option>
-												<?}?>
+												<?php }?>
 												
 												    </select>
 										</label>
@@ -144,9 +144,9 @@ if ($this->session->flashdata ( 'error' )) {
 											id="destino_in" required name="destino_in">
 												<option value="">--------------Elije un Almacen/Cedi-----------------</option>
                                                                                
-                                                 <?foreach ($almacenesCedi as $key){?>
+                                                 <?php foreach ($almacenesCedi as $key){?>
 													<option value="<?=$key->id_cedi?>"><?=$key->nombre." (".$key->tipo.")"?></option>
-												<?}?>    </select>
+												<?php }?>    </select>
 										</label>
 									</section>
 								</fieldset>
@@ -159,9 +159,9 @@ if ($this->session->flashdata ( 'error' )) {
 										<label class="select">Producto <select id="mercancia_in"
 											required  name="mercancia_in">
 												<option value="">----------- Escoja una mercancia ----------</option>
-                                                <?foreach ($productos as $key){?>
+                                                <?php foreach ($productos as $key){?>
 													<option value="<?=$key->id?>"><?=$key->nombre." (".$key->red.")"?></option>
-												<?}?>
+												<?php }?>
 												
 											 </select>
 										</label>
@@ -261,5 +261,6 @@ function GuardarEntrada(){
 	});
 }
 </script>
+
 
 

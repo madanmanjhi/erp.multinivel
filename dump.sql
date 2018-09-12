@@ -5685,4 +5685,6 @@ DELIMITER ;
 
  
 -- Dump completed on 2018-02-15  2:26:03
+ALTER TABLE `empresa_multinivel` 
+ADD COLUMN `g_captcha` VARCHAR(45) NULL DEFAULT 0 AFTER `puntos_personales`;
 

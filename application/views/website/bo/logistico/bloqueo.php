@@ -29,10 +29,10 @@
 												<label class="select">
 													<select id="almacen" name="almacen" onchange="get_mercancias()">
 														<option value="0" selected="" disabled="">Selecciona Almacen</option>
-														<?foreach($almacenes as $almacen)
+														<?php foreach($almacenes as $almacen)
 														{?> 
 															<option value="<?=$almacen->id_almacen?>"><?=$almacen->nombre?></option>	
-														<?}?>
+														<?php }?>
 														
 														
 													</select> <i></i> 
@@ -153,3 +153,4 @@
 				});
 			}
 		</script>
+

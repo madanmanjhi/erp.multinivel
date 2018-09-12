@@ -103,9 +103,9 @@
 					<label class="select">Pais 
 						<select id="pais" required name="pais" onChange="Departamentos()">
 							<option value="-" selected>-- Seleciona un pais --</option>
-							<?foreach ($pais as $key){ ?>
+							<?php foreach ($pais as $key){ ?>
 								<option value="<?=$key->Code?>"><?=$key->Name?></option>
-							<? }?>
+							<?php }?>
 						</select>
 					</label>
 				</div>
@@ -186,11 +186,11 @@ function new_ciudad(){
 									+'País'
 									+'<label class="select">'
 										+'<select id="pais" required name="pais">'
-										+'<?foreach ($pais as $key){?>'
+										+'<?php foreach ($pais as $key){?>'
 											+'<option value="<?=$key->Code?>">'
 												+'<?=$key->Name?>'
 											+'</option>'
-										+'<?}?>'
+										+'<?php }?>'
 										+'</select>'
 									+'</label>'
 								+'</section>'
@@ -302,3 +302,4 @@ function CiudadesDepartamento(){
 }
 
 </script>
+

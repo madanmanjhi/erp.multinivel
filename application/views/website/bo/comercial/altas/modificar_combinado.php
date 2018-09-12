@@ -1,412 +1,371 @@
 <!-- MAIN CONTENT -->
-<?
-$valor_iva_real=0;
-$valor_iva_distribuidores=0;
-$valor_iva_publico=0;
-$valor_total_real=0;
-$valor_total_distribuidores=0;
-$valor_total_publico=0;
+<?php 
 $porcentajeContador=0;
+$item = $mercancia[0];
 ?>
 <div id="content">
-	
-	<section id="widget-grid" class="">
-		<!-- START ROW -->
-		<div class="row">
-			<!-- NEW COL START -->
-			<article class="col-sm-12 col-md-12 col-lg-12">
-				<!-- Widget ID (each widget will need unique ID)-->
-				
-					<!-- widget div-->
-					<div>
-						<div class="widget-body">
-							
-						<form class='smart-form' id='update_merc' name='update_merc' method='post' action='/bo/admin/update_mercancia' enctype='multipart/form-data' role="form" >  
-			<h3><center><b>Editar mercancía :: <?=$nombre_merc?> </b></center></h3>
 
-							<section class="col col-6" style="display: none;">
-								<label class="select"> <select id="tipo_merc" required
-									name="tipo_merc">
-										<option value="3">merc</option>
-								</select>
-								</label>
-							</section>
+    <section id="widget-grid" class="">
+        <!-- START ROW -->
+        <div class="row">
+            <!-- NEW COL START -->
+            <article class="col-sm-12 col-md-12 col-lg-12">
+                <!-- Widget ID (each widget will need unique ID)-->
 
-							<section class="col col-6" style="display: none;">
-								<label class="select"> <select id="id_merc" required
-									name="id_merc">
-										<option value='<?php echo $id_mercancia?>'>merc</option>
-								</select>
-								</label>
-							</section>
+                <!-- widget div-->
+                <div>
+                    <div class="widget-body">
 
-							<fieldset>
-							<legend>País</legend>
-							<fieldset>
-							<section class="col col-12" style="width: 50%;">País de la mercancía
-											<label class="select">
-												<select id="pais2" required name="pais" onChange="select_pais()" required>
-													<?foreach ($pais as $key)
-													{	if ($mercancia[0]->pais == $key->Code){?>
-															<option selected value="<?=$key->Code?>">
-																<?=$key->Name?>
-															</option>
-														<?}else{?>
-															<option value="<?=$key->Code?>">
-																<?=$key->Name?>
-															</option>
-														<?}?>
-													<?}?>
-												</select>
-											</label>
-										</section>
-								</fieldset>
-								<legend>Datos del Paquete</legend>
-								<fieldset>
+                        <form class='smart-form' id='update_merc' name='update_merc' method='post' action='/bo/admin/update_mercancia' enctype='multipart/form-data' role="form" >  
+                            <h3><center><b>Editar mercancía :: <?= $nombre_merc ?> </b></center></h3>
 
-									<section class="col col-2" style="width: 50%;">
-										<label class="input">Nombre <input type="text" name="nombre"
-											id="nombre_pr" value='<?php echo $data_merc[0]->nombre?>' required>
-										</label>
-									</section>
+                            <section class="col col-6" style="display: none;">
+                                <label class="select"> 
+                                    <select id="tipo_merc" required name="tipo_merc">
+                                        <option value="3">merc</option>
+                                    </select>
+                                </label>
+                            </section>
 
+                            <section class="col col-6" style="display: none;">
+                                <label class="select"> 
+                                    <select id="id_merc" required name="id_merc">
+                                        <option value='<?php echo $id_mercancia ?>'>merc</option>
+                                    </select>
+                                </label>
+                            </section>
 
-										<section class="col col-2" style="width: 50%;">
-											<label class="input"><span id="labelextra">Descuento del
-													combinado</span> 
-													<input required id="precio_promo" type="number" name="descuento" value='<? echo $mercancia[0]->descuento;?>' required/> 
-											</label>
-										</section>
+                            <legend>País</legend>
+                            <fieldset>
+                                <section class="col col-12" style="width: 50%;">País de la mercancía
+                                    <label class="select">
+                                        <select id="pais2" required name="pais" onChange="select_pais()" required>
+                                            <?php foreach ($pais as $key) {
+                                                if ($item->pais == $key->Code) {
+                                                    ?>
+                                                    <option selected value="<?= $key->Code ?>">
+                                                    <?= $key->Name ?>
+                                                    </option>
+                                                    <?php } else { ?>
+                                                    <option value="<?= $key->Code ?>">
+                                                    <?= $key->Name ?>
+                                                    </option>
+                                                <?php } ?>
+                                            <?php } ?>
+                                        </select>
+                                    </label>
+                                </section>
+                            </fieldset>
+                            
+                            <legend>Datos del Paquete</legend>
+                            <fieldset>
+                                <section class="col col-2" style="width: 50%;">
+                                    <label class="input">Nombre <input type="text" name="nombre"
+                                                                       id="nombre_pr" value='<?php echo $data_merc[0]->nombre ?>' required>
+                                    </label>
+                                </section>
 
-										<section class="col col-12" style="width: 100%;">
-											Categoría <label class="select"> <select name="red">
-														<?foreach ($grupos as $key){
-																	
-																	if ($data_merc[0]->id_red == $key->id_grupo){?>
-																		<option selected value='<?=$key->id_grupo?>'>
-																			<?= $key->descripcion." (".$key->red.")" ?>
-																	<? }	else{?>
-																		<option value='<?=$key->id_grupo ?>'>
-																			<?= $key->descripcion." (".$key->red.")" ?>
-																	<? }?>
-																<?}?>
-											</select>
-											</label>
-										</section>
+                                <section class="col col-2" style="width: 50%;">
+                                    <label class="input"><span id="labelextra">Descuento del
+                                            combinado</span> 
+                                        <input required id="precio_promo" type="number" name="descuento" value='<?php echo $item->descuento; ?>' required/> 
+                                    </label>
+                                </section>
+
+                                <section class="col col-12" style="width: 100%;">
+                                    Categoría <label class="select"> <select name="red">
+                                            <?php foreach ($grupos as $key) {
+                                                if ($data_merc[0]->id_red == $key->id_grupo) {
+                                                    ?>
+                                                    <option selected value='<?= $key->id_grupo ?>'>
+                                                        <?= $key->descripcion . " (" . $key->red . ")" ?>
+                                                    <?php } else { ?>
+                                                    <option value='<?= $key->id_grupo ?>'>
+                                                        <?= $key->descripcion . " (" . $key->red . ")" ?>
+                                                    <?php } ?>
+                                            <?php } ?>
+                                        </select>
+                                    </label>
+                                </section>
 												
-												<? $i1=0; ?>
-												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="prods">
-										      <?
-										        foreach($prods as $key_1)
-												{?>
-												
-													
-													<div id="<?= $i1=$i1+1?>b">
-														<section class="col col-8"  style="width: 50%" id="ProductosPais" name="ProductosPais">Productos
-												           	<label class="select">
-												               	<select class="custom-scroll"  name="producto[]" id="producto[]">
-												                   	<?foreach ($producto as $key){
-												                    	if($key_1->id == $key->id)
-																		{?>
-												                        	<option selected value= '<? echo $key->id_mercancia?>' >
-												                            	<? echo $key->nombre?> (ACTIVO)
-												                            </option>
-												                        <?}
-																		else
-																		{?>
-																			<option value= '<? echo $key->id_mercancia?>'>
-												                            	<? echo $key->nombre?>
-												                            </option>
-																		<?}
-																	}?>
-																				
-											                	</select>
-											            	</label>
-											        	</section>
+                                <?php $i1 = 0; ?>
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="prods">
+                                    <?php  foreach($prods as $key_1) {?>
+                                    <div id="<?= $i1 = $i1 + 1 ?>b">
+                                        <section class="col col-8"  style="width: 50%" id="ProductosPais" name="ProductosPais">Productos
+                                            <label class="select">
+                                                <select class="custom-scroll"  name="producto[]" id="producto[]">
+                                                    <?php
+                                                    foreach ($producto as $key) {
+                                                        if ($key_1->id == $key->id) {
+                                                            ?>
+                                                            <option selected value= '<?php echo $key->id_mercancia ?>' >
+                                                            <?php echo $key->nombre ?> (ACTIVO)
+                                                            </option>
+                                                        <?php
+                                                        } else {
+                                                            ?>
+                                                            <option value= '<?php echo $key->id_mercancia ?>'>
+                                                            <?php echo $key->nombre ?>
+                                                            </option>
+                                                        <?php }
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </label>
+                                        </section>
 											        
-											        	<section class="col col-4"  style="width: 50%">
-											           		<label class="input">Cantidad de productos
-											                	<input required type="number" min="1" name="n_productos[]" id="prod_qty" value= '<? echo $key_1->cantidad?>' required>
-											            	</label>
-											        	</section>
-											        						<div class=" text-center row">
-
-													<a class='txt-color-red' onclick="delete_product(<?=$i1?>)" style='cursor: pointer;'>Eliminar producto 
-														<i class="fa fa-minus">
-														</i>
-													</a>  
-												</div>
-											        </div>
-											        
-												<?}?>
-												</div>
-												<div id="agregar" class=" text-center row">
-
-													<a onclick="new_product(<?=$i1?>)" style='cursor: pointer;'>Agregar producto 
-														<i class="fa fa-plus">
-														</i>
-													</a>  
-												</div>
-												<?$i2=0;?>		
+                                        <section class="col col-4"  style="width: 50%">
+                                            <label class="input">Cantidad de productos
+                                                <input required type="number" min="1" name="n_productos[]" id="prod_qty" value= '<?php echo $key_1->cantidad ?>' required>
+                                            </label>
+                                        </section>
+                                        
+                                        <div class=" text-center row">
+                                            <a class='txt-color-red' onclick="delete_product(<?= $i1 ?>)" style='cursor: pointer;'>Eliminar producto 
+                                                <i class="fa fa-minus">
+                                                </i>
+                                            </a>  
+                                        </div>
+                                    </div>
+                                    <?php }?>
+                                </div>
+                                <div id="agregar" class=" text-center row">
+                                    <a onclick="new_product(<?= $i1 ?>)" style='cursor: pointer;'>Agregar producto 
+                                        <i class="fa fa-plus">
+                                        </i>
+                                    </a>  
+                                </div>
+				<?php $i2=0;?>		
 												
-												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="servs"> 
-												<?
-
-												foreach($servs as $key_1)
-												{?>
-													
-													
-													<div id="<?= $i2=$i2+1?>a">
-												        <section class="col col-8"  style="width: 50%" id="ServicioPais" name="ServicioPais">Servicios
-												            <label class="select">
-												                <select class="custom-scroll" name="servicio[]" id="servicio[]">
-												                        <?foreach ($servicio as $key){
-													                    	if($key_1->id==$key->id)
-																			{?>
-														                        <option selected value='<? echo $key->id_mercancia?>'>
-														                            <? echo $key->nombre?> (ACTIVO)
-														                        </option>
-													                        <?$porcentajeContador+=$key->porcentaje;}
-																			else 
-																			{?>
-																				<option value='<? echo $key->id_mercancia?>'>
-													                            	<? echo $key->nombre ?>
-													                            </option>
-																			<?}
-																		}?>
-													            </select>
-													        </label>
-													    </section>
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="servs"> 
+                                    <?php foreach($servs as $key_1) {?>
+                                    <div id="<?= $i2=$i2+1?>a">
+                                        <section class="col col-8"  style="width: 50%" id="ServicioPais" name="ServicioPais">Servicios
+                                                <label class="select">
+                                                    <select class="custom-scroll" name="servicio[]" id="servicio[]">
+                                                        <?php foreach ($servicio as $key) {
+                                                            if ($key_1->id == $key->id) {  ?>
+                                                                <option selected value='<?php echo $key->id_mercancia ?>'>
+                                                                <?php echo $key->nombre ?> (ACTIVO)
+                                                                </option>
+                                                                <?php $porcentajeContador += $key->porcentaje;
+                                                            } else { ?>
+                                                                <option value='<?php echo $key->id_mercancia ?>'>
+                                                                <?php echo $key->nombre ?>
+                                                                </option>
+                                                        <?php }
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </label>
+                                        </section>
 													    
-													    <section class="col col-4"  style="width: 50%">
-													       <label class="input">Cantidad de servicios
-													            <input required type="number" min="1" name="n_servicios[]" id="serv_qty" value='<? echo $key_1->cantidad?>' >
-													        </label>
-													    </section>
-													<div  class=" text-center row">
-													<a class='txt-color-red' onclick="delete_service(<?=$i2?>)" style='cursor: pointer;'>Eliminar servicio 
-														<i class="fa fa-minus">
-														</i>
-													</a>  
-													</div>
-													</div>
-													
-												<?}?>
-												</div>
+                                        <section class="col col-4"  style="width: 50%">
+                                            <label class="input">Cantidad de servicios
+                                                <input required type="number" min="1" name="n_servicios[]" id="serv_qty" value='<? echo $key_1->cantidad?>' >
+                                            </label>
+                                        </section>
+                                        <div  class=" text-center row">
+                                            <a class='txt-color-red' onclick="delete_service(<?= $i2 ?>)" style='cursor: pointer;'>Eliminar servicio 
+                                                <i class="fa fa-minus">
+                                                </i>
+                                            </a>  
+                                        </div>
+                                    </div>
+                                    <?php }?>
+                                </div>
 												
-												<div id="agregar1" class=" text-center row">
+                                <div id="agregar1" class=" text-center row">
+                                    <a  onclick="new_service(<?= $i2 ?>)" style='cursor: pointer;'>Agregar servicio 
+                                        <i class="fa fa-plus">
+                                        </i>
+                                    </a>
+                                </div>
+                            </fieldset>
 
-													<a  onclick="new_service(<?=$i2?>)" style='cursor: pointer;'>Agregar servicio 
-														<i class="fa fa-plus">
-														</i>
-													</a>
-												</div>
-								
-								</fieldset>
+                            <div id="moneda">
+                                <fieldset id="moneda_field">
+                                    <legend>Moneda</legend>
 
-								<div id="moneda">
-									<fieldset id="moneda_field">
+                                    <section class="col col-2" style="width: 50%;">
+                                        <label class="input"> Costo real 
+                                            <input required type="number" name="real" id="real" value='<?php echo $item->real ?>'>
+                                        </label>
+                                    </section>
 
-										<legend>Moneda</legend>
+                                    <section class="col col-2" style="width: 50%;">
+                                        <label class="input">Costo distribuidores
+                                            <input required type="number" name="costo" id="costo" value='<?php echo $item->costo ?>' onchange="calcular_precio_total()">
+                                        </label>
+                                    </section>
 
-										<section class="col col-2" style="width: 50%;">
-											<label class="input"> Costo real 
-												<input required type="number" name="real" id="real" value='<? echo $mercancia[0]->real?>'>
-											</label>
-										</section>
+                                    <section class="col col-2" style="width: 50%;">
+                                        <label class="input">Costo publico 
+                                            <input required type="number" name="costo_publico" id="costo_publico" value='<?php echo $item->costo_publico ?>' onchange="calcular_precio_total()">
+                                        </label>
+                                    </section>
 
-										<section class="col col-2" style="width: 50%;">
-											<label class="input">Costo distribuidores
-											 	<input required type="number" name="costo" id="costo" value='<? echo $mercancia[0]->costo?>' onchange="calcular_precio_total()">
-											</label>
-										</section>
+                                    <section class="col col-2" style="width: 50%;">
+                                        <label class="input"> Tiempo mínimo de entrega 
+                                            <input placeholder="En días" type="number" name="entrega" id="entrega" value='<?php echo $item->entrega ?>' onchange="calcular_precio_total()">
+                                        </label>
+                                    </section>																							
 
-										<section class="col col-2" style="width: 50%;">
-											<label class="input">Costo publico 
-												<input required type="number" name="costo_publico" id="costo_publico" value='<? echo $mercancia[0]->costo_publico?>' onchange="calcular_precio_total()">
-											</label>
-										</section>
+                                    <section class="col col-3" style="width: 50%;">
+                                        <label class="input"> Puntos comisionables 
+                                            <input type="number" min="0" max="" name="puntos_com" id="puntos_com" value='<?php echo $item->puntos_comisionables ?>'>
+                                        </label>
+                                    </section>
+                                    <?php $i=0?>
+                                </fieldset>
+                            </div>
+                            <div>
+                                <fieldset>								
+                                    <legend>Impuestos</legend>										
+                                    <div class="row" id="impuesto_agregar">
+                                        <section class="col col-6">Requiere especificación
+                                            <div class="inline-group">
+                                                <label class="radio">
+                                                    <input type="radio" value="1" name="iva" onchange="calcular_precio_total()" 
+                                                        <?php if ($item->iva == "CON")  echo "checked"; ?> >
+                                                    <i></i>con IVA</label>
+                                                <label class="radio">
+                                                    <input type="radio" value="0" onchange="calcular_precio_total()" name="iva" 
+                                                        <?php if ($item->iva == "MAS") echo "checked"; ?> >
+                                                    <i></i>más IVA</label>
+                                            </div>
+                                        </section>
 
-										<section class="col col-2" style="width: 50%;">
-											<label class="input"> Tiempo mínimo de entrega 
-												<input placeholder="En días" type="number" name="entrega" id="entrega" value='<? echo $mercancia[0]->entrega?>' onchange="calcular_precio_total()">
-											</label>
-										</section>
-													
-										
-
-										<section class="col col-3" style="width: 50%;">
-											<label class="input"> Puntos comisionables 
-												<input type="number" min="0" max="" name="puntos_com" id="puntos_com" value='<? echo $mercancia[0]->puntos_comisionables?>'>
-											</label>
-										</section>
-										<?$i=0?>
-									</fieldset>
-								</div>
-							<div>
-								<fieldset>								
-										<legend>Impuestos</legend>
-										
-											<div class="row" id="impuesto_agregar">
-														<section class="col col-6">Requiere especificación
-																<div class="inline-group">
-																	<label class="radio">
-																		<input type="radio" value="1" name="iva" onchange="calcular_precio_total()" <?if($mercancia[0]->iva=="CON"){ echo "checked"; }?>>
-																		<i></i>con IVA</label>
-																		<label class="radio">
-																			<input type="radio" value="0" onchange="calcular_precio_total()" name="iva" <?if($mercancia[0]->iva=="MAS"){ echo "checked"; }?>>
-																			<i></i>más IVA</label>
-																		</div>
-																	</section>
-											
-										<section class="col col-6" style="width: 50%">
-											<br>
-											<br>
-											<a onclick="add_impuesto()" style='cursor: pointer;'>Agregar impuesto<i class="fa fa-plus"></i></a>
-										</section>	
-										<!--<a style="cursor: pointer;" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>-->
-
-															<?$i=0?>
-													
-													<?foreach($impuestos_merc as $merc)
-													{?>	
-													<section id="impuesto" name="impuesto">
-														<section class="col col-6" id="<?= $i=$i+1?>">Impuesto
-															<label class="select">
-																<select name="id_impuesto[]" onclick="calcular_precio_total()">
-																	<?foreach ($impuesto as $key){
-																		if($key->id_pais==$mercancia[0]->pais){
-																			?>
-																		<?if($merc->id_impuesto==$key->id_impuesto)
-																		{?>
-																			<option selected value='<?php echo $key->id_impuesto?>'>
-																				<?php echo $key->descripcion.' '.$key->porcentaje.' % (ACTIVO)'?>
-																			</option>
-																				<? $porcentajeContador+=$key->porcentaje;}
-																		else 
-																		{?>
-																			<option value='<?php echo $key->id_impuesto?>'>
-																				<?php echo $key->descripcion.' '.$key->porcentaje.' %'?>
-																			</option>
-																		<?}?>
-																				
-														<?}
-																	}?>	
-
-																	</select>
-																		<a class='txt-color-red' onclick="dell_impuesto(<?=$i?>)" style='cursor: pointer;'>Eliminar <i class="fa fa-minus"></i></a>
-																	</label>
-														</section>
-														</section>
-														
-													<?}?>	
-													</div>
+                                        <section class="col col-6" style="width: 50%">
+                                            <br>
+                                            <br>
+                                            <a onclick="add_impuesto()" style='cursor: pointer;'>Agregar impuesto<i class="fa fa-plus"></i></a>
+                                        </section>	
+					<!--<a style="cursor: pointer;" onclick="add_impuesto()">Agregar impuesto<i class="fa fa-plus"></i></a>-->
+                                        <?php $i=0?>
+					
+                                        <?php foreach($impuestos_merc as $merc) {?>	
+                                        <section id="impuesto" name="impuesto">
+                                            <section class="col col-6" id="<?= $i=$i+1?>">Impuesto
+                                                <label class="select">
+                                                    <select name="id_impuesto[]" onclick="calcular_precio_total()">
+                                                        <?php foreach ($impuesto as $key){
+                                                            if($key->id_pais==$item->pais){ ?>
+                                                            <?php if($merc->id_impuesto==$key->id_impuesto) {?>
+                                                                <option selected value='<?php echo $key->id_impuesto?>'> 
+                                                                    <?php echo $key->descripcion.' '.$key->porcentaje.' % (ACTIVO)'?>
+                                                                </option>
+                                                                 <?php  $porcentajeContador+=$key->porcentaje;                                                                         
+                                                                } else {?>
+                                                            <option value='<?php echo $key->id_impuesto?>'>
+                                                                <?php echo $key->descripcion.' '.$key->porcentaje.' %'?>
+                                                            </option>
+                                                            <?php }?>
+                                                        <?php }
+                                                        }?>
+                                                    </select>
+                                                    <a class='txt-color-red' onclick="dell_impuesto(<?= $i ?>)" style='cursor: pointer;'>Eliminar <i class="fa fa-minus"></i></a>
+                                                </label>
+                                            </section>
+                                        </section>
+                                        <?php }?>	
+                                    </div>
 				
-										
-																										<?
-													if($porcentajeContador!=0){
-																		$valor_iva_real=($mercancia[0]->real*$porcentajeContador)/100;
-																			$valor_iva_distribuidores=($mercancia[0]->costo*$porcentajeContador)/100;
-																			$valor_iva_publico=($mercancia[0]->costo_publico*$porcentajeContador)/100;
+                                    <?php 
+                                    
+                                    
+                                            $real=$item->real;
+                                            $distribuidor=$item->costo;
+                                            $publico=$item->costo_publico;
+                                            
+                                            $isPorcentaje = ($porcentajeContador!=0);
+                                            $isIVA = ($item->iva=="MAS");
+                                                    
+                                            if($isPorcentaje && $isIVA){
+                                                $real+=(($item->real*$porcentajeContador)/100);
+                                                $distribuidor+=(($item->costo*$porcentajeContador)/100);
+                                                $publico+=(($item->costo_publico*$porcentajeContador)/100);
+                                            }
+                                    ?>	
+                                    <div class="row">	
+                                        <fieldset>							
+                                            <section class="col col-4"  style="width: 50%">
+                                                <label class="input">
+                                                    Costo real con IVA
+                                                    <input type="text" value="<?php echo $real ?>" min="1" max="" name="real_iva" id="real_iva" disabled value="">
+                                                </label>
+                                            </section>
+                                            <section class="col col-4" style="width: 50%">
+                                                <label class="input">
+                                                    Costo distribuidores con IVA
+                                                    <input type="text" value="<?php echo $distribuidor ?>" min="1" max="" name="distribuidores_iva" id="distribuidores_iva" disabled>
+                                                </label>
+                                            </section>
+                                    </div>
+                                    <section class="col col-4" style="width: 50%">
+                                        <label class="input">
+                                            Costo público con IVA
+                                            <input type="text" value="<?php echo $publico ?>" min="1" max="" name="publico_iva" id="publico_iva" disabled>
+                                        </label>
+                                    </section>
+                                </fieldset>	
+                            </div>
+                            
+                            <fieldset>
+                                <div>
+                                    <section style="padding-left: 15px; width: 100%;" class="col col-12"> 
+                                        Descripcion
+                                        <label class="textarea"> 										
+                                            <textarea name="descripcion" rows="3" class="custom-scroll"><?php echo $data_merc[0]->descripcion ?></textarea> 
+                                        </label>
+                                    </section>
 
-																		if($mercancia[0]->iva=="CON"){  
-																			$valor_total_real=	$mercancia[0]->real/*-$valor_iva_real*/;
-																			$valor_total_distribuidores= $mercancia[0]->costo/*-$valor_iva_distribuidores*/;
-																			$valor_total_publico=	$mercancia[0]->costo_publico/*-$valor_iva_publico*/;
-																		}
-																			if($mercancia[0]->iva=="MAS"){
-																			$valor_total_real=	$mercancia[0]->real+$valor_iva_real;
-																			$valor_total_distribuidores=$mercancia[0]->costo+$valor_iva_distribuidores;
-																			$valor_total_publico=	$mercancia[0]->costo_publico+$valor_iva_publico;
-																		}}else{
-																			$valor_total_real=$mercancia[0]->real;
-																			$valor_total_distribuidores=$mercancia[0]->costo;
-																			$valor_total_publico=$mercancia[0]->costo_publico;
-																		}
-													?>	
-													<div class="row">	
-													<fieldset>							
-													<section class="col col-4"  style="width: 50%">
-														<label class="input">
-															Costo real con IVA
-															<input type="text" value="<? echo $valor_total_real ?>" min="1" max="" name="real_iva" id="real_iva" disabled value="">
-														</label>
-													</section>
-													<section class="col col-4" style="width: 50%">
-														<label class="input">
-															Costo distribuidores con IVA
-															<input type="text" value="<? echo $valor_total_distribuidores ?>" min="1" max="" name="distribuidores_iva" id="distribuidores_iva" disabled>
-														</label>
-													</section>
-													</div>
-													<section class="col col-4" style="width: 50%">
-														<label class="input">
-															Costo público con IVA
-															<input type="text" value="<? echo $valor_total_publico ?>" min="1" max="" name="publico_iva" id="publico_iva" disabled>
-														</label>
-													</section>
-													</fieldset>	
-													
-													</fieldset>
-									</div>
-								<div>
-									<section style="padding-left: 15px; width: 100%;"
-										class="col col-12">
-										Descripcion
-										
-										<label class="textarea"> 										
-											<textarea name="descripcion" rows="3" class="custom-scroll"><?php echo $data_merc[0]->descripcion?></textarea> 
-										</label>
-									</section>
+                                    <section id="imagenes2" class="col col-12">
+                                        <label class="label"> Imágen actual </label>
+                                        <?php
+                                        foreach ($img as $key) {
+                                            echo '<div class="no-padding col-xs-12 col-sm-12 col-md-6 col-lg-6"><img style="max-height: 150px;" src="' . $key [0]->url . '" width="150" height="126"></div>';
+                                        }
+                                        ?>
+                                    </section>
 
+                                    <section id="imagenes" class="col col-12">
+                                        <label class="label"> Imágen </label>
+                                        <div class="input input-file">
+                                            <span class="button"><input id="img" name="img"
+                                                onchange="this.parentNode.nextSibling.value = this.value"
+                                                type="file" multiple>Buscar
+                                            </span><input id="imagen_mr"
+                                               placeholder="Agregar alguna imágen" type="text">
+                                        </div>
+                                        <small><cite
+                                                title="Source Title">Para ver el archivo que va a cargar, pulse con el puntero en el boton de "Buscar"</cite>
+                                        </small>
+                                    </section>
+                                </div>
+                            </fieldset>
+                            <fieldset>  
+                                <section class="col col-12 pull-right" >
+                                    <button type="submit" class="btn btn-success">
+                                        Actualizar</button>
+                                </section>   
+                            </fieldset>  		
 
-									<section id="imagenes2" class="col col-12">
-										<label class="label"> Imágen actual </label>
-															<?php
-															
-										foreach ( $img as $key ) {
-																echo '<div class="no-padding col-xs-12 col-sm-12 col-md-6 col-lg-6"><img style="max-height: 150px;" src="' . $key [0]->url . '" width="150" height="126"></div>';
-															}
-															?>
-										            </section>
+                        </form>
+                    </div>
 
-									<section id="imagenes" class="col col-12">
-										<label class="label"> Imágen </label>
-										<div class="input input-file">
-											<span class="button"> <input id="img" name="img"
-												onchange="this.parentNode.nextSibling.value = this.value"
-												type="file" multiple>Buscar
-											</span><input id="imagen_mr"
-												placeholder="Agregar alguna imágen" type="text">
-										</div>
-										<small><cite
-											title="Source Title">Para ver el archivo que va a cargar, pulse con el puntero en el boton de "Buscar"</cite>
-										</small>
-									</section>
+                </div>
+                <!-- end widget div -->
 
+            </article>
+            <!-- END COL -->
+        </div>
 
-								</div>
-							</fieldset>
-
-							<section class="col col-12 pull-right" >
-								<button type="submit" class="btn btn-success">
-								Actualizar</button>
-							</section>
-							
-						</form>
-					</div>
-
-				</div>
-				<!-- end widget div -->
-
-			</article>
-			<!-- END COL -->
-		</div>
-
-	</section>
-	<!-- end widget grid -->
+    </section>
+    <!-- end widget grid -->
 </div>
-	<!-- END MAIN CONTENT -->
+<!-- END MAIN CONTENT -->
 
 <script type="text/javascript">
 
@@ -425,10 +384,10 @@ function new_product(id)
 		+'<section class="col col-8" style="width: 50%" id="ProductosPais'+ib+'" name="ProductosPais'+ib+'">Productos'
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="producto[]" id="producto[]">'
-		+'<!--<?//foreach ($producto as $key){?>'
-		+'<option value="<?// echo $key->id_mercancia?>">'
-		+'<? //echo $key->nombre?></option>'
-		+'<?//}?>-->'
+		+'<!--<?php //foreach ($producto as $key){?>'
+		+'<option value="<?php // echo $key->id_mercancia?>">'
+		+'<?php  //echo $key->nombre?></option>'
+		+'<?php //}?>-->'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -456,10 +415,10 @@ function new_service(id)
 		+'<section class="col col-8" style="width: 50%" id="ServicioPais'+ia+'" name="ServicioPais'+ia+'">Servicios'
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="servicio[]" id="servicio[]">'
-		+'<!--<?//foreach ($servicio as $key){?>'
-		+'<option value="<?//=$key->id_mercancia?>">'
-		+'<?//=$key->nombre?></option>'
-		+'<?//}?>-->'
+		+'<!--<?php //foreach ($servicio as $key){?>'
+		+'<option value="<?php //=$key->id_mercancia?>">'
+		+'<?php //=$key->nombre?></option>'
+		+'<?php //}?>-->'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -969,5 +928,6 @@ function enviar() {
 	
 }
 </script>
-	</html>
+
+
 

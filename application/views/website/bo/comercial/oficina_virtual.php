@@ -3224,8 +3224,7 @@
 				});	
 			}
 				
-		</script>
-		<script>
+		
 			function show_coment_panel(id)
 			{
 				
@@ -3860,3 +3859,4 @@
 		})
 
 		</script>
+

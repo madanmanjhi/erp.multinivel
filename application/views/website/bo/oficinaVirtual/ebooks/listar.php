@@ -13,11 +13,11 @@
 	</div>
 	<?php if($this->session->flashdata('error')) {
 		echo '<div class="alert alert-danger fade in">
-								<button class="close" data-dismiss="alert">
-									×
-								</button>
-								<i class="fa-fw fa fa-check"></i>
-								<strong>Error </strong> '.$this->session->flashdata('error').'
+                            <button class="close" data-dismiss="alert">
+                                    ×
+                            </button>
+                            <i class="fa-fw fa fa-check"></i>
+                            <strong>Error </strong> '.$this->session->flashdata('error').'
 			</div>'; 
 	}
 ?>	 
@@ -348,3 +348,4 @@ function estado_ebook(estatus, id)
 		});
 }
 </script>
+

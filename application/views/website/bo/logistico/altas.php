@@ -76,7 +76,7 @@
 																<section id="correo" class="col col-5">
 																	<textarea name="descripcion" style="max-width: 96%" id="mymarkdown"></textarea>
 																</section>
-																<? if($web==0)
+																<?php if($web==0)
 																{?>
 																<section class="col col-2">Almacen Web
 																	<div class="inline-group">
@@ -88,8 +88,7 @@
 																		<i></i>No</label>
 																	</div>
 																</section>
-																<?}
-																else{?>
+																<?php } else{?>
 																<section class="col col-2">Almacen Web
 																	<div class="inline-group">
 																		<!--<label class="radio state-disabled">
@@ -100,7 +99,7 @@
 																		<i></i>No</label>
 																	</div>
 																</section>
-																<?}?>
+																<?php }?>
 																<section class="col col-2">Activo
 																	<div class="inline-group">
 																		<label class="radio">
@@ -420,3 +419,4 @@ $(document).ready(function() {
 			})
 	});
 </script>
+

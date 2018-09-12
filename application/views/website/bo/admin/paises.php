@@ -40,7 +40,7 @@
 	</div>
 	<div class="row">
 		<form id="multiple_pais" action="/bo/admin/dato_pais_multiple" method="POST">
-			<?foreach ($pais as $key)
+			<?php foreach ($pais as $key)
 			{?>
 				<div class="col-xs-6 col-md-3 col-sm-4 smart-form">
 					<label style="margin-top: 2px !important;" class="checkbox col col-2 pull-right">
@@ -52,7 +52,7 @@
 													<?=strlen($key->Name)>25 ? substr($key->Name,0,25)."..." : $key->Name?></a>
 						</div>
 				</div>
-			<?}?>
+			<?php }?>
 		</form>
 	</div>
 </div>
@@ -180,3 +180,4 @@ function dato_pais_multiple(){
 	});
 }
 </script>
+

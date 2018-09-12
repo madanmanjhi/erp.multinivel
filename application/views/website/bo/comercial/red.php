@@ -102,7 +102,7 @@
 								        </thead>
 			
 								        <tbody>
-								        	<?foreach ($users as $user) {
+								        	<?php foreach ($users as $user) {
 								        	?>
 								            <tr>
 								                <td><?=$user->id?></td>
@@ -114,17 +114,17 @@
 								                <td><?=$user->apellido?></td>
 								                <td>
 								                <a title="Detalles" href="#" onclick="detalle_usuario(<?=$user->id?>)" class="txt-color-blue"><i class="fa fa-eye"></i></a>
-								                <?if($user->tipo_usuario!='Administrador'){?><a onclick="detalle_red(<?=$user->id?>)" title="Detalles en red" href="#" class="txt-color-blue"><i class="fa fa-sitemap"></i></a><?}?>
+								                <?php if($user->tipo_usuario!='Administrador'){?><a onclick="detalle_red(<?=$user->id?>)" title="Detalles en red" href="#" class="txt-color-blue"><i class="fa fa-sitemap"></i></a><?php }?>
 								                <a title="Permisos" href="#" onclick="perfil_permiso(<?=$user->id?>)" class="txt-color-blue"><i class="fa fa-unlock"></i></a>
-								                <?if($user->id_estatus==2){?>
+								                <?php if($user->id_estatus==2){?>
 								                <a title="Activar" href="#" onclick="activar(<?=$user->id?>)" class="txt-color-blue"><i class="fa fa-check"></i></a>
-								                <?}else{?>
+								                <?php }else{?>
 								                <a title="Desactivar" href="#" onclick="desactivar(<?=$user->id?>)" class="txt-color-red"><i class="fa fa-times"></i></a>
-								                <?}?>
+								                <?php }?>
 								                <a title="Eliminar" href="#" onclick="eliminar(<?=$user->id?>)" class="txt-color-red"><i class="fa fa-trash-o"></i></a>
 								            	</td>
 								            </tr>
-								            <?}?>
+								            <?php }?>
 								        </tbody>
 									</table>
 								</div>
@@ -140,7 +140,7 @@
 								        </thead>
 			
 								        <tbody>
-								        	<?foreach ($afiliados as $afiliado) {
+								        	<?php foreach ($afiliados as $afiliado) {
 								        	?>
 								            <tr>
 								                <td><?=$afiliado->id_afiliado?></td>
@@ -148,7 +148,7 @@
 								                <td><?=$afiliado->afiliado_p?></td>
 								                <td><?echo $afiliado->directo ? 'Si':'No' ?></td>
 								            </tr>
-								            <?}?>
+								            <?php }?>
 								        </tbody>
 									</table>
 								</div>
@@ -158,15 +158,14 @@
                                         <li>
                                             <span><i class="fa fa-lg fa-folder-open"></i>Tú</span>
                                             <ul>
-                                                <?
-                                                    foreach ($afiliados as $key) 
+                                                <?php foreach ($afiliados as $key) 
                                                     {
                                                         if($key->debajo_de==$id)
                                                         {?>
                                                         	<li id="<?=$key->id_afiliado?>" class="parent_li" role="treeitem" style="display: list-item;">
                                                     			<span class="quitar" onclick="subred(<?=$key->id_afiliado?>)"><i class="fa fa-lg fa-plus-circle"></i> <?=$key->afiliado?> <?=$key->afiliado_p?></span>
                                                 			</li>
-                                                        <?}
+                                                        <?php }
                                                            
                                                     }
                                                  ?>
@@ -182,7 +181,7 @@
 												<li>
 													<a style="background: url('<?=$img_perfil?>'); background-size: cover; background-position: center;" href="#"><div class="nombre">Tú</div></a>
 													<ul>
-													<?foreach ($afiliados as $key) 
+													<?php foreach ($afiliados as $key) 
                                                     {
                                                     	$key->img ? $img=$key->img : $img="/template/img/empresario.jpg";
                                                         if($key->debajo_de==$id)
@@ -191,7 +190,7 @@
 															<a class="quitar" style="background: url('<?=$img?>'); background-size: cover; background-position: center;" onclick="subtree(<?=$key->id_afiliado?>)" href="#"><div class="nombre"><?=$key->afiliado?> <?=$key->afiliado_p?></div></a>
 															<div onclick="detalles(<?=$key->id_afiliado?>)" class="todo">Detalles</div>
 														</li>
-														<?}
+														<?php }
 													}?>
 													</ul>
 												</li>
@@ -211,7 +210,7 @@
 								        </thead>
 			
 								        <tbody>
-								        	<?foreach ($afiliados as $afiliado) {
+								        	<?php foreach ($afiliados as $afiliado) {
 								        	?>
 								            <tr>
 								                <td><?=$afiliado->id_afiliado?></td>
@@ -219,7 +218,7 @@
 								                <td><?=$afiliado->afiliado_p?></td>
 								                <td><?echo $afiliado->directo ? 'Si':'No' ?></td>
 								            </tr>
-								            <?}?>
+								            <?php }?>
 								        </tbody>
 									</table>
 								</div>
@@ -246,7 +245,7 @@
 								        </thead>
 			
 								        <tbody>
-								        	<?foreach ($preregistro as $key) {
+								        	<?php foreach ($preregistro as $key) {
 								        	?>
 								            <tr>
 								                <td><?=$key->id_preregistro?></td>
@@ -257,7 +256,7 @@
 								                <td><?=$key->invitado_por?></td>
 								                <td><?=$key->fecha?></td>
 								            </tr>
-								            <?}?>
+								            <?php }?>
 								        </tbody>
 									</table>
 									<div class="row">
@@ -682,9 +681,9 @@ function new_perfil(id)
 			+'<section class="col col-6">Grupo del perfil'
 				+'<label class="select">'
 					+'<select name="grupo">'
-					+'<?foreach ($grupos as $key){?>'
+					+'<?php foreach ($grupos as $key){?>'
 					+'<option value="<?=$key->id_grupo?>"><?=$key->descripcion?></option>'
-					+'<?}?></select>'
+					+'<?php }?></select>'
 				+'</label>'
 			+'</section>'
 			+'<section class="col col-6">'
@@ -693,18 +692,18 @@ function new_perfil(id)
 	            +'</label>'
 	        +'</section>'
 	        +'<div class="row"><section class="col col-6">Permisos del grupo Backoffice'
-	       	+'<?foreach ($permisos as $key){if($key->id_grupo==1){?>'
+	       	+'<?php foreach ($permisos as $key){if($key->id_grupo==1){?>'
 			+'<label class="checkbox">'
 				+'<input value="<?=$key->id_permiso?>" name="permiso[]" type="checkbox">'
 				+'<i></i><?=$key->nombre?></label>'	
-				+'<?}}?>'						
+				+'<?php }}?>'						
 			+'</section>'
 			+'<section class="col col-6">Permisos del grupo Oficina virtual'
-	       	+'<?foreach ($permisos as $key){if($key->id_grupo==2){?>'
+	       	+'<?php foreach ($permisos as $key){if($key->id_grupo==2){?>'
 			+'<label class="checkbox">'
 				+'<input value="<?=$key->id_permiso?>" name="permiso[]" type="checkbox">'
 				+'<i></i><?=$key->nombre?></label>'
-				+'<?}}?>'
+				+'<?php }}?>'
 			+'</section>'
 			+'</div></form></div>'
 			,
@@ -754,9 +753,9 @@ function del_perfil()
 			+'<section class="col col-6">Selecciona el perfil que deseas borrar'
 				+'<label class="select">'
 					+'<select name="perfil">'
-					+'<?foreach ($perfiles as $key){?>'
+					+'<?php foreach ($perfiles as $key){?>'
 					+'<option value="<?=$key->id_perfil?>"><?=$key->descripcion?></option>'
-					+'<?}?></select>'
+					+'<?php }?></select>'
 				+'</label>'
 			+'</section>'
 			+'</form></div>'
@@ -978,3 +977,5 @@ function detalle_red(id)
 	});
 }
     </script>
+
+

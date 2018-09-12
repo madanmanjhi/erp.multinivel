@@ -101,7 +101,7 @@
 											</thead>
 											<tbody>
 												
-												<?foreach ($categorias as $categoria) {?>
+												<?php foreach ($categorias as $categoria) {?>
 													<tr>
 														<td><?php echo $categoria->id_grupo; ?></td>
 														<td><?php echo $categoria->id_red; ?></td>
@@ -117,7 +117,7 @@
 															<?php } ?>
 														</td>
 													</tr>
-												<?}?>
+												<?php }?>
 											</tbody>
 										</table>
 								</div>
@@ -323,3 +323,4 @@ function estado(estatus, id)
 			})
 	}
 </script>
+

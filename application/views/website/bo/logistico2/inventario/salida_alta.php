@@ -94,9 +94,9 @@
                                   <label class="select">Tipo de Entrada
                                     <select id="documento" required  name="documento">
                                       <option value="" >--------Escoja un tipo--------------</option>
-                                                           <?foreach ($documento as $key){?>
+                                                           <?php foreach ($documento as $key){?>
 													<option value="<?=$key->id_doc?>"><?=$key->nombre?></option>
-												<?}?>
+												<?php }?>
 												
 												    </select>
                                   </label>
@@ -113,9 +113,9 @@
                                     <select id="origen_in" required  name="origen_in" onChange="ProductoAlmacen()">
                                       <option value="" >--------------Elije Almacen/CEDI-----------------</option>
                                                                                
-                                                 <?foreach (	$almacenesCedi as $key){?>
+                                                 <?php foreach (	$almacenesCedi as $key){?>
 													<option value="<?=$key->id_cedi?>"><?=$key->nombre." (".$key->tipo_nombre.")";?></option>
-												<?}?>    </select>
+												<?php }?>    </select>
                                   </label>
                                 </section>
                                 
@@ -289,5 +289,6 @@ function ProductoAlmacen(){
 
 
 </script>
+
 
 

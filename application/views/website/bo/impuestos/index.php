@@ -64,48 +64,56 @@
 						
 										
 									
-									<table id="dt_basic" class="table table-striped table-bordered table-hover" width="100%">
-											<thead>			                
-												<tr>
-													<th>ID</th>
-													<th data-class="expand">Nombre</th>
-													<th data-hide="phone,tablet">Porcentaje</th>
-													<th data-hide="phone,tablet">Pais</th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody>
-												
-												<?foreach ($impuestos as $impuesto) {?>
-													<tr>
-														<td><?php echo $impuesto->id_impuesto; ?></td>
-														<td><?php echo $impuesto->descripcion; ?></td>
-														<td><?php echo $impuesto->porcentaje; ?> %</td>
-														<td>
-															<img class="flag flag-<?php echo strtolower($impuesto->Code2); ?>" >
-															<?php echo $impuesto->Name; ?>
-														</td>
-														<td>
-															<a title="Editar" style="cursor: pointer;" class="txt-color-blue" onclick="editar('<?php echo $impuesto->id_impuesto; ?>');"><i class="fa fa-pencil fa-3x"></i></a>
-															
-															<?php if($impuesto->estatus == 'ACT'){ ?>
-																<a title="Desactivar" style="cursor: pointer;" onclick="estado('DES','<?php echo $impuesto->id_impuesto; ?>')" class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
-															<?php } else {?>
-																<a title="Activar" style="cursor: pointer;" onclick="estado('ACT','<?php echo $impuesto->id_impuesto; ?>')" class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
-															<?php } ?>
-															<a title="Eliminar" style="cursor: pointer;" class="txt-color-red" onclick="eliminar('<?php echo $impuesto->id_impuesto; ?>');"><i class="fa fa-trash-o fa-3x"></i></a>
-														</td>
-													</tr>
-												<?}?>
-											</tbody>
-										</table>
-								</div>
-								
-							</div>
-						</div>
-						<!-- end widget content -->
-						
-					</div>
+                                                            <table id="dt_basic" class="table table-striped table-bordered table-hover" width="100%">
+                                                                <thead>			                
+                                                                    <tr>
+                                                                        <th>ID</th>
+                                                                        <th data-class="expand">Nombre</th>
+                                                                        <th data-hide="phone,tablet">Porcentaje</th>
+                                                                        <th data-hide="phone,tablet">Pais</th>
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                    <?php foreach ($impuestos as $impuesto) { ?>
+                                                                        <tr>
+                                                                            <td><?php echo $impuesto->id_impuesto; ?></td>
+                                                                            <td><?php echo $impuesto->descripcion; ?></td>
+                                                                            <td><?php echo $impuesto->porcentaje; ?> %</td>
+                                                                            <td>
+                                                                                <img class="flag flag-<?php echo strtolower($impuesto->Code2); ?>" >
+                                                                                <?php echo $impuesto->Name; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <a title="Editar" style="cursor: pointer;" class="txt-color-blue" 
+                                                                                   onclick="editar('<?php echo $impuesto->id_impuesto; ?>');">
+                                                                                    <i class="fa fa-pencil fa-3x"></i></a>
+
+                                                                                <?php if ($impuesto->estatus == 'ACT') { ?>
+                                                                                    <a title="Desactivar" style="cursor: pointer;" 
+                                                                                       onclick="estado('DES','<?php echo $impuesto->id_impuesto; ?>')" 
+                                                                                       class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
+                                                                                <?php } else { ?>
+                                                                                    <a title="Activar" style="cursor: pointer;" 
+                                                                                       onclick="estado('ACT','<?php echo $impuesto->id_impuesto; ?>')" 
+                                                                                       class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
+                                                                                <?php } ?>
+                                                                                <a title="Eliminar" style="cursor: pointer;" class="txt-color-red" 
+                                                                                   onclick="eliminar('<?php echo $impuesto->id_impuesto; ?>');">
+                                                                                    <i class="fa fa-trash-o fa-3x"></i></a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+
+                                                </div>
+                                        </div>
+                                        <!-- end widget content -->
+
+                                </div>
 					<!-- end widget div -->
 				</div>
 				<!-- end widget -->
@@ -302,3 +310,5 @@ function estado(estatus, id)
 			})
 	}
 </script>
+
+

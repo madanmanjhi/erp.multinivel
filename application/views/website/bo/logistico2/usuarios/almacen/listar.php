@@ -87,7 +87,7 @@
 											</thead>
 											<tbody>
 												
-												<?foreach ($users as $user) {?>
+												<?php foreach ($users as $user) {?>
 													<tr>
 														<td><?php echo $user->id; ?></td>
 														<td><?php echo $user->username; ?></td>
@@ -100,7 +100,7 @@
 															<a title="Eliminar" href="#"  class="txt-color-red" onclick="eliminar('<?php echo $user->id; ?>');"><i class="fa fa-trash-o fa-3x"></i></a>
 														</td>
 													</tr>
-												<?}?>
+												<?php }?>
 											</tbody>
 										</table>
 								</div>
@@ -296,3 +296,4 @@ function eliminar(id) {
 }
 </style>
 			
+

@@ -63,36 +63,36 @@
                                              <!-- widget content -->
                                              <div class="widget-body">
 												
-												<div id="myTabContent1" class="tab-content padding-10">
-													
-														
-														<div class="tree smart-form">
-														
-		                                                    <ul>
-		                                                        <li>
-			                                                        <span><i class="fa fa-lg fa-folder-open"></i>Tú</span>
-			                                                        <ul>
-		                                                                <? 
-		                                                                    foreach ($afiliados[$id_red] as $key) 
-		                                                                    {
-		                                                                        if($key->debajo_de==$id)
-		                                                                        {?>
-		                                                                        	<li id="<?=$key->id_afiliado?>" class="parent_li" role="treeitem" style="display: list-item;">
-			                                                                			<span class="quitar" onclick="subred(<?=$key->id_afiliado?>,<?php echo $id_red; ?>)"><i class="fa fa-lg fa-plus-circle"></i> <?=$key->afiliado?> <?=$key->afiliado_p?></span>
-			                                                            			</li>
-		                                                                        <?}
-		                                                                           
-		                                                                    }
-		                                                                 ?>
-			                                                         </ul>
-			                                                    </li>
-		                                                    </ul>
-	                                                  	</div>
-													</div>
-													
-												</div>
-											</div>
-                                             <!-- end widget content -->
+                                                 <div id="myTabContent1" class="tab-content padding-10">
+
+                                                     <div class="tree smart-form">
+
+                                                         <ul>
+                                                             <li>
+                                                                 <span><i class="fa fa-lg fa-folder-open"></i>Tú</span>
+                                                                 <ul>
+                                                                     <?php
+                                                                     foreach ($afiliados[$id_red] as $key) {
+                                                                         if ($key->debajo_de == $id) {
+                                                                             ?>
+                                                                             <li id="<?= $key->id_afiliado ?>" class="parent_li" role="treeitem" style="display: list-item;">
+                                                                                 <span class="quitar" onclick="subred(<?= $key->id_afiliado ?>,<?php echo $id_red; ?>)">
+                                                                                     <i class="fa fa-lg fa-plus-circle"></i> 
+                                                                                 <?= $key->afiliado ?> <?= $key->afiliado_p ?></span>
+                                                                             </li>
+                                                                         <?php
+                                                                         }
+                                                                     }
+                                                                     ?>
+                                                                 </ul>
+                                                             </li>
+                                                         </ul>
+                                                     </div>
+                                                 </div>
+
+                                             </div>
+                                        </div>
+                                        <!-- end widget content -->
                                         </div>
                                         <!-- end widget div -->
                                    </div>
@@ -358,3 +358,6 @@ function detalles(id)
 	});
 }
     </script>
+
+
+

@@ -24,13 +24,13 @@
                 <label class="select">País
                     <select id="pais" required name="pais" onChange="CiudadesPais()">
                         <option value="-" selected>-- Seleciona un país --</option>
-                        <? foreach ($paises as $key) {
+                        <?php foreach ($paises as $key) {
                             if ($proveedor[0]->id_pais == $key->Code) {
                                 ?>
                                 <option value="<?= $key->Code ?>" selected><?= $key->Name ?></option>
                             <?php } else { ?>
                                 <option value="<?= $key->Code ?>"><?= $key->Name ?></option>
-                            <? }
+                            <?php }
                         }
                         ?>
                     </select>
@@ -40,13 +40,13 @@
             <div class="col col-xs-12 col-sm-6 col-lg-6">
                 <label for="" class="select">Estado/Departamento
                     <select id="departamento" name="estado" onChange="CiudadesDepartamento()" required>
-                        <? foreach ($departamentos as $key) {
+                        <?php foreach ($departamentos as $key) {
                             if ($proveedor[0]->estado == $key['id']) {
                                 ?>
                                 <option value="<?= $key['id'] ?>" selected><?= $key['Name'] ?></option>
                             <?php } else { ?>
                                 <option value="<?= $key['id'] ?>"><?= $key['Name'] ?></option>
-    <? }
+    <?php }
 }
 ?>
                     </select>
@@ -56,13 +56,13 @@
             <div class="col col-xs-12 col-sm-6 col-lg-6">
                 <label for="" class="select">Municipio/Ciudad
                     <select id="municipio" required name="municipio">
-                        <? foreach ($ciudades2 as $key) {
+                        <?php foreach ($ciudades2 as $key) {
                             if ($proveedor[0]->municipio == $key['id']) {
                                 ?>
                                 <option value="<?= $key['id'] ?>" selected><?= $key['Name'] ?></option>
     <?php } else { ?>
                                 <option value="<?= $key['id'] ?>"><?= $key['Name'] ?></option>
-    <? }
+    <?php }
 }
 ?>
                     </select>
@@ -325,3 +325,4 @@ foreach ($telefono_movil as $telefono) {
 
     }
 </script>
+

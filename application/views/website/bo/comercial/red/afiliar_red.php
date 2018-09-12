@@ -507,8 +507,8 @@ function botbox(nombre, id, lado)
 							+'<div id="dir_red" class="row">'
 								+'<section class="col col-6">País'
 									+'<label class="select">'
-										+'<select id="pais_red" required name="pais"><?foreach ($pais as $key){?>'
-											+'<option value="<?=$key->Code?>"><?=$key->Name?></option><?}?>'
+										+'<select id="pais_red" required name="pais"><?php foreach ($pais as $key){?>'
+											+'<option value="<?=$key->Code?>"><?=$key->Name?></option><?php }?>'
 										+'</select>'
 									+'</label>'
 								+'</section>'
@@ -550,37 +550,37 @@ function botbox(nombre, id, lado)
 							+'<div class="row">'
 								+'<section class="col col-6">Estado civil'
 									+'<label class="select">'
-									+'<select name="civil"><?foreach ($civil as $key){?>'
-									+'<option value="<?=$key->id_edo_civil?>"><?=$key->descripcion?></option><?}?>'
+									+'<select name="civil"><?php foreach ($civil as $key){?>'
+									+'<option value="<?=$key->id_edo_civil?>"><?=$key->descripcion?></option><?php }?>'
 									+'</select>'
 									+'</label>'
 								+'</section>'
 								+'<section class="col col-6">Género&nbsp;'
-									+'<div class="inline-group"><?foreach ($sexo as $value){?>'
+									+'<div class="inline-group"><?php foreach ($sexo as $value){?>'
 									+'<label class="radio">'
 									+'<input <?=($value->id_sexo==1) ? "checked" : " " ?> type="radio" value="<?=$value->id_sexo?>" name="sexo" placeholder="sexo"><i></i><?=$value->descripcion?>'
-									+'</label><?}?>'
+									+'</label><?php }?>'
 									+'</div>'
 								+'</section>'
 								+'<section class="col col-12">Estudio&nbsp;'
-									+'<div class="inline-group"><?foreach ($estudios as $value){?>'
+									+'<div class="inline-group"><?php foreach ($estudios as $value){?>'
 									+'<label class="radio">'
 									+'<input <?=($value->id_estudio==1) ? "checked" : " " ?> type="radio" value="<?=$value->id_estudio?>" name="estudios"><i></i><?=$value->descripcion?>'
-									+'</label><?}?>'
+									+'</label><?php }?>'
 									+'</div>'
 								+'</section>'
 								+'<section class="col col-6">Ocupación&nbsp;'
-									+'<div class="inline-group"><?foreach ($ocupacion as $value){?>'
+									+'<div class="inline-group"><?php foreach ($ocupacion as $value){?>'
 									+'<label class="radio">'
 									+'<input <?=($value->id_ocupacion==1) ? "checked" : " " ?> type="radio" value="<?=$value->id_ocupacion?>" name="ocupacion"><i></i><?=$value->descripcion?>'
-									+'</label><?}?>'
+									+'</label><?php }?>'
 									+'</div>'
 								+'</section>'
 								+'<section class="col col-6">Tiempo dedicado&nbsp;'
-									+'<div class="inline-group"><?foreach ($tiempo_dedicado as $value){?>'
+									+'<div class="inline-group"><?php foreach ($tiempo_dedicado as $value){?>'
 									+'<label class="radio">'
 									+'<input <?=($value->id_tiempo_dedicado==1) ? "checked" : " " ?> type="radio" value="<?=$value->id_tiempo_dedicado?>" name="tiempo_dedicado"><i></i><?=$value->descripcion?>'
-									+'</label><?}?>'
+									+'</label><?php }?>'
 									+'</div>'
 								+'</section>'
 							+'</div>'
@@ -1048,44 +1048,52 @@ function InformarPremio(premio){
 							<div id="myTabContent1" class="tab-content padding-10">
 								<div class="tab-pane fade in active" id="s2">
 									
-									<div id="dos" class="row">
-										<!--
-										We will create a family tree1 using just CSS(3)
-										The markup will be simple nested lists
-										-->
-										<div class="tree1" style="width: 10000rem;">
-											<ul>
-												<li>
-													<a style="background: url('<?=$img_perfil?>'); background-size: cover; background-position: center;" href="#"><div class="nombre">Tú</div></a>
-													<ul>
-													<?
-													$aux =0;
-													foreach ($afiliados as $key) 
-                                                    {
-                                                    	$aux++;
-                                                    	$key->img ? $img=$key->img : $img="/template/img/empresario.jpg";
-                                                        if($key->debajo_de==$id)
-                                                        {?>
-														<li id="<?=$key->id_afiliado?>">
-															<a class="quitar" style="background: url('<?=$img?>'); background-size: cover; background-position: center;" onclick="subred(<?=$key->id_afiliado?>)" href="#"></a>
-															<div onclick="detalles(<?=$key->id_afiliado?>)" class="<?=($key->directo==0) ? 'todo' : 'todo1'?>"><?=$key->afiliado?> <?=$key->afiliado_p?><br />Detalles</div>
-														</li>
-														<?}
-													}
-													for ( $i = $aux ; $i < count($red_frontales[0]->frontal)+1 ; $i++){?>
-															<li>
-																<a onclick='botbox("<?php echo 'Tu'; ?>","<?php echo $id; ?>","<?php echo $i; ?> ")' href='javascript:void(0)'>Afiliar Aqui</a>
-												            </li>
-														<? } ?>
-														<li>
-															<a onclick='botbox("<?php echo 'Tu'; ?>","<?php echo $id; ?>","<?php echo $i; ?> ")' href='javascript:void(0)'>Afiliar Aqui</a>
-												        </li>
-													</ul>
-												</li>
-											</ul>
-										</div>
-									</div>
-								
+                                                                    <div id="dos" class="row">
+                                                                        <!--
+                                                                        We will create a family tree1 using just CSS(3)
+                                                                        The markup will be simple nested lists
+                                                                        -->
+                                                                        <div class="tree1" style="width: 10000rem;">
+                                                                            <ul>
+                                                                                <li>
+                                                                                    <a style="background: url('<?= $img_perfil ?>'); background-size: cover; background-position: center;" href="#">
+                                                                                        <div class="nombre">Tú</div></a>
+                                                                                    <ul>
+                                                                                        <?php
+                                                                                        $aux = 0;
+                                                                                        foreach ($afiliados as $key) {
+                                                                                            $aux++;
+                                                                                            $img = file_exists(getcwd().$key->img) ? $key->img : "/template/img/avatars/male.png";
+                                                                                            if ($key->debajo_de == $id) {?>
+                                                                                        <li id="<?= $key->id_afiliado ?>">
+                                                                                                    <a class="quitar" style="background: url('<?= $img ?>'); 
+                                                                                                       background-size: cover; background-position: center;" 
+                                                                                                       onclick="subred(<?= $key->id_afiliado ?>)" href="#"></a>
+                                                                                                    <div onclick="detalles(<?= $key->id_afiliado ?>)" 
+                                                                                                         class="<?= ($key->directo == 0) ? 'todo' : 'todo1' ?>">
+                                                                                                            <?= $key->afiliado ?> <?= $key->afiliado_p ?><br />Detalles
+                                                                                                    </div>
+                                                                                                </li>
+                                                                                            <?php
+                                                                                            }
+                                                                                        }
+                                                                                        for ($i = $aux; $i < count($red_frontales[0]->frontal) + 1; $i++) {
+                                                                                            ?>
+                                                                                            <li>
+                                                                                                <a onclick='botbox("<?php echo 'Tu'; ?>","<?php echo $id; ?>","<?php echo $i; ?> ")' 
+                                                                                                   href='javascript:void(0)'>Afiliar Aqui</a>
+                                                                                            </li>
+<?php } ?>
+                                                                                        <li>
+                                                                                            <a onclick='botbox("<?php echo 'Tu'; ?>","<?php echo $id; ?>","<?php echo $i; ?> ")' 
+                                                                                               href='javascript:void(0)'>Afiliar Aqui</a>
+                                                                                        </li>
+                                                                                    </ul>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+
 								</div><!-- end tree -->
 							</div>
 						</div>
@@ -1226,3 +1234,8 @@ right connector from last child*/
 /*Thats all. I hope you enjoyed it.
 Thanks :)*/
 </style>
+
+
+
+
+

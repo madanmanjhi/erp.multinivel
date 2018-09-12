@@ -80,9 +80,9 @@
 																	<label class="select">
 																		<select id="tipo_movimiento_in" required type="text" name="tipo_movimiento_in">
 																			<option value="0">Escoja un tipo</option>
-																			<? foreach($movimientos_in as $mov){?>
+																			<?php foreach($movimientos_in as $mov){?>
 																				<option value="<?=$mov->id_movimiento?>"><?=$mov->descripcion?></option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -103,9 +103,9 @@
 																	<label class="select">
 																		<select id="destino_in" required type="text" name="destino_in">
 																			<option value="0">Escoja un almacen</option>
-																			<? foreach($almacenes as $almacen){?>
+																			<?php foreach($almacenes as $almacen){?>
 																				<option value="<?=$almacen->id_almacen?>"><?=$almacen->nombre?></option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -116,9 +116,9 @@
 																	<label class="select">
 																		<select id="mercancia_in" required type="text" name="mercancia_in">
 																			<option value="0">Escoja una mercancia</option>
-																			<? foreach($mercancias as $mercancia){?>
+																			<?php foreach($mercancias as $mercancia){?>
 																				<option value="<?=$mercancia->id?>"><?=$mercancia->sku_2?></option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -131,9 +131,9 @@
 																	<label class="select">
 																		<select id="impuesto_in" required type="text" name="impuesto_in">
 																			<option value="0">Escoja un impuesto</option>
-																			<? foreach($impuestos as $impuesto){?>
+																			<?php foreach($impuestos as $impuesto){?>
 																				<option value="<?=$impuesto->id_impuesto?>"><?=$impuesto->descripcion?> <?=$impuesto->porcentaje?> %</option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -269,9 +269,9 @@
 																	<label class="select">
 																		<select id="tipo_movimiento_out" required type="text" name="tipo_movimiento_out">
 																			<option value="0">Escoja un tipo</option>
-																			<? foreach($movimientos_out as $mov){?>
+																			<?php foreach($movimientos_out as $mov){?>
 																				<option value="<?=$mov->id_movimiento?>"><?=$mov->descripcion?></option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -287,9 +287,9 @@
 																	<label class="select">
 																		<select id="origen_out" required type="text" name="origen_out">
 																			<option value="0">Escoja un almacen</option>
-																			<? foreach($almacenes as $almacen){?>
+																			<?php foreach($almacenes as $almacen){?>
 																				<option value="<?=$almacen->id_almacen?>"><?=$almacen->nombre?></option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -306,9 +306,9 @@
 																	<label class="select">
 																		<select id="mercancia_out" required type="text" name="mercancia_out">
 																			<option value="0">Escoja una mercancia</option>
-																			<? foreach($mercancias as $mercancia){?>
+																			<?php foreach($mercancias as $mercancia){?>
 																				<option value="<?=$mercancia->id?>"><?=$mercancia->sku_2?></option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -321,9 +321,9 @@
 																	<label class="select">
 																		<select id="impuesto_out" required type="text" name="impuesto_out">
 																			<option value="0">Escoja un impuesto</option>
-																			<? foreach($impuestos as $impuesto){?>
+																			<?php foreach($impuestos as $impuesto){?>
 																				<option value="<?=$impuesto->id_impuesto?>"><?=$impuesto->descripcion?> <?=$impuesto->porcentaje?> %</option>
-																			<?}?>
+																			<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -955,3 +955,4 @@
 		
 		})
 </script>
+

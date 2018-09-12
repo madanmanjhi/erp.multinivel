@@ -39,14 +39,14 @@ if ($this->session->flashdata('error')) {
                 <label class="select">País 
                     <select id="pais" required name="pais" onChange="Departamentos()">
                         <option value="-" selected>-- Seleciona un país --</option>
-                        <? foreach ($pais as $key) {
+                        <?php foreach ($pais as $key) {
                             if ($PaisCiudad[0]->CountryCode == $key->Code) {
                                 ?>
                                 <option selected value="<?= $key->Code ?>"><?= $key->Name ?></option>
 
                             <?php } else { ?>
                                 <option value="<?= $key->Code ?>"><?= $key->Name ?></option>
-    <? }
+    <?php }
 } ?>
                     </select>
                 </label>
@@ -56,8 +56,7 @@ if ($this->session->flashdata('error')) {
                 <label for="" class="select">Estado/Departamento <select
                         id="departamento" name="estado" onChange="CiudadesDepartamento()"
                         required>
-                            <?
-                            foreach ($departamentos as $key) {
+                            <?php foreach ($departamentos as $key) {
                                 if ($ciudad_actual[0]->id_estate == $key->id) {
                                     ?>
 
@@ -65,7 +64,7 @@ if ($this->session->flashdata('error')) {
                             <?php } else { ?>
 
                                 <option value="<?= $key->id ?>"><?= utf8_decode($key->Nombre) ?></option>
-    <? }
+    <?php }
 } ?>
                     </select>
                 </label>
@@ -74,14 +73,13 @@ if ($this->session->flashdata('error')) {
             <div style="width: 25rem;">
                 <label for="" class="select">Municipio/Ciudad <select
                         id="ciudad" required name="ciudad" >
-                        <?
-                        foreach ($ciudades as $key) {
+                        <?php foreach ($ciudades as $key) {
                             if ($cedi[0]->ciudad == $key->ID) {
                                 ?>
                                 <option selected value="<?= $key->ID ?>"><?= utf8_decode($key->Name) ?></option>
     <?php } else { ?>
                                 <option value="<?= $key->ID ?>"><?= utf8_decode($key->Name) ?></option>
-    <? }
+    <?php }
 } ?>
                     </select>
                 </label>
@@ -115,11 +113,11 @@ if ($this->session->flashdata('error')) {
                     + 'País'
                     + '<label class="select">'
                     + '<select id="pais" required name="pais">'
-                    + '<? foreach ($pais as $key) { ?>'
+                    + '<?php foreach ($pais as $key) { ?>'
                         + '<option value="<?= $key->Code ?>">'
                         + '<?= $key->Name ?>'
                         + '</option>'
-                        + '<? } ?>'
+                        + '<?php } ?>'
                     + '</select>'
                     + '</label>'
                     + '</section>'
@@ -232,3 +230,5 @@ if ($this->session->flashdata('error')) {
     }
 
 </script>				
+
+

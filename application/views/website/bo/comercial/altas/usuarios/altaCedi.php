@@ -82,11 +82,11 @@
 											<label class="select">
 												<label class="label">Seleccione el CEDI al que pertenecerá</label>
 												<select name="id_cedi" id="id_cedi" required="">
-													<?foreach ($cedis as $cedi) {?>
+													<?php foreach ($cedis as $cedi) {?>
 														<option value="<?php echo $cedi->id_cedi; ?>">
 															<?php echo $cedi->nombre; ?>
 														</option>
-													<?}?>
+													<?php }?>
 												</select>
 											</label>
 											
@@ -158,11 +158,11 @@
 											<label class="select">
 												<label class="label">País</label>
 												<select name="id_pais" id="id_pais" required="">
-													<?foreach ($paises as $pais) {?>
+													<?php foreach ($paises as $pais) {?>
 														<option value="<?php echo $pais->Code; ?>">
 															<?php echo $pais->Name; ?>
 														</option>
-													<?}?>
+													<?php }?>
 												</select>
 											</label>
 											
@@ -281,3 +281,4 @@
 				}
 </style>
 			
+

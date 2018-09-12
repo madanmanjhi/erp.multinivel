@@ -159,12 +159,12 @@
 																	Tipo de persona
 																	<label class="select">
 																		<select id="tipo_fiscal" required name="fiscal">
-																		<?foreach ($tipo_fiscal as $key)
+																		<?php foreach ($tipo_fiscal as $key)
 																		{?> contenedor
 																			<option value="<?=$key->id?>">
 																				<?=$key->descripcion?>
 																			</option>
-																		<?}?>
+																		<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -221,12 +221,12 @@
 																	País
 																	<label class="select">
 																		<select id="pais" required name="pais">
-																		<?foreach ($pais as $key)
+																		<?php foreach ($pais as $key)
 																		{?>
 																			<option value="<?=$key->Code?>">
 																				<?=$key->Name?>
 																			</option>
-																		<?}?>
+																		<?php }?>
 																		</select>
 																	</label>
 																</section>
@@ -269,7 +269,7 @@
 																<section class="col col-3">Estado civil
 																	<label class="select">
 																		<select name="civil">
-																		<?foreach ($civil as $key)
+																		<?php foreach ($civil as $key)
 																		{ 
 																			echo '<option value="'.$key->id_edo_civil.'">'.$key->descripcion.'</option>';
 																				
@@ -279,46 +279,42 @@
 																</section>
 																<section class="col col-2">Género&nbsp;
 																	<div class="inline-group">
-																		<?
-																		foreach ($sexo as $value)
+																		<?php foreach ($sexo as $value)
 																		{?>
 																			<label class="radio">
 																			<input <?=($value->id_sexo==1) ? 'checked' : '' ?> type="radio" value="<?=$value->id_sexo?>" name="sexo" placeholder="sexo">
 																			<i></i><?=$value->descripcion?></label>
-																		<?}?>
+																		<?php }?>
 																		</div>
 																</section>
 																<section class="col col-2">Estudio&nbsp;
 																	<div class="inline-group">
-																		<?
-																		foreach ($estudios as $value)
+																		<?php foreach ($estudios as $value)
 																		{?>
 																			<label class="radio">
 																			<input <?=($value->id_estudio==1) ? 'checked' : '' ?> type="radio" value="<?=$value->id_estudio?>" name="estudios">
 																			<i></i><?=$value->descripcion?></label>
-																		<?}?>
+																		<?php }?>
 																		</div>
 																</section>
 																<section class="col col-2">Ocupación&nbsp;
 																	<div class="inline-group">
-																		<?
-																		foreach ($ocupacion as $value)
+																		<?php foreach ($ocupacion as $value)
 																		{?>
 																			<label class="radio">
 																			<input <?=($value->id_ocupacion==1) ? 'checked' : '' ?> type="radio" value="<?=$value->id_ocupacion?>" name="ocupacion">
 																			<i></i><?=$value->descripcion?></label>
-																		<?}?>
+																		<?php }?>
 																		</div>
 																</section>
 																<section class="col col-2">Tiempo dedicado&nbsp;
 																	<div class="inline-group">
-																		<?
-																		foreach ($tiempo_dedicado as $value)
+																		<?php foreach ($tiempo_dedicado as $value)
 																		{?>
 																			<label class="radio">
 																			<input <?=($value->id_tiempo_dedicado==1) ? 'checked' : '' ?> type="radio" value="<?=$value->id_tiempo_dedicado?>" name="tiempo_dedicado">
 																			<i></i><?=$value->descripcion?></label>
-																		<?}?>
+																		<?php }?>
 																		</div>
 																</section>
 															</div>
@@ -326,136 +322,7 @@
 															
 													</form>
 												</div>
-												<div class="step-pane" id="step3">
-
-													<div class="row">
-														<br />
-													</div>
-													<div class="hidden-xs hidden-sm hidden-md col-lg-1"></div>
-													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-10">
-														<div class="row">
-													        <div id="planuno" class="col-xs-12 col-sm-6 col-md-3">
-													            <div class="panel panel-success pricing-big">
-													                <div class="panel-heading">
-													                    <h3 class="panel-title">
-													                       <i class="fa fa-plane"></i> Plan despegue</h3>
-													                </div>
-													                <div class="panel-body no-padding text-align-center">
-													                    <div class="the-price">
-													                        <h1>
-													                            <strong>$85.25 USD</strong></h1>
-													                    </div>
-																		<div class="price-features">
-																			<ul class="list-unstyled text-left">
-																	          	<li><h1><i class="fa fa-check text-success"></i> <strong>8%</strong> de ganancia</h1></li>
-																	        	<li><h1><i class="fa fa-check text-success"></i> <strong>60</strong> puntos de comisión</h1></li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>1</strong> Aloe Detox (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>1</strong> Vita Live (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>1</strong> Linea Gala</li>
-																	        </ul>
-																		</div>
-													                </div>
-													                <div class="panel-footer text-align-center">
-													                    <a id="plan1" href="javascript:void(0);" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>
-													                </div>
-													            </div>
-													        </div>
-													        
-													        <div id="plandos" class="col-xs-12 col-sm-6 col-md-3">
-													            <div class="panel panel-teal pricing-big">
-													            	
-													                <div class="panel-heading">
-													                    <h3 class="panel-title">
-													                        <i class="fa fa-bar-chart-o"></i> Plan avance</h3>
-													                </div>
-													                <div class="panel-body no-padding text-align-center">
-													                    <div class="the-price">
-													                        <h1>
-													                            <strong>$164.00 USD</strong></h1>
-													                    </div>
-																		<div class="price-features">
-																			<ul class="list-unstyled text-left">
-																	          	<li><h1><i class="fa fa-check text-success"></i> <strong>10%</strong> de ganancia</h1></li>
-																	        	<li><h1><i class="fa fa-check text-success"></i> <strong>135</strong> puntos de comisión</h1></li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>4</strong> Aloe Detox (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>3</strong> Vita Live (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>1</strong> Linea Gala</li>
-																	        </ul>
-																		</div>
-													                </div>
-													                <div class="panel-footer text-align-center">
-													                    <a id="plan2" href="javascript:void(0);" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>
-													                </div>
-													            </div>
-													        </div>
-													        
-													        <div id="plantres" class="col-xs-12 col-sm-6 col-md-3">
-													            <div class="panel panel-primary pricing-big">
-													            	<img src="/template/img/ribbon.png" class="ribbon" alt="">
-													                <div class="panel-heading">
-													                    <h3 class="panel-title">
-													                        <i class="fa fa-suitcase"></i> Plan empresarial</h3>
-													                </div>
-													                <div class="panel-body no-padding text-align-center">
-													                    <div class="the-price">
-													                        <h1>
-													                            <strong>$454.25 USD</strong></h1>
-													                    </div>
-																		<div class="price-features">
-																			<ul class="list-unstyled text-left">
-																	          	<li><h1><i class="fa fa-check text-success"></i> <strong>12%</strong> de ganancia</h1></li>
-																	        	<li><h1><i class="fa fa-check text-success"></i> <strong>420</strong> puntos de comisión</h1></li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>10</strong> Aloe Detox (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>9</strong> Vita Live (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>4</strong> Linea Gala</li>
-																	        </ul>
-																		</div>
-													                </div>
-													                <div class="panel-footer text-align-center">
-													                    <a id="plan3" href="javascript:void(0);" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>
-													                </div>
-													            </div>
-													        </div>
-													        
-													        <div id="plancuatro" class="col-xs-12 col-sm-6 col-md-3">
-													            <div class="panel panel-darken pricing-big">
-													            	
-													                <div class="panel-heading">
-													                    <h3 class="panel-title">
-													                        <i class="fa fa-signal"></i> <i class="fa fa-male"></i> Plan inversionista</h3>
-													                </div>
-													                <div class="panel-body no-padding text-align-center">
-													                    <div class="the-price">
-													                        <h1>
-													                            <strong>$920.00 USD</strong></h1>
-													                    </div>
-																		<div class="price-features">
-																			<ul class="list-unstyled text-left">
-																	          	<li><h1><i class="fa fa-check text-success"></i> <strong>15%</strong> de ganancia</h1></li>
-																	        	<li><h1><i class="fa fa-check text-success"></i> <strong>850</strong> puntos de comisión</h1></li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>20</strong> Aloe Detox (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>20</strong> Vita Live (6 pack)</li>
-																	        	<li><i class="fa fa-check text-success"></i> <strong>8</strong> Linea Gala</li>
-																	        	<li><i class="fa fa-check text-success"></i> <small>Podrás modificar la cantidad de producto que tengan el mismo precio que no insida en el valor y puntaje del plan</small></li>
-																	        </ul>
-																		</div>
-													                </div>
-													                <div class="panel-footer text-align-center">
-													                    <a id="plan4" href="javascript:void(0);" class="btn btn-primary btn-block" role="button">Seleccionar</span></a>
-													                </div>
-													            </div>
-													        </div>		    	
-											    		</div>
-											    		<br />
-											    		<a id="remove_step" href="javascript:void(0);" class="btn btn-primary btn-block" role="button">Comprar el plan después</span></a>
-											    	</div>
-												</div>
-												<div class="step-pane" id="step4">
-													<div class="well">
--														<p>El pago se realizara despues, en la enttrega de su primer pedido</p>
--													</div>
-												</div>
-				
+												 
 											</div>
 										</div>
 										
@@ -1044,3 +911,6 @@ function detalles(id)
 
 
 </script>
+
+
+

@@ -158,6 +158,10 @@ class web_personal extends CI_Model{
             $contacto = str_replace("<frame","<!--<frame", $contacto);
         }
                 
+        $fa_fix = stripos($contacto, "/templates/shaper_helix3/css/template.css");  
+        if($fa_fix)
+            $contacto = str_replace('<link href="/templates/shaper_helix3/css/template.css" rel="stylesheet" type="text/css" />',"", $contacto);
+                
         $setbody = str_replace("</body","<body", $contacto);
         $setbody = str_replace("<body","¬<body", $setbody);
         $setbody = explode("¬", $setbody);

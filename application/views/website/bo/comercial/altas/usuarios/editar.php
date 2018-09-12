@@ -5,11 +5,11 @@
 								<label class="select">
 								<label class="label">Seleccione un tipo de usuario</label>
 									<select name="tipo" id="tipo" required="">
-										<?foreach ($tiposUsuario as $tipo) {?>
+										<?php foreach ($tiposUsuario as $tipo) {?>
 											<option value="<?php echo $tipo->id_tipo_usuario; ?>" <?php if($tipo->id_tipo_usuario==$user[0]->tipoId)echo 'selected="selected"';?>>
 												<?php echo $tipo->descripcion; ?>
 											</option>
-										<?}?>
+										<?php }?>
 									</select>
 								<br>
 								<label class="input"> Nombre de Usuario
@@ -62,3 +62,4 @@ function enviar() {
 		
 }
 </script>
+

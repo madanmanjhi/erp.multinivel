@@ -147,7 +147,7 @@
 							
 								<!-- widget content -->
 												<div class="widget-body no-padding">
-													<?$i=1;
+													<?php $i=1;
 													if($archivos){?>
 													<table id="datatable_fixed_column" class="table table-striped table-bordered table-hover" width="100%">
 														<thead>
@@ -164,7 +164,7 @@
 														</thead>
 														<tbody>
 															<form id="archivos">
-																<?foreach ($archivos as $archivo){?>
+																<?php foreach ($archivos as $archivo){?>
 																<!-- TR -->
 																<tr>
 																	<td class="text-center"><input name="archivo[]" value="<?=$archivo->id_archivero?>" class="chek" type="checkbox"></td>
@@ -199,11 +199,11 @@
 																	</td>
 																</tr>
 																<!-- end TR -->
-																<?$i++;}?>
+																<?php $i++;}?>
 															</form>
 														</tbody>
 													</table>
-													<?}else{echo "<h1>No tienes archivos aún</h1>";}?>
+													<?php }else{echo "<h1>No tienes archivos aún</h1>";}?>
 												</div>
 												<!-- end widget content -->
 									</article>
@@ -399,3 +399,4 @@ function borrar_multiple()
 }
 
 </script>
+

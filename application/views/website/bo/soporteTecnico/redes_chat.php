@@ -21,7 +21,7 @@
                 <fieldset>
                     <legend>Escoja una red para dar soporte tecnico</legend>
                     <div class="row">
-                        <? foreach ($redes as $red) { ?>
+                        <?php foreach ($redes as $red) { ?>
                             <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
                                     <!-- <a href="/bo/comercial/mi_red?id_red=<? //= $red->id  ?>"> -->
                                 <a href="/bo/configuracion/chat_soporte?id_red=<?= $red->id ?>">
@@ -40,3 +40,4 @@
         </div>
     </section>
 </div>
+

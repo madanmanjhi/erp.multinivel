@@ -57,9 +57,9 @@ if ($this->session->flashdata ( 'error' )) {
 										País del combinado <label class="select"> <select id="pais"
 											required name="pais" id="pais" onChange="select_pais()">
 												<option value="-" selected>-- Seleciona un pais --</option>
-														<?foreach ($pais as $key){?>
+														<?php foreach ($pais as $key){?>
 															<option value="<?=$key->Code?>"><?=$key->Name?></option>
-														<?}?>
+														<?php }?>
 													</select>
 										</label>
 									</section>
@@ -84,16 +84,16 @@ if ($this->session->flashdata ( 'error' )) {
 													</section>
 													<section class="col col-3">
 														Categoria <label class="select"> <select name="red">
-																<?foreach ($grupos as $grupo){?>
+																<?php foreach ($grupos as $grupo){?>
 																	<option value="<?=$grupo->id_grupo?>">
 																	<?= $grupo->descripcion." (".$grupo->red.")"?>
-																<?}?>
+																<?php }?>
 																
 														
 														</select>
 														</label>
 													</section>
-														<? $i1=0; ?>
+														<?php  $i1=0; ?>
 											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" id="prods">
 														<div id="<?= $i1=$i1+1?>p">
 															<section class="col col-8" id="ProductosPais"
@@ -101,10 +101,10 @@ if ($this->session->flashdata ( 'error' )) {
 																Productos <label class="select"> <select
 																	class="custom-scroll" name="producto[]">
 																		<option value="0">Ninguno</option>
-																		<!--<?//foreach ($producto as $key){?>
-											<option value="<?//=$key->id?>">
-											<?//=$key->nombre?></option>
-											<?//}?>-->
+																		<!--<?php //foreach ($producto as $key){?>
+											<option value="<?php //=$key->id?>">
+											<?php //=$key->nombre?></option>
+											<?php //}?>-->
 																</select>
 																</label>
 															</section>
@@ -122,7 +122,7 @@ if ($this->session->flashdata ( 'error' )) {
 															</div>
 														</div>
 													</div>
-											<? $i2=0; ?>
+											<?php  $i2=0; ?>
 											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" id="servs">
 														<div id="<?= $i2=$i2+1?>s">
 															<section class="col col-8" id="ServicioPais"
@@ -130,10 +130,10 @@ if ($this->session->flashdata ( 'error' )) {
 																Servicios <label class="select"> <select
 																	class="custom-scroll" name="servicio[]">
 																		<option value="0">Ninguno</option>
-																		<!--<?//foreach ($servicio as $key){?>
-											<option value="<?//=$key->id?>">
-											<?//=$key->nombre?></option>
-											<?//}?>-->
+																		<!--<?php //foreach ($servicio as $key){?>
+											<option value="<?php //=$key->id?>">
+											<?php //=$key->nombre?></option>
+											<?php //}?>-->
 																</select>
 																</label>
 															</section>
@@ -615,10 +615,10 @@ function new_product()
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="producto[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<!--<?//foreach ($producto as $key){?>'
-		+'<option value="<?//=$key->id_mercancia?>">'
-		+'<?//=$key->nombre?></option>'
-		+'<?//}?>-->'
+		+'<!--<?php //foreach ($producto as $key){?>'
+		+'<option value="<?php //=$key->id_mercancia?>">'
+		+'<?php //=$key->nombre?></option>'
+		+'<?php //}?>-->'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -640,10 +640,10 @@ function new_service()
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="servicio[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<!--<?//foreach ($servicio as $key){?>'
-		+'<option value="<?//=$key->id_mercancia?>">'
-		+'<?//=$key->nombre?></option>'
-		+'<?//}?>-->'
+		+'<!--<?php //foreach ($servicio as $key){?>'
+		+'<option value="<?php //=$key->id_mercancia?>">'
+		+'<?php //=$key->nombre?></option>'
+		+'<?php //}?>-->'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -785,7 +785,7 @@ function new_impuesto()
 function kill_impuesto()
 {
 	bootbox.dialog({
-		message: "<form class='smart-form'><label class='select text-center'><select id='imp_sel'><? foreach($impuesto as $imp){?><option value='<?=$imp->id_impuesto?>'><?=$imp->descripcion?> (<?=$imp->porcentaje?> %)</option><?}?></select></label></form>",
+		message: "<form class='smart-form'><label class='select text-center'><select id='imp_sel'><?php foreach($impuesto as $imp){?><option value='<?=$imp->id_impuesto?>'><?=$imp->descripcion?> (<?=$imp->porcentaje?> %)</option><?php }?></select></label></form>",
 		title: 'Eliminar grupo',
 		buttons: {
 			success: {
@@ -1120,10 +1120,10 @@ function new_empresa()
 		+'<section class="col col-6">Regimen fiscal'
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="regimen">'
-		+'<?foreach ($regimen as $key){?>'
+		+'<?php foreach ($regimen as $key){?>'
 		+'<option value="<?=$key->id_regimen?>">'
 		+'<?=$key->abreviatura." ".$key->descripcion?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1135,11 +1135,11 @@ function new_empresa()
 		+'País'
 		+'<label class="select">'
 		+'<select id="pais" required name="pais">'
-		+'<?foreach ($pais as $key){?>'
+		+'<?php foreach ($pais as $key){?>'
 		+'<option value="<?=$key->Code?>">'
 		+'<?=$key->Name?>'
 		+'</option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1630,10 +1630,10 @@ function new_pack()
 		+'<section class="col col-12">Tipo del paquete'
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="tipo_paquete">'
-		+'<?foreach ($tipo_paquete as $key){?>'
+		+'<?php foreach ($tipo_paquete as $key){?>'
 		+'<option value="<?=$key->id_tipo?>">'
 		+'<?=$key->descripcion?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1668,10 +1668,10 @@ function new_pack()
 		+'<label class="select">'
 		+'<select class="custom-scroll"  name="producto[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<?foreach ($producto as $key){?>'
+		+'<?php foreach ($producto as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -1686,10 +1686,10 @@ function new_pack()
 		+'<label class="select">'
 		+'<select class="custom-scroll" name="servicio[]">'
 		+'<option value="0">Ninguno</option>'
-		+'<?foreach ($servicio as $key){?>'
+		+'<?php foreach ($servicio as $key){?>'
 		+'<option value="<?=$key->id_mercancia?>">'
 		+'<?=$key->nombre?></option>'
-		+'<?}?>'
+		+'<?php }?>'
 		+'</select>'
 		+'</label>'
 		+'</section>'
@@ -2099,3 +2099,6 @@ ImpuestosPais();
 }
 
 </script>
+
+
+
