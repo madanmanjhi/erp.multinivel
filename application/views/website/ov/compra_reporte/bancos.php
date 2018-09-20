@@ -2,7 +2,7 @@
 <div class="well">
     <fieldset>
         <div class="row">
-            <? foreach ($bancos as $banco) { ?>
+            <?php foreach ($bancos as $banco) { ?>
                 <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
                     <a onclick="Enviar(<?= $banco->id_banco ?>)">
                         <div class="well well-sm txt-color-white text-center link_dashboard" style="background:#60a917">
@@ -66,3 +66,4 @@
         });
     }
 </script>
+
