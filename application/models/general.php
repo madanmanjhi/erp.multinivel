@@ -2,7 +2,7 @@
 
 class general extends CI_Model
 {
-	
+
 	function __construct() {
 		parent::__construct();
 	
@@ -85,7 +85,7 @@ class general extends CI_Model
 	}
 	function dato_usuario($email)
 	{
-		$q=$this->db->query('
+		$q=$this->db->query("
 			SELECT profile.user_id, profile.nombre nombre, profile.apellido apellido,
 			profile.fecha_nacimiento nacimiento, profile.id_estudio id_estudio,
 			profile.id_ocupacion id_ocupacion,
@@ -101,7 +101,7 @@ class general extends CI_Model
 			left join cat_edo_civil edo_civil on
 			profile.id_edo_civil=edo_civil.id_edo_civil
 			left join users on profile.user_id=users.id
-			where users.email="'.$email.'"');
+			where users.email=$email$");
 		return $q->result();
 	}
 	function update_login($id)
@@ -110,7 +110,8 @@ class general extends CI_Model
 		$q=$this->db->query('select last_login from users where id = '.$id);
 		$q=$q->result();
 
-		$this->db->query('update user_profiles set ultima_sesion="'.$q[0]->last_login.'" where user_id='.$id);
+            $last_login = $q[0]->last_login;
+            $this->db->query("update user_profiles set ultima_sesion=' $last_login ' where user_id=$id");
 		}
 	}
 
@@ -128,8 +129,9 @@ class general extends CI_Model
  
 		if($this->isBlockedExpired())
 			return false;
-		
-		$q=$this->db->query('SELECT blocked FROM users_attempts where ip = "'.$this->input->ip_address().'"');
+
+        $ip_address = $this->input->ip_address();
+        $q=$this->db->query("SELECT blocked FROM users_attempts where ip = '$ip_address'");
 		$blocked=$q->result();
 		
 		if(!isset($blocked[0]->blocked))
@@ -141,7 +143,9 @@ class general extends CI_Model
 	}
 	
 	function isBlockedExpired(){
-		$q=$this->db->query('SELECT ip FROM users_attempts where ip = "'.$this->input->ip_address().'" and (attempts>=5) and ("'.date('Y-m-d H:i:s').'") > (last_login + INTERVAL 30 MINUTE)');
+        $ip_address = $this->input->ip_address();
+        $fecha = date('Y-m-d H:i:s');
+        $q=$this->db->query("SELECT ip FROM users_attempts where ip = '$ip_address' and (attempts>=5) and ('$fecha') > (last_login + INTERVAL 30 MINUTE)");
 		
 		$intentos=$q->result();
 		
@@ -155,13 +159,15 @@ class general extends CI_Model
 	}
 	
 	function addAttempts(){
-		$q=$this->db->query('SELECT attempts , ip FROM users_attempts where ip = "'.$this->input->ip_address().'"');
+        $ip_address = $this->input->ip_address();
+        $q=$this->db->query("SELECT attempts , ip FROM users_attempts where ip = '$ip_address'");
 		$intentos=$q->result();
-		
-		if(!isset($intentos[0]->ip)){
+
+        $fecha = date('Y-m-d H:i:s');
+        if(!isset($intentos[0]->ip)){
 			$datos = array(
-					'ip' => $this->input->ip_address(),
-					'last_login'   => date('Y-m-d H:i:s'),
+					'ip' => $ip_address,
+					'last_login'   => $fecha,
 					'attempts'    => '1',
 			);
 			$this->db->insert('users_attempts',$datos);
@@ -171,37 +177,40 @@ class general extends CI_Model
 			return "ninguno";
 		}
 		else {
-			$this->db->query('update users_attempts set attempts ="'.(($intentos[0]->attempts)+1).'" , last_login ="'.date('Y-m-d H:i:s').'" where ip = "'.$this->input->ip_address().'"');
-			return "".(6-(($intentos[0]->attempts)+1));
+            $intentos = ($intentos[0]->attempts) + 1;
+            $this->db->query("update users_attempts set attempts ='$intentos' , last_login ='$fecha' where ip = '$ip_address'");
+			return "".(6-($intentos));
 		}
 	}
 	
 	function locked(){
-		$this->db->query('update users_attempts set blocked ="1" where ip = "'.$this->input->ip_address().'"');
+        $ip_address = $this->input->ip_address();
+        $this->db->query("update users_attempts set blocked ='1' where ip = '$ip_address'");
 	}
 	
 	function unlocked(){
-		$this->db->query('update users_attempts set blocked ="0",attempts ="1" where ip = "'.$this->input->ip_address().'"');
+        $ip_address = $this->input->ip_address();
+        $this->db->query("update users_attempts set blocked ='0',attempts ='1' where ip = '$ip_address'");
 		return true;
 	}
 	
 	function get_temp_invitacion($token)
 	{
-		$q=$this->db->query("select * from temp_invitacion where token = '".$token."'");
+		$q=$this->db->query("select * from temp_invitacion where token = '$token'");
 		$token = $q->result();
 		return $token;
 	}
 	
 	function get_temp_invitacion_ACT($token)
 	{
-		$q=$this->db->query("select * from temp_invitacion where token = '".$token."' and estatus = 'ACT'");
+		$q=$this->db->query("select * from temp_invitacion where token = '$token' and estatus = 'ACT'");
 		$token = $q->result();
 		return $token;
 	}
 	
 	function get_temp_invitacion_ACT_id($token)
 	{
-		$q=$this->db->query("select * from temp_invitacion where id = '".$token."' and estatus = 'ACT'");
+		$q=$this->db->query("select * from temp_invitacion where id = '$token' and estatus = 'ACT'");
 		$token = $q->result();
 		return $token;
 	}
@@ -237,5 +246,59 @@ class general extends CI_Model
 		return ($ocupado) ? true : false;
 	}
 	
+        function issetVar($var, $type = false, $novar = false) {
+
+            $result = isset($var) ? $var : $novar;
+
+            if ($type)
+                $result = isset($var[0]->$type) ? $var[0]->$type : $novar;
+
+            if (!isset($var[0]->$type))
+                log_message('ERROR', "issetVar T:($type) :: " . json_encode($var));
+
+            return $result;
+        }
 	
+        function hex2rgb($hex,$str = false) {
+            $hex = str_replace("#", "", $hex);
+            $isShort = (strlen($hex) == 3);
+            
+            $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+            $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+            $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+            
+            if(!$isShort){
+               $r = hexdec(substr($hex,0,2));
+               $g = hexdec(substr($hex,2,2));
+               $b = hexdec(substr($hex,4,2));
+            }
+            
+            $rgb = array($r, $g, $b);
+            
+            if($str)
+                $rgb = implode(",", $rgb);
+            //return implode(",", $rgb); // returns the rgb values separated by commas
+            return $rgb; // returns an array with the rgb values
+         }
+         
+         function rgb2hex($rgb) {
+            
+            $trash = "rgb|rgba|(|)|;"; 
+            $trash = explode("|", $trash);
+            $fix = (gettype($rgb) == "string");
+            if($fix){
+                foreach ($trash as $t)
+                    $rgb= str_replace ($t, "", $rgb);
+                    
+                $rgb = explode(",", $rgb);                
+            } 
+             
+            $hex = "#";
+            $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+            $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+            $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+
+            return $hex; // returns the hex value including the number sign (#)
+         }
+        
 }

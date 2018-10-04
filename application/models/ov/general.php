@@ -28,7 +28,7 @@ class general extends CI_Model
 	}
 	
 	function actualizarEstadoAfiliado($id){
-		$q = $this->db->query("UPDATE user_profiles SET estatus = 'ACT' WHERE user_id = ".$id);
+		$this->db->query("UPDATE user_profiles SET estatus = 'ACT' WHERE user_id = ".$id);
 	}
 	
 	function VerificarCompraPaquete($id){
@@ -295,7 +295,7 @@ class general extends CI_Model
 	
 	function get_username($id)
 	{
-		$q=$this->db->query('select * from user_profiles where user_id = "'.$id.'"');
+		$q=$this->db->query("select * from user_profiles where user_id = '$id'");
 		return $q->result();
 	}
 	function get_style($id)
@@ -312,10 +312,12 @@ class general extends CI_Model
 	
 	function get_pais($id)
 	{
-		$q=$this->db->query("select cu.pais as pais,c.Name as nombrePais,c.Code2 as codigo,concat(cu.calle,' ',cu.colonia,' ',cu.municipio,' ',cu.estado)as direccion
-								,cu.cp as codigo_postal,cu.estado as estado,cu.municipio as municipio,cu.colonia as colonia,cu.calle as calle
-								from cross_dir_user cu,Country c
-								where c.Code=cu.pais and cu.id_user = ".$id."");
+		$q=$this->db->query("select cu.pais as pais,c.Name as nombrePais,c.Code2 as codigo,
+                              concat(cu.calle,' ',cu.colonia,' ',cu.municipio,' ',cu.estado)as direccion,
+                              cu.cp as codigo_postal,cu.estado as estado,cu.municipio as municipio,
+							  cu.colonia as colonia,cu.calle as calle
+							  from cross_dir_user cu,Country c
+					          where c.Code=cu.pais and cu.id_user =$id");
 		return $q->result();
 	}
 	
@@ -341,4 +343,17 @@ class general extends CI_Model
 		return implode(',',$ArrayVarchar);
 	}
 	
+        function issetVar($var, $type = false, $novar = false) {
+
+            $result = isset($var) ? $var : $novar;
+
+            if ($type)
+                $result = isset($var[0]->$type) ? $var[0]->$type : $novar;
+
+            if (!isset($var[0]->$type))
+                log_message('ERROR', "issetVar T:($type) :: " . json_encode($var));
+
+            return $result;
+        }
+
 }

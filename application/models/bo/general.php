@@ -33,7 +33,7 @@ class general extends CI_Model
 	
 	function get_username($id)
 	{
-		$q=$this->db->query('select * from user_profiles where user_id = '.$id);
+		$q=$this->db->query("select * from user_profiles where user_id = $id");
 		return $q->result();
 	}
 	function get_groups()
@@ -65,4 +65,18 @@ class general extends CI_Model
 								and u.id!=2;');
 		return $q->result();
 	}
+        
+        function issetVar($var, $type = false, $novar = false) {
+
+            $result = isset($var) ? $var : $novar;
+
+            if ($type)
+                $result = isset($var[0]->$type) ? $var[0]->$type : $novar;
+
+            if (!isset($var[0]->$type))
+                log_message('ERROR', "issetVar T:($type) :: " . json_encode($var));
+
+            return $result;
+        }
+        
 }
