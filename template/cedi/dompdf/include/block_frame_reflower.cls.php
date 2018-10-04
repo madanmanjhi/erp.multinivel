@@ -3,7 +3,7 @@
  * @package dompdf
  * @link    http://www.dompdf.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
- * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @author  Fabien MÃ©nager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  * @version $Id: block_frame_reflower.cls.php 471 2012-02-06 21:59:10Z fabien.menager $
  */
@@ -193,7 +193,11 @@ class Block_Frame_Reflower extends Frame_Reflower {
     if ( $width < $min_width )
       extract($this->_calculate_width($min_width));
 
-    return array($width, $margin_left, $margin_right, $left, $right);
+      $margin_left =0;
+      $margin_right =0;
+      $left =0;
+      $right =0;
+      return array($width, $margin_left, $margin_right, $left, $right);
 
   }
   
