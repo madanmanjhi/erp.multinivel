@@ -5,7 +5,8 @@
         $nombre_empresa = $ci->general->issetVar($empresa,"nombre","NetworkSoft");
         $logo = $ci->general->issetVar($empresa,"logo","/logo.png");
         $icon = $ci->general->issetVar($empresa,"icono","/template/img/favicon/favicon.png");
-   	$style=$ci->general->get_style(1);
+        $web = $ci->general->issetVar($empresa,"web","/");
+   	    $style=$ci->general->get_style(1);
         $style = array(
             $ci->general->issetVar($style,"bg_color","#00B4DC"),
             $ci->general->issetVar($style,"btn_1_color","#17222d"),
@@ -41,8 +42,8 @@
         <link rel="stylesheet" type="text/css" media="screen" href="/template/css/demo.min.css">
 
         <!-- #FAVICONS -->
-        <link rel="shortcut icon" href="<?=$icon?>" type="image/jpg">
-        <link rel="icon" href="<?=$icon?>" type="image/jpg">
+        <link rel="shortcut icon" href="<?=$icon?>" type="image/png">
+        <link rel="icon" href="<?=$icon?>" type="image/png">
 
         <!-- #GOOGLE FONT -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
@@ -157,7 +158,8 @@
         <div id="footer" class="fade in">
             <br />
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <small>Copyright © 2018 <a href="http://networksoft.mx" target="_blank">NetworkSoft®</a> DEMO. Todos los derechos reservados.  </small>
+                <small>Copyright © <?=date('Y')?> <a href="<?=$web?>" target="_blank">
+                        <?=$nombre_empresa?></a> . Todos los derechos reservados.  </small>
             </div>
         </div>
         <!--================================================== -->	
@@ -165,7 +167,7 @@
                 .form_login{
                     background: rgba(<?= $ci->general->hex2rgb($style[2],true)?>,0.2) !important;
                         border: none;
-                        box-shadow: 1px 1px 4px rgba(0, 90, 110, 0.5);
+                        box-shadow: 1px 1px 4px rgba(<?= $ci->general->hex2rgb($style[2],true)?>, 0.5);
                 }	
                 #login-form header{
                         background: none;
@@ -203,7 +205,7 @@
                     font-weight: initial; 
                     height: 2.5em; 
                     background-color: <?=$style[1]?>;
-                    border-color: #268498;
+                    border-color: rgba(<?= $ci->general->hex2rgb($style[1],true)?>,0.1);
                     font-size: 1.5em;
                 }			
                 #enviar:hover{							
