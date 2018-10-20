@@ -1,5 +1,4 @@
-<?php
-if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 class modelo_pagosonline extends CI_Model
 {
 	function val_compropago()
@@ -41,8 +40,21 @@ class modelo_pagosonline extends CI_Model
 		}
 		return $payulatam;
 	}
-	
-	function val_paypal()
+
+    function val_blockchain()
+    {
+        $blockchain=$this->get_datos_blockchain();
+        if(!$blockchain){
+            $dato=array(
+                "apikey" =>	"0000"
+            );
+            $this->db->insert("blockchain",$dato);
+            $blockchain=$this->get_datos_blockchain();
+        }
+        return $blockchain;
+    }
+
+    function val_paypal()
 	{
 		$payulatam=$this->get_datos_paypal();
 		if(!$payulatam){
@@ -50,7 +62,7 @@ class modelo_pagosonline extends CI_Model
 					"email" =>	"seonetworksoft-facilitator@gmail.com"
 			);
 			$this->db->insert("paypal",$dato);
-			$payulatam=$this->get_datos_payulatam();
+			$payulatam=$this->get_datos_paypal();
 		}
 		return $payulatam;
 	}
@@ -75,7 +87,12 @@ class modelo_pagosonline extends CI_Model
 		$payulatam = $q->result();
 		return $payulatam;
 	}
-	
+    function get_datos_blockchain()
+    {
+        $q=$this->db->query("select * from blockchain");
+        $paypal = $q->result();
+        return $paypal;
+    }
 	function get_datos_paypal()
 	{
 		$q=$this->db->query("select * from paypal");
@@ -185,7 +202,31 @@ class modelo_pagosonline extends CI_Model
 	
 				return true;
 	}
-	
+
+    function actualizar_blockchain()
+    {
+        $test=0;
+        $estado='DES';
+
+        if(isset($_POST['test']))
+            $test=1;
+
+        if(isset($_POST['estatus']))
+            $estado='ACT';
+
+        $dato = array(
+            "apikey" => $_POST['key'],
+            "currency" => $_POST['moneda'],
+            "test" => $test,
+            "estatus" => $estado
+        );
+
+        $this->db->where('id', $_POST['id']);
+        $this->db->update('blockchain', $dato);
+
+        return true;
+    }
+
 	function actualizar_paypal()
 	{
 	

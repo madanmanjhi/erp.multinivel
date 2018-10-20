@@ -215,9 +215,13 @@
 															<a onclick="consignacion()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
 																<img src="/template/img/payment/deposito-bancario.jpg" alt="Banco" height="60" width="240">
 															</a>
-															<?php if($payulatam[0]->estatus=='ACT') {?>
+                                                            <?php if($blockchain[0]->estatus=='ACT') {?>
+                                                                <a onclick="blockchain()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
+                                                                    <img src="/template/img/payment/blockchain.png" alt="blockchain" height="60" >
+                                                                </a>
+                                                            <?php } if($payulatam[0]->estatus=='ACT') {?>
 															<a onclick="payuLatam()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
-																<img src="/template/img/payment/payu.jpg" alt="american express" height="60" width="100">
+																<img src="/template/img/payment/payu.jpg" alt="payu" height="60" width="100">
 															</a>
 															<?php } if($paypal[0]->estatus=='ACT') {?>
 															<a onclick="payPal()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
@@ -385,6 +389,30 @@
 			}
 		});	
 	}
+
+    function blockchain(){
+        iniciarSpinner();
+        $.ajax({
+            type:"post",
+            url:"pagarVentaBlockchain",
+            success: function(msg){
+                FinalizarSpinner();
+                bootbox.dialog({
+                    message: msg,
+                    title: "Pago Blockchain",
+                    className: "",
+                    buttons: {
+                        success: {
+                            label: "Cancelar",
+                            className: "btn-danger",
+                            callback: function() {
+                            }
+                        }
+                    }
+                })
+            }
+        });
+    }
 
 	function payuLatam(){
 		iniciarSpinner();

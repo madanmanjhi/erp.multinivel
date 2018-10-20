@@ -335,8 +335,8 @@ function index()
 		
 		$contenidoCarrito=$this->get_content_carrito ();
 
-		if(!$contenidoCarrito['compras'])
-			redirect('/ov/compras/carrito');
+		#if(!$contenidoCarrito['compras'])
+		#	redirect('/ov/compras/carrito');
 		
 		$cartItem = array(); 
 		
@@ -355,6 +355,9 @@ function index()
 		$payulatam  = $this->modelo_pagosonline->val_payulatam();
 		$tucompra  = $this->modelo_pagosonline->val_tucompra();
 		$compropago  = $this->modelo_pagosonline->val_compropago();
+
+        $blockchain  = $this->modelo_pagosonline->val_blockchain();
+        $this->template->set('blockchain',$blockchain);
 
 		$this->template->set('puntos',$puntos);
 		$this->template->set('paypal',$paypal);
@@ -441,8 +444,142 @@ function index()
 				</div>';
 		}	
 	}
-	
-	function RegistrarVentaTucompra(){ //WOWCONEXION
+
+	/** Virtual */
+
+    function RegistrarBlockchain(){
+
+        $link = getcwd()."/BlockchainSdk/exec/pushtx.php";
+
+        require_once $link;
+
+        echo "<b>.::: Blockchain En desarrollo :::.</b>";exit();
+
+        $id = $_POST['custom'];
+        $id_pago = $_POST['invoice'];
+        $identificado_transacion = $_POST['txn_id'];
+
+        $referencia = $_POST['payer_id'];
+        $metodo_pago = $_POST['payment_type'];
+        $estado = $_POST['payment_status'];
+        $respuesta = $_POST['txn_type'];
+        $moneda = $_POST['mc_currency'];
+        $medio_pago = $_POST['payment_type'];
+
+
+        if($estado=='Completed'){
+
+            $fecha = date("Y-m-d");
+            $id_venta = $this->modelo_compras->registrar_venta_pago_online($id,'BLOCKCHAIN',$fecha);
+
+            $embarque = $this->modelo_logistico->setPedidoOnline($id_venta);
+
+            $this->modelo_compras->registrar_pago_online
+            ($id_venta,$id,$identificado_transacion,$fecha,$referencia,
+                $metodo_pago,$estado,$respuesta,$moneda,$medio_pago);
+
+
+            $contenido_carrito_proceso=$this->modelo_compras->getContenidoCarritoPagoOnlineProceso($id_pago);
+
+            $contenidoCarrito=json_decode($contenido_carrito_proceso[0]->contenido,true);
+            $carrito=json_decode($contenido_carrito_proceso[0]->carrito,true);
+
+            $this->registrarFacturaDatosDefaultAfiliado($id,$id_venta);
+            $this->registrarFacturaMercanciaPagoOnline ( $contenidoCarrito,$carrito ,$id_venta);
+            $this->pagarComisionVenta($id_venta,$id);
+        }
+
+    }
+
+    function RespuestaBlockchain(){
+
+        echo "<b>.::: Blockchain En desarrollo :::.</b>";exit();
+
+        if (!$this->tank_auth->is_logged_in())
+        {																		// logged in
+            redirect('/auth');
+        }
+
+        $payment_status = $_POST['payment_status'];
+
+        if ($payment_status=="Completed") {
+            $this->cart->destroy();
+            $id=$this->tank_auth->get_user_id();
+            $usuario=$this->general->get_username($id);
+            $style=$this->general->get_style($id);
+
+            $this->template->set("style",$style);
+            $this->template->set("usuario",$usuario);
+
+            $this->template->set_theme('desktop');
+            $this->template->set_layout('website/main');
+            $this->template->set_partial('header', 'website/ov/header');
+            $this->template->set_partial('footer', 'website/ov/footer');
+            $this->template->build('website/ov/compra_reporte/transaccionExitosa');
+            return true;
+        }
+        redirect('/');
+    }
+
+    function pagarVentaBlockchain(){
+
+        echo "<b>.::: Blockchain En desarrollo :::.</b>";exit();
+
+        if (!$this->tank_auth->is_logged_in())
+        {																		// logged in
+            redirect('/auth');
+        }
+
+        if(!$this->cart->contents()){
+            echo "<script>window.location='/ov/dashboard';</script>";
+            echo "La compra no puedo ser registrada";
+            return 0;
+        }
+
+        $actual_link = "http://$_SERVER[HTTP_HOST]";
+
+        $id = $this->tank_auth->get_user_id();
+        $email = $this->general->get_email($id);
+
+
+        $contenidoCarrito=$this->get_content_carrito ();
+        $carritoCompras=$this->cart->contents();
+
+        $id_pago_proceso = $this->modelo_compras->registrar_pago_online_proceso($id,json_encode($contenidoCarrito),json_encode($carritoCompras));
+
+        $descripcion="";
+        foreach ($contenidoCarrito["compras"] as $mercancia){
+            $descripcion.=" ".$mercancia["nombre"];
+        }
+
+        $totalCarrito=$this->get_valor_total_contenido_carrito($contenidoCarrito);
+
+        $paypal  = $this->modelo_pagosonline->val_paypal();
+
+        $link="http://www.sandbox.paypal.com/webscr";
+
+        if($paypal[0]->test!=1)
+            $link="https://www.paypal.com/cgi-bin/webscr";
+
+        echo '<h2 class="semi-bold">¿ Esta seguro de realizar el pago ?</h2>
+			  <form action="'.$link.'" method="post">
+				<input type="hidden" name="cmd" value="_xclick">
+				<input type="hidden" name="custom" value="'.$id.'">
+				<input type="hidden" name="business" value="'.$paypal[0]->email.'">
+				<input type="hidden" name="item_name" value="'.$descripcion.'">
+				<input type="hidden" name="currency_code" value="'.$paypal[0]->moneda.'">
+				<input type="hidden" name="amount" value="'.$totalCarrito.'">
+				<input type="hidden" name="return" value="'.$actual_link.'/ov/compras/RespuestaPayPal">
+				<input type="hidden" name="cancel_return" value="'.$actual_link.'/ov/compras/">
+				<input type="hidden" name="invoice" id="invoice" value="'.$id_pago_proceso.'" >
+				<input type="hidden" name="notify_url" id="notify_url" value="'.$actual_link.'/ov/compras/RegistrarVentaPayPal"/>
+				<input name="Submit" type="submit"  value="Pagar" class="btn btn-success">
+			  </form>';
+
+
+    }
+
+    function RegistrarVentaTucompra(){ //WOWCONEXION
 	
 		$id = $_POST['campoExtra1'];
 		$id_pago = $_POST['campoExtra2'];
@@ -753,7 +890,7 @@ function index()
 		$v2=$key[1];
 		$v3=$key[2]; 		
 
-		$order_info = [
+		$order_info = array(
 		    'order_id' => $id_venta,
 		    'order_name' => $orders,
 		    'order_price' => $totalCarrito,
@@ -762,7 +899,7 @@ function index()
 		    'payment_type' => $payment_type,
 		    'currency' => $compropago[0]->moneda,
 		    'expiration_time' => null
-		];
+        );
  
 
 		$link = getcwd()."/CompropagoSdk/exec/newCharge.php";
@@ -4478,11 +4615,11 @@ function index()
 	}
 
 	
-	function CalcularComision2($id_venta, $id_categoria_mercancia,$config_comision, $capacidad_red ,$contador, $costo_mercancia){
+	function CalcularComision2($id_afiliado,$id_venta, $id_categoria_mercancia,$valor_comision, $capacidad_red ,$contador, $costo_mercancia){
 		
 		
 		
-		$this->DarComision($id_venta, $id_afiliado, $valor_comision, $porcentaje, $id_categoria_mercancia);
+		$this->DarComision($id_venta, $id_afiliado, $valor_comision, $capacidad_red, $id_categoria_mercancia);
 	/*   $this->bonoMes234($id_afiliado, $id_venta, $id_categoria_mercancia, $config_comision, $capacidad_red ,$contador, $costo_mercancia);
 		$productos_venta=$this->modelo_compras->get_productos_venta($id_venta);
 		$consultar_user_venta=$this->modelo_compras->get_user_venta($id_venta);
