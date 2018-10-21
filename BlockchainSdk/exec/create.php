@@ -3,12 +3,15 @@
 require_once(dirname(__DIR__) . '/vendor/autoload.php');
 
 $api_code = null;
-if(file_exists('code.txt')) {
-    $api_code = trim(file_get_contents('code.txt'));
-}
+if(!isset($api_key)){
+    echo "MUST BE SET AN API KEY</pre>\n";
+    exit();
+}    
+
+$api_code = trim($api_key);
 
 $Blockchain = new \Blockchain\Blockchain($api_code);
-
+/** REQUIRE nodejs, npm & root env features */
 $Blockchain->setServiceUrl('http://localhost:3000');
 
 $wallet = $Blockchain->Create->create('weakPassword01!');

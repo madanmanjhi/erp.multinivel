@@ -48,13 +48,14 @@ class Blockchain {
 
     const DEBUG = true;
     public $log = Array();
+    public $name_plugin = "blockchain-wallet-service";
 
     public function __construct($api_code=null) {
         $this->service_url = null;
 
         if(!is_null($api_code)) {
             $this->api_code = $api_code;
-        }
+        }            
 
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_USERAGENT, 'Blockchain-PHP/1.0');
@@ -81,7 +82,15 @@ class Blockchain {
         curl_setopt($this->ch, CURLOPT_TIMEOUT, intval($timeout));
     }
 
-    public function setServiceUrl($service_url) {
+    public function setServiceUrl($service_url) {  
+	    
+        try{
+            shell_exec($this->name_plugin." start --port 3000");
+        }catch (Exception $e){
+            echo "SERVICE PORT UNAVAILABLE";
+            return false;
+        }
+      
         if (substr($service_url, -1, 1) != '/'){
             $service_url = $service_url . '/';
         }

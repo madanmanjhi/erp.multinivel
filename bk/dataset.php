@@ -43,7 +43,7 @@ function newStatement($db,$query) {
 		$cmd = $db->prepare($query);
 		
 		// Relacionar y ejecutar la sentencia
-		$cmd->execute($values);
+		$cmd->execute();
 		return $cmd ? 1 : 0;
 		
 	} catch (PDOException $e) {
