@@ -1,26 +1,15 @@
-erp.multinivel 
+ERP MULTINIVEL (DEV)
 =
-_ERP BASE MLM - Versión: 3.9 - 
-[NetworkSoft DEV](http://network-soft.com)_
+**[Bitcoin](https://www.google.com/search?q=blockchain)**
+**[Logístico](https://www.google.com/search?q=sistema%20pos)** 
+**[BackOffice](https://www.google.com/search?q=oficina%20virtual)** 
+**[MLM](https://www.google.com/search?q=network%20marketing)**
 
-21-10-2018
--  
-### update web
-```mysql
-UPDATE empresa_multinivel
-  SET web = 'http://demo.networksoft.com.mx' 
-  WHERE id_tributaria LIKE '98765432-1'
- ```
-20-10-2018
--
-### create blockchain
-```mysql
-CREATE TABLE blockchain
- (
-     id int PRIMARY KEY AUTO_INCREMENT,
-     apikey varchar(100) DEFAULT 0000,
-     currency varchar(4) DEFAULT 'USD',
-     test int DEFAULT 0 COMMENT '1 is Actived',
-     estatus varchar(3) DEFAULT 'ACT'
- );
-```
+#### Edición: 
+_Alpha_
+
+#### Última Revisión : 
+2018-10-22
+ 
+#### Autor:
+ _[NetworkSoft DEV](http://network-soft.com)_
