@@ -538,7 +538,7 @@ function index()
         $contenidoCarrito=$this->get_content_carrito ();
         $totalCarrito=$this->get_valor_total_contenido_carrito($contenidoCarrito);
 */
-        $totalCarrito = 6000;
+        $totalCarrito = 6000;#TODO:
         $blockchain = $this->modelo_pagosonline->val_blockchain();
         $api_key = $blockchain[0]->apikey;
 
