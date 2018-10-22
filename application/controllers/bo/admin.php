@@ -97,8 +97,8 @@ class admin extends CI_Controller
 		$this->template->set("proveedores",$proveedores);
 		$this->template->set("promo",$promo);
 		$this->template->set("grupo",$grupo);
-		$this->template->set("servicio",$servicio);
-		$this->template->set("producto",$producto);
+		#$this->template->set("servicio",$servicio);
+		#$this->template->set("producto",$producto);
 		$this->template->set("combinado",$combinado);
 		$this->template->set("impuesto",$impuesto);
 		$this->template->set("tipo_mercancia",$tipo_mercancia);
@@ -228,7 +228,7 @@ class admin extends CI_Controller
 	}
 	function cuenta()
 	{
-		$cuenta = $this->model_admin->get_banco();
+		$this->model_admin->get_banco();
 	}
 	function new_user()
 	{
@@ -293,7 +293,7 @@ class admin extends CI_Controller
 			$datos = $this->model_admin->del_merc($id);
 			
 			if(unlink($_SERVER['DOCUMENT_ROOT'].$datos[0]->url)){
-				//echo "File Deleted.";
+				log_message("DEV", "File Deleted.");
 			}
 			
 			$this->model_admin->del_tipo_merc($datos[0]->id_tipo_mercancia, $datos[0]->sku);
@@ -477,18 +477,16 @@ class admin extends CI_Controller
 		}
 		
 		$id=$this->tank_auth->get_user_id();
-		
+        $usuario=$this->general->get_username($id);
+
 		if(!$this->general->isAValidUser($id,"comercial"))
 		{
 			redirect('/auth/logout');
 		}
 
-		$usuario=$this->general->get_username($id);
-
 		if(!isset($_POST['proveedor']))
 			$_POST['proveedor']='Ninguno';
-		
-		$id=$this->tank_auth->get_user_id();
+
 		$sku=$this->model_admin->new_mercancia();
 
 		$ruta="/media/carrito/";
@@ -565,8 +563,6 @@ class admin extends CI_Controller
 		<section class="col col-6">
 			<label class="label">Idioma</label>';
 		
-		$activado = '';
-		
 		foreach ($dato_pais as $idioma)
 		{
 			
@@ -596,7 +592,9 @@ class admin extends CI_Controller
 		
 		echo '</section></div></form>';
 
+		return true;
 	}
+
 	function cp()
 	{
 		if(strlen($_POST['cp'])>3)
@@ -809,7 +807,7 @@ class admin extends CI_Controller
 			
 			$id_img = $this->model_admin->traer_id_imagen_merc($sku);
 			
-			$datos = $this->model_admin->traer_foto($sku);
+			#TODO: $datos = $this->model_admin->traer_foto($sku);
 			
 		/*	if(unlink($_SERVER['DOCUMENT_ROOT'].$datos[0]->url)){
 				//echo "File Deleted.";
@@ -834,7 +832,10 @@ class admin extends CI_Controller
 		{																		// logged in
 			redirect('/auth');
 		}
-		
+
+        $id=$this->tank_auth->get_user_id();
+        $usuario=$this->general->get_username($id);
+
 		if($usuario[0]->id_tipo_usuario!=1)
 		{
 			redirect('/auth/logout');
@@ -845,7 +846,7 @@ class admin extends CI_Controller
 		$paquete_merc = $this->model_admin->get_paquete_mercancia($id_paquete);
 		$detalles     = $this->model_admin->detalle_paquete($id_paquete);
 
-		$this->template->set("tipo_paquete",$tipo_paquete);
+		#$this->template->set("tipo_paquete",$tipo_paquete);
 		$this->template->set("paquete_merc",$paquete_merc);
 	}
 	function alta_paquete()

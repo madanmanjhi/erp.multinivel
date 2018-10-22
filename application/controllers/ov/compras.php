@@ -335,7 +335,8 @@ function index()
 		
 		$contenidoCarrito=$this->get_content_carrito ();
 
-		#if(!$contenidoCarrito['compras'])
+		#TODO:
+        # if(!$contenidoCarrito['compras'])
 		#	redirect('/ov/compras/carrito');
 		
 		$cartItem = array(); 
@@ -523,59 +524,43 @@ function index()
 
     function pagarVentaBlockchain(){
 
-        echo "<b>.::: Blockchain En desarrollo :::.</b>";exit();
-
         if (!$this->tank_auth->is_logged_in())
         {																		// logged in
             redirect('/auth');
         }
-
+/*TODO:
         if(!$this->cart->contents()){
             echo "<script>window.location='/ov/dashboard';</script>";
             echo "La compra no puedo ser registrada";
             return 0;
         }
 
-        $actual_link = "http://$_SERVER[HTTP_HOST]";
-
-        $id = $this->tank_auth->get_user_id();
-        $email = $this->general->get_email($id);
-
-
         $contenidoCarrito=$this->get_content_carrito ();
-        $carritoCompras=$this->cart->contents();
+        $totalCarrito=$this->get_valor_total_contenido_carrito($contenidoCarrito);
+*/
+        $totalCarrito = 6000;
+        $blockchain = $this->modelo_pagosonline->val_blockchain();
+        $api_key = $blockchain[0]->apikey;
 
-        $id_pago_proceso = $this->modelo_compras->registrar_pago_online_proceso($id,json_encode($contenidoCarrito),json_encode($carritoCompras));
+        $link = getcwd()."/BlockchainSdk/exec/rates.php";
 
-        $descripcion="";
-        foreach ($contenidoCarrito["compras"] as $mercancia){
-            $descripcion.=" ".$mercancia["nombre"];
+        require_once $link;
+
+        if(!$myAPI){
+            echo "<b>.::: Blockchain En desarrollo :::.</b>";
+            exit();
         }
 
-        $totalCarrito=$this->get_valor_total_contenido_carrito($contenidoCarrito);
+        $currency = "USD";$to="BTC";
+        $amount = $myAPI->convertTo($totalCarrito,$currency,$to);
+        $rates = $myAPI->getRates($currency);
+        $this->template->set("amount","$amount");
+        $this->template->set("rates",$rates);
+        $this->template->set("xe",$to);
+        $this->template->set("currency",$currency);
+        $this->template->set("value","$totalCarrito");
 
-        $paypal  = $this->modelo_pagosonline->val_paypal();
-
-        $link="http://www.sandbox.paypal.com/webscr";
-
-        if($paypal[0]->test!=1)
-            $link="https://www.paypal.com/cgi-bin/webscr";
-
-        echo '<h2 class="semi-bold">¿ Esta seguro de realizar el pago ?</h2>
-			  <form action="'.$link.'" method="post">
-				<input type="hidden" name="cmd" value="_xclick">
-				<input type="hidden" name="custom" value="'.$id.'">
-				<input type="hidden" name="business" value="'.$paypal[0]->email.'">
-				<input type="hidden" name="item_name" value="'.$descripcion.'">
-				<input type="hidden" name="currency_code" value="'.$paypal[0]->moneda.'">
-				<input type="hidden" name="amount" value="'.$totalCarrito.'">
-				<input type="hidden" name="return" value="'.$actual_link.'/ov/compras/RespuestaPayPal">
-				<input type="hidden" name="cancel_return" value="'.$actual_link.'/ov/compras/">
-				<input type="hidden" name="invoice" id="invoice" value="'.$id_pago_proceso.'" >
-				<input type="hidden" name="notify_url" id="notify_url" value="'.$actual_link.'/ov/compras/RegistrarVentaPayPal"/>
-				<input name="Submit" type="submit"  value="Pagar" class="btn btn-success">
-			  </form>';
-
+        $this->template->build('website/ov/compra_reporte/blockchain/consultar');
 
     }
 

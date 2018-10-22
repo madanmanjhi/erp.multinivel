@@ -1,78 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-
-    <style type="text/css">
-        td {
-            text-align: right;
-        }
-        td:first-child {
-            text-align: left;
-        }
-    </style>
-</head>
-<body>
-<pre><?php
-
+<?php
 require_once(dirname(__DIR__) . '/vendor/autoload.php');
 
+function pre_message($string,$exit = false){
+    echo "<pre>$string</pre>\n";
+    if($exit)
+        exit();
+}
+
 $api_code = null;
-if(!isset($api_key)){
-    echo "MUST BE SET AN API KEY</pre>\n";
-    exit();
-}    
+if(!isset($api_key))
+    pre_message("MUST BE SET AN API KEY",true);
 
-$api_code = trim($api_key);
+$myAPI = new rates($api_key);
 
-$Blockchain = new \Blockchain\Blockchain($api_code);
+class rates{
 
-// Convert a fiat amount to BTC
-$amount = $Blockchain->Rates->toBTC(500, 'USD');
+    private $Blockchain = false;
+    private $examples = array();
 
-?>
-<p>500 USD will purchase <?php echo $amount; ?> BTC.</p>
-<?php
+    function __construct($api_key = 0000){
 
-// Get Exchanges Rates
-$rates = $Blockchain->Rates->get();
+        $api_code = trim($api_key);
+        $this->Blockchain = new \Blockchain\Blockchain($api_code);
+    }
 
-?>
-<table>
-    <thead>
-        <tr>
-            <th>&nbsp;</th>
-            <th>15 m</th>
-            <th>Last</th>
-            <th>Buy</th>
-            <th>Sell</th>
-        </tr>
-    </thead>
-    <tbody>
-<?php
+    function convertTo($units = 500,$currency = 'USD',$to = "BTC"){
+        // Convert a fiat amount to BTC
+        $funct = "to".$to;
+        $amount = $this->Blockchain->Rates->$funct($units, $currency);
+        return $amount;
+    }
 
-foreach ($rates as $cur => $ticker) {
-    ?>
-        <tr>
-            <td><strong><?php echo $cur; ?> (<?php echo $ticker->symbol; ?>)</strong></td>
-            <td><?php echo $ticker->m15; ?></td>
-            <td><?php echo $ticker->last; ?></td>
-            <td><?php echo $ticker->buy; ?></td>
-            <td><?php echo $ticker->sell; ?></td>
-        </tr>
-    <?php
+    function getRates($cur = false){
+        // Get Exchanges Rates
+        $rates = $this->Blockchain->Rates->get($cur);
+        return $rates;
+    }
+
+    function getLog(){
+        // Output log of activity
+        $log = $this->Blockchain->log;
+        return $log;
+    }
+
 }
 
 ?>
-    </tbody>
-</table>
-<?php
-
-var_dump($rates);
-
-// Output log of activity
-var_dump($Blockchain->log);
-
-?></pre>
-</body>
-</html>

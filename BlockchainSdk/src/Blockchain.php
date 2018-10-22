@@ -32,12 +32,12 @@ use \Blockchain\V2\Receive\Receive as ReceiveV2;
 
 // Check if BCMath module installed
 if(!function_exists('bcscale')) {
-    throw new Error("BC Math module not installed.");
+    $this->_pre_error("BC Math module not installed.");
 }
 
 // Check if curl module installed
 if(!function_exists('curl_init')) {
-    throw new Error("cURL module not installed.");
+    $this->_pre_error("cURL module not installed.");
 }
 
 class Blockchain {
@@ -83,13 +83,6 @@ class Blockchain {
     }
 
     public function setServiceUrl($service_url) {  
-	    
-        try{
-            shell_exec($this->name_plugin." start --port 3000");
-        }catch (Exception $e){
-            echo "SERVICE PORT UNAVAILABLE";
-            return false;
-        }
       
         if (substr($service_url, -1, 1) != '/'){
             $service_url = $service_url . '/';
@@ -102,7 +95,7 @@ class Blockchain {
 
         if (($resource == "api/v2/create") || (substr($resource, 0, 8) === "merchant")) {
             if ($this->service_url == null) {
-                throw new ApiError("When calling a merchant endpoint or creating a wallet, service_url must be set");
+                $this->_pre_error("When calling a merchant endpoint or creating a wallet, service_url must be set");
             }
             $url = $this->service_url;
         }
@@ -123,7 +116,7 @@ class Blockchain {
 
         // throw ApiError if we get an 'error' field in the JSON
         if(array_key_exists('error', $json)) {
-            throw new ApiError($json['error']);
+            $this->_pre_error($json['error']);
         }
 
         return $json;
@@ -133,7 +126,7 @@ class Blockchain {
         $url = Blockchain::URL;
 
         if (($resource == "api/v2/create") || (substr($resource, 0, 8) === "merchant")) {
-            $url = SERVICE_URL;
+            $url = $this->service_url;
         }
 
         curl_setopt($this->ch, CURLOPT_POST, false);
@@ -156,14 +149,14 @@ class Blockchain {
 
         if(curl_error($this->ch)) {
             $info = curl_getinfo($this->ch);
-            throw new HttpError("Call to " . $info['url'] . " failed: " . curl_error($this->ch));
+            $this->_pre_error("Call to " . $info['url'] . " failed: " . curl_error($this->ch));
         }
         $json = json_decode($response, true);
         if(is_null($json)) {
             // this is possibly a from btc request with a comma separation
             $json = json_decode(str_replace(',', '', $response));
             if (is_null($json))
-                throw new Error("Unable to decode JSON response from Blockchain: " . $response);
+                $this->_pre_error("Unable to decode JSON response from Blockchain: " . $response);
         }
 
         if(self::DEBUG) {
@@ -175,5 +168,15 @@ class Blockchain {
         }
 
         return $json;
+    }
+    
+    function _pre_error($string){
+        $this->_pre_message($string,true);
+    }
+    
+    function _pre_message($string,$exit = false){
+        echo "<pre>$string</pre>\n";
+        if($exit)
+            exit();
     }
 }

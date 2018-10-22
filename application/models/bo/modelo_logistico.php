@@ -287,7 +287,7 @@ class modelo_logistico extends CI_Model
 		
 		if(isset($id_inventario))
 		{
-			$actual=$inventario_res[0]->cantidad*1;
+			$actual=$id_inventario[0]->cantidad*1;
 			$mas=$cant*1;
 			$cantidad=$actual+$mas;
 			$this->db->query("update inventario set cantidad=".$cantidad." where id_inventario=".$id_inventario);
@@ -358,10 +358,10 @@ class modelo_logistico extends CI_Model
 		
 		if(isset($id_inventario))
 		{
-			$actual=$inventario_res[0]->cantidad*1;
+			$actual=$id_inventario[0]->cantidad*1;
 			$mas=$cant*1;
 			$cantidad=$actual-$mas;
-			$this->db->query("update inventario set cantidad=".$cantidad." where id_inventario=".$inventario_res[0]->id_inventario);
+			$this->db->query("update inventario set cantidad=".$cantidad." where id_inventario=".$id_inventario[0]->id_inventario);
 		}
 	}
 	
@@ -972,20 +972,20 @@ pt.id = cve.id_tarifa and co.Code = pm.id_pais and pm.estado = es.id and pm.muni
 			//$dato++;
 		}
 		
-		$embarques_array = implode(',', $dato);
+		$embarques_array = $dato ? implode(',', $dato) : 1;
 		
 		return $this->getEmbarquesHechos ( $inicio, $fin, $embarques_array);
 	}
 	
-	private function getEmbarquesHechos($inicio, $fin, $id) {
+	private function getEmbarquesHechos($inicio, $fin, $id = 1) {
 		
 		/*$q2=$this->db->query("SELECT a.*, b.keyword, b.destino, c.descripcion tipo, d.nombre origen, e.descripcion estatus_e, f.id_embarque,f.fecha_entrega,
 		 h.descripcion estado_e, b.id_mercancia, b.cantidad, cve.correo
 		 FROM surtido a, movimiento b, cat_movimiento c, almacen d, cat_estatus_surtido e, embarque f, cross_surtido_embarque g, cross_venta_envio cve,
 		 cat_estatus_embarque h WHERE a.id_movimiento=b.id_movimiento and a.id_almacen_origen=d.id_almacen and f.id_embarque=g.id_embarque and a.id_surtido=g.id_surtido
 		 and b.id_tipo=c.id_movimiento and a.estatus=e.id_estatus and h.id_estatus=f.id_estatus and cve.id_venta = a.id_venta and f.id_embarque=".$embarque->id_embarque." limit 1");
-		*/				
-		
+		*/
+
 		$query = "SELECT 
 					    s.id_surtido as id,
 					    m.keyword as id_transaccion,
@@ -1112,7 +1112,7 @@ pt.id = cve.id_tarifa and co.Code = pm.id_pais and pm.estado = es.id and pm.muni
 	}
 	function del_file_multiple()
 	{
-		foreach ($_post["archivo"] as $file) 
+		foreach ($_POST["archivo"] as $file)
 		{
 			$this->db->query('delete form archivero_cedi where id_archivero='.$file);
 		}

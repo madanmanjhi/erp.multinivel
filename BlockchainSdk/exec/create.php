@@ -10,6 +10,8 @@ if(!isset($api_key)){
 
 $api_code = trim($api_key);
 
+require_once("WalletService.php");
+
 $Blockchain = new \Blockchain\Blockchain($api_code);
 /** REQUIRE nodejs, npm & root env features */
 $Blockchain->setServiceUrl('http://localhost:3000');

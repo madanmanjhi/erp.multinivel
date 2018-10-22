@@ -259,7 +259,18 @@
 
 										</div>
 </div>
+<style>
+    .payment-methods .btn.btn-success.txt-color-blueLight {
+        padding: 1px;
+        border-radius: 0.4em;
+        background: none;
+        border: thin solid;
+    }
+    .payment-methods .btn.btn-success.txt-color-blueLight:hover {
+        border: thin solid #009148;
+    }
 
+</style>
 <script>
     paceOptions = {
       elements: true
