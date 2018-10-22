@@ -49,14 +49,14 @@ $active_group = 'default';
 $active_record = TRUE;
 
 
-#$db['default']['hostname'] = 'erpaguagana.db.11569157.1d4.hostedresource.net';
-#$db['default']['username'] = 'erpaguagana';
-#$db['default']['password'] = 'AGns#2018';
-#$db['default']['database'] = 'erpaguagana';
+#$db['default']['hostname'] = '107.180.118.8';
+#$db['default']['username'] = 'startnetworksoft';
+#$db['default']['password'] = 'NStm2017#';
+#$db['default']['database'] = 'erpbeta';
 
 $db['default']['hostname'] = '127.0.0.1';
 $db['default']['username'] = 'root';
-$db['default']['password'] = '';
+$db['default']['password'] = 'toor';#'';
 $db['default']['database'] = 'erpmultinivel';
 $db['default']['port'] = '';
 $db['default']['dbdriver'] = 'mysqli';
