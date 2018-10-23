@@ -254,7 +254,7 @@ class general extends CI_Model
                 $result = isset($var[0]->$type) ? $var[0]->$type : $novar;
 
             if (!isset($var[0]->$type))
-                log_message('ERROR', "issetVar T:($type) :: " . json_encode($var));
+                log_message('DEV', "issetVar T:($type) :: " . json_encode($var));
 
             return $result;
         }
@@ -300,5 +300,56 @@ class general extends CI_Model
 
             return $hex; // returns the hex value including the number sign (#)
          }
-        
+
+        function getAnyTime($date, $time = '1 month', $add = true)
+        {
+            $fecha_sub = new DateTime($date);
+            if ($add)
+                date_add($fecha_sub, date_interval_create_from_date_string("$time"));
+            else
+                date_sub($fecha_sub, date_interval_create_from_date_string("$time"));
+
+            $date = date_format($fecha_sub, 'Y-m-d');
+
+            return $date;
+        }
+
+        function getNextTime($date, $time = 'month')
+        {
+            $fecha_sub = new DateTime($date);
+            date_add($fecha_sub, date_interval_create_from_date_string("1 $time"));
+            $date = date_format($fecha_sub, 'Y-m-d');
+
+            return $date;
+        }
+
+        function getLastTime($date, $time = 'month')
+        {
+            $fecha_sub = new DateTime($date);
+            date_sub($fecha_sub, date_interval_create_from_date_string("1 $time"));
+            $date = date_format($fecha_sub, 'Y-m-d');
+
+            return $date;
+        }
+
+    function setFechaformato($fecha=false,$formato=0)
+    {
+        $f = array('Y-m-d H:i:s','Y-m-d');
+
+        if(!$fecha)
+            $fecha = date($f[0]);
+
+        $fecha = strtotime($fecha);
+
+        if(isset($f[$formato]))
+            return date($f[$formato],$fecha);
+
+        try {
+            return date($formato,$fecha);
+        } catch (Exception $e) {
+            log_message('DEV',"fail conversion date :: $formato");
+            return date($f[1],$fecha);
+        }
+    }
+
 }
