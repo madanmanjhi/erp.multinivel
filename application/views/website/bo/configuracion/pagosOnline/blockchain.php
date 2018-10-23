@@ -42,10 +42,13 @@
 						</span>
                         <h2>BlockChain</h2>
                     </header>
-
+                    <?php
+                    $wallets = $blockchain[1];
+                    $blockchain = $blockchain[0];
+                    ?>
                     <!-- widget div-->
                     <div>
-                        <form id="form_virtual" method="post" action="/bo/virtual/actualizar_blockchain" role="form"
+                        <form id="form_virtual" method="POST" action="/bo/virtual/actualizar_blockchain" role="form"
                               class="smart-form">
                             <fieldset>
                                 <legend>Configuracion API</legend>
@@ -56,7 +59,7 @@
                                                value="<?= $blockchain[0]->apikey; ?>">
                                     </label>
                                     <div class="note">
-                                        <strong>Nota:</strong> En estado test : 0000
+                                        <strong>Nota:</strong> En estado test : 78d9ce16-e1d6-47f7-acf1-f456409715f5
                                     </div>
                                 </section>
                                 <section class="col col-6">
@@ -87,10 +90,43 @@
                                     </label>
                                 </section>
                             </fieldset>
+                            <fieldset>
+                                <legend>Wallets</legend>
+                                <?php foreach ($wallets as $index => $wallet) : ?>
+                                <?php $id_data = $index+1; ?>
+                                <div class="well col-md-6" id="wx_<?=$id_data;?>">
+                                    <section class="col col-8 wallet_<?=$id_data;?>">
+                                        Hash :
+                                        <label class="input">
+                                            <i class="icon-prepend fa fa-money"></i>
+                                            <input required type="text" name="wallet[]"
+                                                   id="wallet_<?=$id_data;?>" class="wallet"
+                                                   pattern="[A-z0-9--]{36,}" onkeyup="validarhash(<?=$id_data;?>)"
+                                                   placeholder="36 caracteres" value="<?= $wallet->hashkey; ?>">
+                                        </label>
+                                        <div class="note">
+                                            <strong>Nota:</strong> En estado test : 2c303dc6-3817-4759-b0b1-a55369a56028
+                                        </div>
+                                    </section>
+                                    <section class="col col-4 wallet_per_<?=$id_data;?>">
+                                        <?php $per = (sizeof($wallets)>1) ? $wallet->porcentaje : 100; ?>
+                                        Porcentaje :
+                                        <label class="input">
+                                            <i class="icon-prepend">%</i>
+                                            <input required type="number" name="wallet_per[]"
+                                                   id="wallet_per_<?=$id_data;?>" class="wallet-per"
+                                                   max="100" min="0" step="0.01"
+                                                   placeholder="máximo: 100%" value="<?= $wallet->porcentaje; ?>">
+                                        </label>
+                                        <div class="note">
+                                            <strong>Nota:</strong> 0 es deshabilitado
+                                        </div>
+                                    </section>
+                                </div>
+                                <?php endforeach; ?>
+                            </fieldset>
                             <footer>
-                                <button style="margin: 1rem;margin-bottom: 4rem;" type="input" class="btn btn-success">
-                                    Guardar
-                                </button>
+                                <input style="margin: 1rem;margin-bottom: 4rem;" type="submit" class="btn btn-success" value="Guardar" />
                             </footer>
                         </form>
                     </div>
@@ -115,13 +151,27 @@
 <script src="/template/js/plugin/fuelux/wizard/wizard.min.js"></script>
 <script type="text/javascript">
 
-    $("#form_paypal").submit(function (event) {
+    $("#form_virtual").submit(function (event) {
         event.preventDefault();
         iniciarSpinner();
         enviar();
     });
 
-    $("#moneda").val("<?=$blockchain[0]->moneda;?>");
+    $("#moneda").val("<?=$blockchain[0]->currency;?>");
+
+    function validarhash(data=1) {
+        var tag = "#wallet_"+data;
+        var sec = "section.wallet_"+data;
+        var aler = "#alert_"+data;
+        var value = $(tag).val();
+        var msg = "Por favor, Verifique y digite el Hash permitido.";
+        var warn = "<div class='txt-color-red' id='alert_"+data+"'>"+msg+"</div>";
+
+        $(aler).remove();
+        if(value.length<36)
+            $(sec).append(warn);
+
+    }
 
     function enviar() {
 

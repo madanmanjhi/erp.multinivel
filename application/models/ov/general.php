@@ -277,4 +277,106 @@ class general extends mGeneral
 		return $q->result();
 	}
 
+    public function setAfiliadoenRed($id,$red){
+
+        $isAfiliado = $this->isAfiliadoenRed ( $id, $red );
+
+        if ($isAfiliado)
+            return $this->setRedActived($id, $red);
+
+        $Redes = $this->isAfiliadoenRed($id);
+        $isNew = (sizeof($Redes)==1) && (sizeof($isAfiliado) == 1);
+
+        $this->insertNewRed($id, $red);
+
+        return ($isNew);
+
+    }
+
+    private function insertNewRed($id, $red) {
+
+        $this->nueva_red($id,$red);
+
+        $negocio = "(SELECT
+					            max(id_red) id
+					        FROM
+					            red
+					        WHERE
+					            lider = a.directo AND tipo_red = $red and estatus = 'ACT')";
+
+        $query = "INSERT INTO afiliar
+                          SELECT null,$red,$id,0,directo,lado,'ACT',$negocio
+                                    FROM afiliar a WHERE id_afiliado = $id AND id_red = 1";
+        $this->db->query($query);
+    }
+
+    function getLider($id,$red){
+        $query = "SELECT
+					            debajo_de id
+					        FROM
+					            afiliar
+					        WHERE
+					            id_afiliado in (SELECT debajo_de FROM afiliar 
+                                        WHERE id_red = $red  
+                                            AND id_afiliado = $id)
+                                AND id_red = $red ";
+        $q = $this->db->query($query);
+
+        $q = $q->result();
+        return $q ? $q[0]->id : 2;
+
+    }
+
+    private function nueva_red($id,$red = 1) {
+
+        $ciclo = ($red == 2) ? 1 : 0;
+
+        $dato_red = array(
+            'tipo_red' => $red,
+            "lider" => $id,
+            "ciclo" => $ciclo,
+            "estatus" => "ACT"
+        );
+
+        $this->db->insert("red", $dato_red);
+
+        return $this->db->insert_id();
+    }
+
+    private function setRedActived($id_usuario,$id_red)
+    {
+        $dato = array(
+            "estatus" => "ACT"
+        );
+
+        $this->db->where('id_afiliado', $id_usuario);
+        $this->db->where('id_red', $id_red);
+        $this->db->update('afiliar', $dato);
+
+        return true;
+
+    }
+
+    public function isAfiliadoenRed($id, $red = false) {
+
+        $query = "SELECT * FROM afiliar WHERE id_afiliado = $id";
+
+        if($red)
+            $query.=" AND id_red in ($red)";
+
+        $q = $this->db->query($query);
+        $q = $q->result();
+        return $q;
+    }
+
+
+    function isPreActived($id)
+    {
+        if($id==2)
+            return true;
+
+        $q=$this->db->query("SELECT * FROM venta WHERE id_user = $id");
+        return $q->result();
+    }
+
 }
