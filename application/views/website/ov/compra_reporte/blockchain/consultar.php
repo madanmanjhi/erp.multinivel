@@ -1,20 +1,23 @@
 <div id="spinner-div"></div>
-<div class="well">
-    <fieldset>
+<div>
+    <legend>Total a Pagar</legend>
+    <fieldset class="col col-md-12">
         <div class="row">
-            <legend>Total a Pagar</legend>
             <div class="col-md-6">
-                <div class="well">
+                <div class="backHome bg-color-grayDark">
                     <h3><strong><?=$currency?>: </strong></h3>
                     <h2 class="no-padding">$ <?=$value?></h2>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="well" style="text-align: right">
+                <div class="backHome bg-color-green" style="text-align: right">
                     <h3 ><strong><?=$xe?>: </strong></h3>
                     <h2 class="no-padding" ><?=$amount; ?></h2>
                 </div>
             </div>
+        </div>
+        <hr class="col-md-11"/>
+        <div class="row">
             <legend>Tasa(s) de cambio</legend>
                 <?php foreach ($rates as $cur => $ticker) : ?>
                     <?php $sym = $ticker->symbol; $cuk= " " . $cur; ?>
@@ -32,16 +35,20 @@
                                 </tr>
                             </table>
                         </div>
-
                     </div>
-
-
                 <?php endforeach; ?>
-
-
-
         </div>
+
     </fieldset>
+</div>
+<hr class="col-md-11"/>
+<div class="row">
+    <section class="col-md-12">
+        <h2 style="text-align: center">
+            ¿Deseas proceder con el pago? <br/> haz click en
+            <strong class="txt-color-green">continuar</strong>.
+        </h2>
+    </section>
 </div>
 <style type="text/css">
     td {
@@ -56,55 +63,5 @@
         padding-right: 1rem;
     }
 </style>
-<script type="text/javascript">
-    function Enviar(id, nombre) {
-        bootbox.dialog({
-            message: "Estas Seguro(a) que desea pagar desde " + nombre+" ?",
-            title: "Pago",
-            className: "",
-            buttons: {
-                success: {
-                    label: "Aceptar",
-                    className: "btn-success",
-                    callback: function () {
-                        setiniciarSpinner();
-                        Registrar(id);
-                    }
-                },
-                cancelar: {
-                    label: "Cancelar",
-                    className: "btn-danger",
-                    callback: function () {
-                    }
-                }
-            }
-        })
-    }
-    function Registrar(id) {
-        $.ajax({
-            data: {
-                prov: id,
-            },
-            type: "post",
-            url: "CompropagoRegistrar",
-            success: function (msg) {
-                FinalizarSpinner();
-                bootbox.dialog({
-                    message: msg,
-                    title: "Pago",
-                    className: "",
-                    buttons: {
-                        success: {
-                            label: "Aceptar",
-                            className: "btn-success",
-                            callback: function () {
-                                window.location = "/ov/dashboard";
-                            }
-                        }
-                    }
-                })
-            }
-        });
-    }
-</script>
+
 

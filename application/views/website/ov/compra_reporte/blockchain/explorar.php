@@ -2,24 +2,32 @@
 <div class="well">
     <fieldset>
         <div class="row">
-            <?php foreach ($providers as $providing) { ?>
-                <div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
-                    <a onclick="Enviar('<?= $provider->internal_name ?>', '<?= $provider->name ?>')">
+            <?php foreach ($providers as $provider) : ?>
+                <?php
+                $nombre = substr($provider->hashkey, 0, 6);
+                $nombre .= " ... ".substr($provider->hashkey, -6);
+                ?>
+                <div class="col-xs-12">
+                    <a onclick="Enviar(<?= $provider->id; ?>,'<?= $nombre; ?>')">
                         <div class="well well-sm txt-color-white text-center link_dashboard" style="background:#3498db">
-                            <img src="<?= $provider->image_medium; ?>" alt="<?= $provider->name; ?>">
-                            <h5><?= substr($provider->name, 0, 12) ?></h5>
+                            <?php
+                            #$icon = '<img src="/template/img/payment/blockchain.png" alt="'.$nombre.'" />';
+                            $icon = "<i class='fa fa-qrcode fa-3x'></i>";
+                            ?>
+                            <?=$icon;?>
+                            <h1><?= $nombre; ?></h1>
                         </div>	
                     </a>
                 </div>
-            <?php } ?>
+            <?php endforeach; ?>
         </div>
     </fieldset>
 </div>
 <script type="text/javascript">
     function Enviar(id, nombre) {
         bootbox.dialog({
-            message: "Estas Seguro(a) que desea pagar desde " + nombre+" ?",
-            title: "Pago",
+            message: "Estas Seguro(a) que desea pagar con el # " + nombre+" ?",
+            title: "Confirmar Transacción",
             className: "",
             buttons: {
                 success: {
@@ -42,15 +50,15 @@
     function Registrar(id) {
         $.ajax({
             data: {
-                prov: id,
+                wx: id,
             },
-            type: "post",
-            url: "CompropagoRegistrar",
+            type: "POST",
+            url: "pagarVentaBlockchain",
             success: function (msg) {
                 FinalizarSpinner();
                 bootbox.dialog({
                     message: msg,
-                    title: "Pago",
+                    title: "Confirmar Transacción",
                     className: "",
                     buttons: {
                         success: {

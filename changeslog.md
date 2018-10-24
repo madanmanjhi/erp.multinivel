@@ -3,6 +3,14 @@ erp.multinivel
 _ERP BASE MLM - Versión: 3.9 - 
 [NetworkSoft DEV](http://network-soft.com)_
 
+24-10-2018
+-
+### update hashkey
+```mysql
+ALTER TABLE blockchain_wallet 
+MODIFY hashkey varchar(120) DEFAULT '0';
+```
+
 23-10-2018
 -
 ### create wallets

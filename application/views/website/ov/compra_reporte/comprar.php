@@ -404,19 +404,48 @@
     function blockchain(){
         iniciarSpinner();
         $.ajax({
-            type:"post",
-            url:"pagarVentaBlockchain",
+            type:"POST",
+            url:"consultarBlockchain",
             success: function(msg){
                 FinalizarSpinner();
                 bootbox.dialog({
                     message: msg,
-                    title: "Pago Blockchain",
+                    title: "Cotizar Blockchain",
                     className: "",
                     buttons: {
-                        success: {
+                        danger: {
                             label: "Cancelar",
                             className: "btn-danger",
                             callback: function() {
+                            }
+                        },
+                        success: {
+                            label: "Continuar",
+                            className: "btn-success",
+                            callback: function() {
+
+                                iniciarSpinner();
+                                $.ajax({
+                                    type:"POST",
+                                    url:"pagarVentaBlockchain",
+                                    success: function(msg){
+                                        FinalizarSpinner();
+                                        bootbox.dialog({
+                                            message: msg,
+                                            title: "Pago Blockchain",
+                                            className: "",
+                                            buttons: {
+                                                danger: {
+                                                    label: "Cancelar",
+                                                    className: "btn-danger",
+                                                    callback: function() {
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                });
+
                             }
                         }
                     }

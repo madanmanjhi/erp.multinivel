@@ -93,9 +93,9 @@ class modelo_pagosonline extends CI_Model
 		$blockchain = $q->result();
 		return $blockchain;
 	}
-    function get_wallet_blockchain($id = 1)
+    function get_wallet_blockchain($id = 1,$where = "")
     {
-        $q=$this->db->query("select * from blockchain_wallet where id_usuario in ($id)");
+        $q=$this->db->query("select * from blockchain_wallet where id_usuario in ($id) $where");
         $wallets = $q->result();
         return $wallets;
     }
@@ -230,6 +230,14 @@ class modelo_pagosonline extends CI_Model
         $this->db->where('id', $_POST['id']);
         $this->db->update('blockchain', $dato);
 
+        $dato=array(
+            "hashkey"     => $_POST['wallet'],
+            "porcentaje"       		=> $_POST['wallet_per'],
+        );
+
+        $this->db->where('id_usuario', 1);
+        $this->db->update('blockchain_wallet', $dato);
+
         return true;
     }
 
@@ -254,7 +262,7 @@ class modelo_pagosonline extends CI_Model
 	
 		$this->db->where('email', $_POST['id']);
 		$this->db->update('paypal', $dato);
-	
+
 		return true;
 	}
 

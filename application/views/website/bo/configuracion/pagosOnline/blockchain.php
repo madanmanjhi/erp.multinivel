@@ -94,18 +94,20 @@
                                 <legend>Wallets</legend>
                                 <?php foreach ($wallets as $index => $wallet) : ?>
                                 <?php $id_data = $index+1; ?>
-                                <div class="well col-md-6" id="wx_<?=$id_data;?>">
+                                <div class="well col-md-6 padding-top-10" id="wx_<?=$id_data;?>">
                                     <section class="col col-8 wallet_<?=$id_data;?>">
-                                        Hash :
+                                        <i class="icon-append fa fa-money"></i>xPub :
                                         <label class="input">
-                                            <i class="icon-prepend fa fa-money"></i>
-                                            <input required type="text" name="wallet[]"
+
+                                            <textarea required type="text" name="wallet[]"
                                                    id="wallet_<?=$id_data;?>" class="wallet"
-                                                   pattern="[A-z0-9--]{36,}" onkeyup="validarhash(<?=$id_data;?>)"
-                                                   placeholder="36 caracteres" value="<?= $wallet->hashkey; ?>">
+                                                   pattern="[A-z0-9--]{111,120}" onkeyup="validarhash(<?=$id_data;?>)"
+                                                   rows="3" style="width: 100%;"
+                                                   placeholder="111 caracteres"><?= $wallet->hashkey; ?></textarea>
                                         </label>
                                         <div class="note">
-                                            <strong>Nota:</strong> En estado test : 2c303dc6-3817-4759-b0b1-a55369a56028
+                                            <strong>Nota:</strong> En estado test :
+                                            <abbr title="xpub6DCYLGKBqULSb45X9tKkg5gCX2QP1o4gx7D9QTruw7xhA6Rp21crjvL6G94Uij4Di6jWZ566t4kFj7Az9BRnBDMcakL81Bs7vhCRnCmgQ26">?</abbr>
                                         </div>
                                     </section>
                                     <section class="col col-4 wallet_per_<?=$id_data;?>">
@@ -168,7 +170,7 @@
         var warn = "<div class='txt-color-red' id='alert_"+data+"'>"+msg+"</div>";
 
         $(aler).remove();
-        if(value.length<36)
+        if(value.length<111)
             $(sec).append(warn);
 
     }
