@@ -47,7 +47,10 @@ class modelo_logistico extends CI_Model
 	function setPedidoOnline($venta){
 	
 		$mercancia = $this->modelo_compras->get_mercancia_venta_inventario($venta);
-		
+
+		if(!$mercancia)
+		    return false;
+
 		$items = array();
 		
 		foreach ($mercancia as $item){

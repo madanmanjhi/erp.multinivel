@@ -56,7 +56,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = '127.0.0.1';
 $db['default']['username'] = 'root';
-$db['default']['password'] = 'toor';#'';
+$db['default']['password'] = '';#'toor';
 $db['default']['database'] = 'erpmultinivel';
 $db['default']['port'] = '';
 $db['default']['dbdriver'] = 'mysqli';

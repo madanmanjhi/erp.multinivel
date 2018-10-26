@@ -544,7 +544,7 @@ function index()
                 log_message('DEV', $error);
                 return false;
             }
-
+            unset($carrito[0]);
             $id_venta = $this->modelo_compras->registrar_venta_pago_online($id,$metodo_pago,$fecha);
 
             $this->modelo_compras->registrar_pago_online
@@ -4245,7 +4245,9 @@ function index()
         $q = $this->getCarritoProceso($id_proceso);
 
         $dato_carrito = json_decode($q[0]->carrito);
-        $dato_carrito[0]->$type = $dato;
+        foreach ($dato_carrito as $datos){
+            $datos->$type = $dato;
+        }
         $carritoDato = json_encode($dato_carrito);
 
         $this->db->query("UPDATE pago_online_proceso SET carrito = '$carritoDato' WHERE id = $id_proceso");
