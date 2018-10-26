@@ -436,7 +436,7 @@
                                             className: "",
                                             buttons: {
                                                 danger: {
-                                                    label: "Cancelar",
+                                                    label: "Cerrar",
                                                     className: "btn-danger",
                                                     callback: function() {
                                                     }

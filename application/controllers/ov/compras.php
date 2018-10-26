@@ -28,7 +28,8 @@ class compras extends CI_Controller
 		$this->load->model('model_carrito_temporal');
 		$this->load->model('model_servicio');
 		$this->load->model('bo/modelo_pagosonline');
-			
+        $this->load->model('bo/modelo_logistico');
+        $this->load->model('cemail');
 		$this->load->model('ov/model_web_personal_reporte');
 	}
 	
@@ -119,7 +120,6 @@ function index()
 			$this->carritoTipoMercancia($validacionCompraMercancia);
 			return true;
 		}
-			
 		
 		$usuario = $this->general->get_username($id);
 		$grupos = $this->model_mercancia->CategoriasMercancia();
@@ -527,6 +527,8 @@ function index()
 
             $proceso = $this->getCarritoProceso($id_pago);
             $id = $proceso[0]->id_usuario;
+            $email = $this->general->get_email($id);
+            $email = $email[0]->email;
             $referencia = json_encode($proceso[0]->carrito);
 
             $contenido_carrito_proceso=$this->modelo_compras->getContenidoCarritoPagoOnlineProceso($id_pago);
@@ -555,16 +557,24 @@ function index()
 
             $this->pagarComisionVenta($id_venta,$id);
 
-            redirect("/ov/compras/respuestaBlockchain?id=$id");
+            $typesec = $this->typeSERVER();
+            $SERVER_NAME = $_SERVER["SERVER_NAME"];
+            $view = "$typesec://$SERVER_NAME/ov/compras/respuestaBlockchain?id=$id";
+            $view = "<h2>COMPRA EXITOSA</h2><hr/><br/><h3># venta : $id_venta</h3>";
+
+            $this->cemail->sendPHPmail($email,$metodo_pago,$view);
+            echo "OK";
             return true;
         }
-
+        echo "FAIL";
         return false;
 
     }
 
     function comprobarBlockchain(){
-        $code = isset($_POST['code']) ? $_POST['code'] : $_GET['code'];
+
+        $code = isset($_POST['code']) ? $_POST['code'] : false;
+
         $query = "SELECT * FROM pago_online_transaccion 
                           WHERE reference_sale = '$code' AND payment_method_id = 'BLOCKCHAIN'";
         $q = $this->db->query($query);
@@ -581,23 +591,22 @@ function index()
     function RespuestaBlockchain(){
 
         $id = isset($_GET['id']) ? $_GET['id'] : $_POST['id'];
-        if ($this->tank_auth->is_logged_in())
+        if ($this->tank_auth->is_logged_in() && !$id)
         {																		// logged in
             $id=$this->tank_auth->get_user_id();
         }
 
         if ($id) {
             $this->cart->destroy();
-            $id=$this->tank_auth->get_user_id();
             $usuario=$this->general->get_username($id);
-            $style=$this->general->get_style($id);
+            $style=$this->general->get_style(1);
 
             $this->template->set("style",$style);
             $this->template->set("usuario",$usuario);
 
             $this->template->set_theme('desktop');
             $this->template->set_layout('website/main');
-            $this->template->set_partial('header', 'website/ov/header');
+            $this->template->set_partial('header', 'website/ov/header',array("id"=>$id));
             $this->template->set_partial('footer', 'website/ov/footer');
             $this->template->build('website/ov/compra_reporte/transaccionExitosa');
             return true;
@@ -660,7 +669,7 @@ function index()
         $callback = $this->setCallback($firma, $id_proceso);
 
         $url = "https://api.blockchain.info/v2/receive";
-        $url .= "?xpub=$xpub&callback=$callback&key=$api_key";
+        $url .= "?xpub=$xpub&callback=$callback&key=$api_key&gap_limit=1000";
         $command = 'curl "' . $url . '"';
         #TODO: echo $command;exit();
         $cargar = shell_exec($command);
@@ -676,9 +685,7 @@ function index()
         $site .= $link;
         $params = "?k=$firma&id=$id_proceso";
         #$params.= "&seclink=$link";#TODO:
-        require (APPPATH."config/config.php");
-        $ssl = $config["enable_hooks"];
-        $typesec = ($ssl) ? "https" : "http";
+        $typesec = $this->typeSERVER();
         $uri = $site.$params;
         $callback = "$typesec://$uri";
         log_message('DEV',"callback : $callback");
@@ -4249,6 +4256,14 @@ function index()
         $q = $this->db->query("SELECT * FROM pago_online_proceso WHERE id = $id_proceso");
         $q = $q->result();
         return $q;
+    }
+
+    private function typeSERVER()
+    {
+        require(APPPATH . "config/config.php");
+        $ssl = $config["enable_hooks"];
+        $typesec = ($ssl) ? "https" : "http";
+        return $typesec;
     }
 
 }

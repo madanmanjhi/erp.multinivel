@@ -63,7 +63,7 @@ class mGeneral extends CI_Model
     }
     function get_style($id)
     {
-        $q=$this->db->query('select * from estilo_usuario where id_usuario = '.$id);
+        $q=$this->db->query("select * from estilo_usuario where id_usuario = $id");
         return $q->result();
     }
     function get_username($id)

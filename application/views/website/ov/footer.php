@@ -3,7 +3,8 @@
 <?php $ci = &get_instance();
 $ci->load->model("bo/model_admin");
 $ci->load->library('tank_auth');
-$id=$this->tank_auth->get_user_id();
+if ($this->tank_auth->is_logged_in())
+    $id=$this->tank_auth->get_user_id();
 $empresa=$ci->model_admin->val_empresa_multinivel();
 $nombre_empresa = $ci->general->issetVar($empresa,"nombre","NetworkSoft");
 $web = $ci->general->issetVar($empresa,"web","/");
