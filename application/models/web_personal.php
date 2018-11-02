@@ -139,8 +139,18 @@ class web_personal extends CI_Model{
         $webempresa = $this->empresa();              
         $webempresa = $webempresa[0]->web; # "http://[[website]]";
         $webland = "";#TODO : "/[[website_form]].html";
-        $contacto = file_get_contents($webempresa.$webland);  
-        
+
+        $urldef = 'http://' . $_SERVER['SERVER_NAME'] . "/";
+        $contacto = file_get_contents($urldef);
+        try{
+            $contacto = file_get_contents($webempresa.$webland);
+        }catch (Exception $e){
+            log_message('DEV',"web personal ERROR :: $webempresa$webland");
+        }
+
+        if(!$contacto)
+            $contacto = file_get_contents($urldef);
+
         $isFrame = stripos($contacto, "<frame");
         $notBody = !stripos($contacto, "<body");
         $notUTF = !stripos($contacto, "<meta charset");
@@ -161,7 +171,7 @@ class web_personal extends CI_Model{
         $fa_fix = stripos($contacto, "/templates/shaper_helix3/css/template.css");  
         if($fa_fix)
             $contacto = str_replace('<link href="/templates/shaper_helix3/css/template.css" rel="stylesheet" type="text/css" />',"", $contacto);
-                
+
         $setbody = str_replace("</body","<body", $contacto);
         $setbody = str_replace("<body","¬<body", $setbody);
         $setbody = explode("¬", $setbody);

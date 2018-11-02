@@ -185,7 +185,9 @@
 																							<fieldset><div>
 													<section class="col col-xs-12 col-md-6 col-lg-6">
 														Tipo Paquete <label class="select"> <select name="tipo">
-																<?php foreach ($paquetes_actuales as $row){?>
+																<?php
+                                                               if(!isset($paquetes_actuales))$paquetes_actuales =  array();
+                                                                foreach ($paquetes_actuales as $row){?>
 																	<option value="<?=$row->idnivel?>">
 																	<?= $row->nombre ?>
 																<?php }?>

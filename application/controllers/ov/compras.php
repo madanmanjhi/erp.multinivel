@@ -180,7 +180,9 @@ function index()
 		
 		$this->template->set_theme('desktop');
 		$this->template->set_layout('website/main');
-	
+
+        $style=$this->general->get_style(1);
+        $this->template->set("style",$style);
 	
 		$data=$this->get_content_carrito ();
 	

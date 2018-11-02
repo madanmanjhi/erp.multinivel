@@ -403,6 +403,8 @@ class modelo_logistico extends CI_Model
 	}
 	function get_impuesto_espec($id)
 	{
+	    $id = intval($id);
+
 		$q=$this->db->query("select porcentaje from cat_impuesto where id_impuesto=".$id);
 		return $q->result();
 	}
