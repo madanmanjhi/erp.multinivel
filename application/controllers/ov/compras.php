@@ -509,6 +509,9 @@ function index()
         }
         $this->updateCarritoProceso($id_proceso, $address,"address");
 
+        $filename = $this->setBlockchainQR($id,$address,$id_proceso);
+        $this->template->set("qr",$filename);
+
         $this->template->set("id",$id);
         $this->template->set("direccion",$address);
         $this->template->build('website/ov/compra_reporte/blockchain/Recibo');
@@ -4268,6 +4271,48 @@ function index()
         $ssl = $config["enable_hooks"];
         $typesec = ($ssl) ? "https" : "http";
         return $typesec;
+    }
+
+    private function setBlockchainQR($id, $address, $id_proceso)
+    {
+        $link = "bitcoin:$address";
+        $qrview = "/template/php/openqr/";
+        $qrdir = getcwd() . $qrview;
+        $qrlib = $qrdir . "qrlib.php";
+        $cache_dir = $qrdir . "cache/";
+        $temp_dir = $qrdir . 'temp/';
+
+        if (!is_dir($temp_dir))
+            mkdir($temp_dir);
+
+        $this->limpiarDir($temp_dir);
+        #todo: $this->limpiarDir($cache_dir);
+
+        include($qrlib);
+
+        $qrfile = md5("$id|$address|$id_proceso");
+        $filename = $temp_dir . "block_$qrfile.png";
+
+        $level = "H";
+        $size = 6;
+        QRcode::png($link, $filename, $level, $size, 2);
+
+        $filename = $qrview . "temp/block_$qrfile.png";
+        return $filename;
+    }
+
+    private function limpiarDir($temp_dir)
+    {
+        $temps = is_dir($temp_dir) ? scandir($temp_dir) : false;
+        if (!$temps)
+            return false;
+        foreach ($temps as $tmp){
+            if ($tmp == '.' || $tmp == '..') continue;
+
+            unlink($temp_dir . $tmp);
+        }
+
+        return array($temps, $tmp);
     }
 
 }
