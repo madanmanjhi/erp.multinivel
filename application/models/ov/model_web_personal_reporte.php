@@ -11,7 +11,7 @@ class model_web_personal_reporte extends CI_Model
 	function consultar_ventas_web_personal($id,$inicio,$fin){
 		$venta_web_p=$this->db->query(" Select v.id_venta ,v.id_comprador,v.fecha ,
 										c.nombre,c.apellido,c.email,c.telefono,v.estado,
-										mr.sku ,mr.id_tipo_mercancia ,cv.cantidad ,vt.costo
+										mr.sku ,mr.id_tipo_mercancia ,cv.cantidad ,mr.costo
 										from  cross_comprador_venta v ,
 										comprador c ,  
 										users u , 
@@ -32,7 +32,7 @@ class model_web_personal_reporte extends CI_Model
 	function consultar_ventas_web_personal_listar($id){
 		$venta_web_p=$this->db->query(" Select v.id_venta ,v.id_comprador,v.fecha ,
 										c.nombre,c.apellido,c.email,c.telefono,v.estado,
-										mr.sku ,mr.id_tipo_mercancia ,cv.cantidad ,vt.costo
+										mr.sku ,mr.id_tipo_mercancia ,cv.cantidad ,mr.costo
 										from  cross_comprador_venta v ,
 										comprador c ,
 										users u ,

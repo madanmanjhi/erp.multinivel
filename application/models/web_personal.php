@@ -142,6 +142,14 @@ class web_personal extends CI_Model{
 
         $urldef = 'http://' . $_SERVER['SERVER_NAME'] . "/";
         $contacto = file_get_contents($urldef);
+
+        set_error_handler(
+            create_function(
+                '$severity, $message, $file, $line',
+                'throw new ErrorException($message, $severity, $severity, $file, $line);'
+            )
+        );
+
         try{
             $contacto = file_get_contents($webempresa.$webland);
         }catch (Exception $e){

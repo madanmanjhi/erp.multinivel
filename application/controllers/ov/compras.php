@@ -3362,7 +3362,7 @@ function index()
 		}
 	
 		$pais = $this->general->get_pais($id);
-		$paisUsuario=$pais[0]->pais;
+		$paisUsuario=$this->general->issetVar($pais,"pais","AAA");
 	
 		$productos=1;
 		$servicios=2;
@@ -3399,7 +3399,7 @@ function index()
 			}
 		
 			$pais = $this->general->get_pais($id);
-			$paisUsuario=$pais[0]->pais;
+			$paisUsuario=$this->general->issetVar($pais,"pais","AAA");
 		
 			$tipoMercancia = $_GET['tipoMercancia'];
 		

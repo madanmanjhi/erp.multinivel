@@ -206,8 +206,8 @@ class reportes extends CI_Controller {
 	
 		$usuario=$this->general->get_username($id);
 		
-		$inicio = $_POST['inicio'] ? $_POST['inicio'] : date('Y-m').'-01';
-		$fin = $_POST['fin'] ? $_POST['fin'] : date('Y-m-d');
+		$inicio = isset($_POST['inicio']) ? $_POST['inicio'] : date('Y-m').'-01';
+		$fin = isset($_POST['fin']) ? $_POST['fin'] : date('Y-m-d');
 	
 		$inventario = $this->modelo_cedi->getVentasRealizadas($inicio,$fin);
 	
