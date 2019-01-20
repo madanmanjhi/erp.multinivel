@@ -1259,6 +1259,136 @@ class autobono
 		$year->setDate($year->format('Y'), 12, 31);
 		return date_format($year, 'Y-m-d');
 	}
+
+    /** ARGS:
+     * id:id_usuario f0:fechaInicio f1:fechaFin tp:tipo mc:item WH:where OD:order GP:group
+     */
+    private function getVentaMercancia($id,$f0,$f1,$tp=false,$mc=false,$WH="",$OD=false,$GP=false)
+    {
+        if ($tp)
+            $WH .= " AND m.id_tipo_mercancia in ($tp)";
+
+        if ($mc)
+            $WH .= " AND cvm.id_mercancia in ($mc)";
+
+        if ($GP)
+            $GP = "GROUP BY cvm.id_mercancia";
+        else
+            $GP = "";
+
+        if ($OD)
+            $OD = "ORDER BY v.fecha DESC,v.id_venta DESC";
+        else
+            $OD = "";
+
+        $query = "SELECT *
+						FROM
+							cross_venta_mercancia cvm,
+							mercancia m,
+                            items i,
+							venta v
+						WHERE
+                            i.id = m.id
+							AND m.id = cvm.id_mercancia
+							AND cvm.id_venta = v.id_venta
+							$WH
+							AND v.id_user in ($id)
+							AND v.id_estatus = 'ACT'
+							AND v.fecha BETWEEN '$f0' AND '$f1 23:59:59'
+						$GP $OD";
+
+        $q = newQuery($this->db,$query);
+
+
+        return $q;
+    }
 	
-	
+    private function getRecentYear($id_usuario,$fecha) {
+        if (! $fecha)
+            $fecha = date("Y-m-d");
+
+        $fechaAlta = $this->getInicioFecha($id_usuario);
+
+        $mifecha = date('Y') . "-" . date('m-d', strtotime($fechaAlta));
+
+        $datelast = date("Y-m-d", strtotime($mifecha));
+
+        $is = ($datelast < $fecha);
+
+        if (! $is)
+            $mifecha = $this->getLastTime($mifecha, "year");
+
+        return $mifecha;
+    }
+
+    private function getAnyTime($date,$time = '1 month'){
+
+        $fecha_sub = new DateTime($date);
+        $q= newQuery($this->db,"select date_add('".$date."', interval ".$time.") fecha");
+        $fecha_sub = $q ? $q[1]["fecha"] : date('Y-m-d');
+        $date = date('Y-m-d',strtotime($fecha_sub));
+
+        return $date;
+
+    }
+
+    private function getNextTime($date,$time = 'month'){
+
+        $fecha_sub = new DateTime($date);
+        $q= newQuery($this->db,"select date_add('".$date."', interval 1 ".$time.") fecha");
+        $fecha_sub = $q ? $q[1]["fecha"] : date('Y-m-d');
+        $date = date('Y-m-d',strtotime($fecha_sub));
+
+        return $date;
+
+    }
+
+    private function getLastTime($date,$time = 'month'){
+
+        $fecha_sub = new DateTime($date);
+        $q= newQuery($this->db,"select date_sub('".$date."', interval 1 ".$time.") fecha");
+        $fecha_sub = $q ? $q[1]["fecha"] : date('Y-m-d');
+        $date = date('Y-m-d',strtotime($fecha_sub));
+
+        return $date;
+
+    }
+
+
+    private function insertDatos($table,$datos){
+        $attribs = array();$values=array();
+
+        foreach ($datos as $key => $value){
+            array_push($attribs, $key);
+            $value = "'$value'";
+            array_push($values, $value);
+        }
+
+        $query = "INSERT INTO $table (".implode(",", $attribs).")
+                        VALUES (".implode(",", $values).")";
+
+        newQuery($this->db,$query);
+
+        return true;
+    }
+
+    private function updateDatos($table,$datos,$where = false){
+
+        $values=array();
+
+        foreach ($datos as $key => $value){
+            $value = "$key = '$value'";
+            array_push($values, $value);
+        }
+
+        if($where)
+            $where = " WHERE ".$where;
+
+        $query = "UPDATE $table SET ".implode(",", $values).$where;
+
+        newQuery($this->db,$query);
+
+        return true;
+    }
+
 }
