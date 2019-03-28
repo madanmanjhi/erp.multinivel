@@ -30,8 +30,16 @@ class home extends CI_Controller
 		$id=$this->tank_auth->get_user_id();
 		$usuario=$this->general->get_username($id);
 		
-                $inicio = $_POST['inicio'] ? $_POST['inicio'] : date('Y-m').'-01';
-		$fin = $_POST['fin'] ? $_POST['fin'] : date('Y-m-d');
+        $inicio = date('Y-m').'-01';
+		$fin =date('Y-m-d');
+
+        if(isset($_POST['inicio'])&&isset($_POST['fin'])){
+        	$inicio = $_POST['inicio']; 
+        	$fin = $_POST['fin']; 
+		}
+
+		if(isset($_GET['inicio'])) 
+			 $inicio = $_GET['inicio']; 
                 
 		$style=$this->modelo_dashboard->get_style($id);
 		$almacen  = $this->modelo_cedi->getUsuarioId($id);
@@ -39,7 +47,7 @@ class home extends CI_Controller
 		$productos = $this->model_inventario->Obtener_Productos_Almacen($almacen[0]->cedi);
 		
 		$this->template->set("style",$style);
-		$data = array("user2" => $usuario[0]->nombre."<br/>".$usuario[0]->apellido);
+		$data = array("user" => $usuario[0]->nombre."<br/>".$usuario[0]->apellido);
 		$this->template->set("productos",$productos);
                 $this->template->set("ventas",$ventas);
 
@@ -60,8 +68,16 @@ class home extends CI_Controller
 		$id=$this->tank_auth->get_user_id();
 		$usuario=$this->general->get_username($id);
 	
-                $inicio = $_POST['inicio'] ? $_POST['inicio'] : date('Y-m').'-01';
-		$fin = $_POST['fin'] ? $_POST['fin'] : date('Y-m-d');
+        $inicio = date('Y-m').'-01';
+		$fin =date('Y-m-d');
+
+        if(isset($_POST['inicio'])&&isset($_POST['fin'])){
+        	$inicio = $_POST['inicio']; 
+        	$fin = $_POST['fin']; 
+		}
+
+		if(isset($_GET['inicio'])) 
+			 $inicio = $_GET['inicio']; 
                 
 		$style=$this->modelo_dashboard->get_style($id);
 		$almacen  = $this->modelo_cedi->getUsuarioId($id);

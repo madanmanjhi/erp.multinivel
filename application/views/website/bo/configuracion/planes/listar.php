@@ -76,7 +76,7 @@
 											</thead>
 											<tbody>
 												
-												<?foreach ($planes as $plan) {?>
+												<?php foreach ($planes as $plan) {?>
 													<tr>
 														<td><?php echo $plan->id; ?></td>
 														<td><?php echo $plan->nombre; ?></td>
@@ -101,7 +101,7 @@
 															<a style="cursor: pointer"title="Eliminar"  class="txt-color-red" onclick="eliminar('<?php echo $plan->id; ?>');"><i class="fa fa-trash-o fa-3x"></i></a>
 														</td>
 													</tr>
-												<?}?>
+												<?php }?>
 											</tbody>
 										</table>
 								</div>
@@ -286,7 +286,7 @@ function eliminar(id) {
 					}
 			}
 		}
-	})
+	});
 	});
 }
 
@@ -299,11 +299,14 @@ function estado(estatus, id)
 		data: {
 			id:id, 
 			estado: estatus
-		},
+		}
 		}).done(function( msg )
 				{
 					location.href = "/bo/planes/listar";
 				
-			})
+			});
 	}
 </script>
+
+
+

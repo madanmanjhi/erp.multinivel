@@ -1,16 +1,32 @@
 #!/usr/bin/php
 <?php
-
-echo "Leyendo datos...";
+date_default_timezone_set('America/Mexico_City');#city
+echo "Leyendo datos..."; 
 	
-	//$base="/var/www";
-	//$project="/erp.multinivel";
-	$base="/home/content/57/11569157/html"; 
-	$project="/test";
-	$db_config=$base.$project."/application/config/database.php";
-
-echo "\n>OK\nCargando base de datos...";
+	#function setDir($base="/var/www"){	
+	function setDir_($base="/home/startupns/www/"){	
+		$project="erp.networksoft"; #"erp.clientes" 
+		$project.="/rtm";#"erp.multinivel" 
+		return $base.$project;
+	}
+	
+	function setCommand_ ($db,$file,$data = ""){
+		$hostname = $db['default']['hostname'];
+		$username = $db['default']['username'];
+		$password = $db['default']['password'];
+		$database = $db['default']['database'];
+        #echo setDir()."/bk/".$file." ".$hostname." ".$username." ".$password." ".$database." \"$data\"";
+		return setDir()."/bk/".$file." ".$hostname." ".$username." ".$password." ".$database." \"$data\"";
+	}
+	
+$code = "->networksoft";#code
+$val = md5(date('Y-m-d')."^".date('H:i:s').$code);    
+	 require_once(setDir_()."/bk/dataset.php");
+echo "
+>OK
+Cargando base de datos...";
 		
+	$db_config=setDir()."/application/config/database.php";
 	$linea="";
 	$file = fopen($db_config, "r");
 	while(!feof($file)){
@@ -21,11 +37,47 @@ echo "\n>OK\nCargando base de datos...";
 	$val="<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');";
 	$texto=str_replace($val, "<?php ", $linea);
 		  
-	$fp2 = fopen($base.$project."/bk/db_access.php", "w"); 
+	$fp2 = fopen(setDir()."/bk/db_access.php", "w"); 
 	fputs($fp2, $texto);
 	fclose($fp2);
 		
-	include($base.$project."/bk/db_access.php");
-echo "\n>OK\nCreando dump...";
-	exec($base.$project."/bk/bk_daily.sh ".$db['default']['hostname']." ".$db['default']['username']." ".$db['default']['password']." ".$db['default']['database']);
-echo "\n>OK\n\n!Dump creado con exito!\n";
+	include(setDir()."/bk/db_access.php");
+echo "
+>OK
+Creando dump...";
+	$command = setCommand($db,"bk_daily.sh");
+	exec($command);
+echo "
+>OK
+!Dump creado con exito!
+";
+
+echo "\n\n>PROCESOS 1> AUTOBONO DIARIO\n";
+#include(setDir()."/bk/autobono.php");
+echo "\n\nCargando Datos\n";
+#$autobono = new autobono($db);
+echo "\n>OK\nProcesando Datos\n";
+#$afiliados = $autobono->calcular();
+echo "\n>OK\n\n!PROCESO COMPLETADO!\n";	
+
+echo "
+
+PROCESOS 2> Compresion dinamica:
+";
+#include(setDir()."/bk/autored.php");
+
+echo "
+>OK
+Procesando Datos
+";
+#$autored = new autored($db);
+echo "
+>OK
+Realizando Acciones
+";
+#$autored->procesar();	
+echo "
+>OK
+!Proceso realizado con exito
+";
+	

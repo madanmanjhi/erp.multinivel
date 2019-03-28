@@ -1,4 +1,3 @@
-
 <!-- MAIN CONTENT -->
 <div id="content">
 	<div class="row">
@@ -104,8 +103,7 @@
 											        	<label class="label">
 											        		Imágen actual
 											        	</label>
-															<?
-												            if($img[0]->nombre_banner!=""){
+															<?php if($img[0]->nombre_banner!=""){
 												           	echo '<div class="no-padding col-xs-12 col-sm-12 col-md-6 col-lg-6"><img style="max-height: 150px;" src="/media/Empresa/'.$img[0]->nombre_banner.'" width="390px" height="150px"></div>';
 												           }else{
 												           	echo "No hay imagen";
@@ -199,6 +197,7 @@ function enviar()
 	});
 }*/
 </script>
+
 
 
 

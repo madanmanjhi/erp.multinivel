@@ -61,11 +61,11 @@
 													<section class="col col-3">Categoria
 															<label class="select">
 																<select name="red">
-																<?foreach ($grupos as $grupo){?>
+																<?php foreach ($grupos as $grupo){?>
 																	<option value="<?=$grupo->id_grupo?>">
 																	<?= $grupo->descripcion." (".$grupo->red.")" ?>
 																	</option>
-																<?}?>
+																<?php }?>
 																</select>
 															</label>
 													</section>
@@ -112,10 +112,10 @@
 														<label class="select">
 															<select id="pais" required name="pais" onChange="select_pais()">
 															<option value="-" selected>-- Seleciona un pais --</option>
-															<?foreach ($pais as $key){?>
+															<?php foreach ($pais as $key){?>
 																<option value="<?=$key->Code?>">
 																<?=$key->Name?></option>
-															<?}?>
+															<?php }?>
 															</select>
 														</label>
 													</section>
@@ -593,3 +593,4 @@ ImpuestosPais();
 }
 
 </script>
+

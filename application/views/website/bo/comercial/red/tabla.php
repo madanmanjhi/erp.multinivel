@@ -162,23 +162,22 @@
 			
 			</form>
 			<table id="dt_basic" class="table table-striped table-bordered table-hover" width="100%">
-				<thead>
-					<tr>
-						<th>ID</th>
-		                <th data-class="expand">Imagen</th>
-		                <th data-hide="phone,tablet">Usuario</th>
-			            <th data-hide="phone,tablet">Nombre</th>
-			            <th data-hide="phone,tablet">Apellido</th>
-				        <th data-hide="phone,tablet">e-mail</th>
-				        <th data-hide="phone,tablet">Tipo usuario</th>
-				        <th>Accion</th>
-			        </tr>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th data-class="expand">Imagen</th>
+                                    <th data-hide="phone,tablet">Usuario</th>
+                                    <th data-hide="phone,tablet">Nombre</th>
+                                    <th data-hide="phone,tablet">Apellido</th>
+                                    <th data-hide="phone,tablet">e-mail</th>
+                                    <th data-hide="phone,tablet">Tipo usuario</th>
+                                    <th>Accion</th>
+                                </tr>
 			    </thead>
 			    <tbody>
-				     <?foreach ($afiliados as $afiliado) {
-				          									        	?>
-				      <tr>
-				        <td><?php echo $afiliado->id;?></td>
+				<?php foreach ($afiliados as $afiliado) { ?>
+                                <tr>
+                                        <td><?php echo $afiliado->id; ?></td>
 				        
 				      <?php
 				       $afiliados_imagen="/template/img/avatars/male.png";
@@ -192,33 +191,38 @@
 						}
 						?>
 				        
-		                <td><img style="width: 10rem;" src="<?php echo $afiliados_imagen?>"></img></td>
-		                <td><?php echo $afiliado->username?></td>
-			            <td><?php echo $afiliado->nombre?></td>
-			            <td><?php echo $afiliado->apellido?></td>
-				        <td><?php echo $afiliado->email?></td>
-				        <td><?php echo $afiliado->descripcion?></td>
-				        <td>
-				        	
-				        	<?if($afiliado->estatus=='Desactivado'){?>
-				        	<a title="Desbloquear" style='cursor: pointer;' onclick="estado_afiliado(1,<?=$afiliado->id?>)" class="txt-color-gray"><i class="fa fa-lock fa-3x"></i></a>
-							<?}else{?>
-							<a title="Bloquear" style='cursor: pointer;' onclick="estado_afiliado(2,<?=$afiliado->id?>)" class="txt-color-gray"><i class="fa fa-unlock fa-3x"></i></a>
-							<?}?>
-							
-					        <a title="Editar" style='cursor: pointer;' onclick="modificar_afiliado(<?php echo $afiliado->id;?>)" class="txt-color-blue"><i class="fa fa-pencil fa-3x"></i></a>
-						</td>
-				        
-				    </tr>
-				 <?} ?>
-			</tbody>
-			</table>
-	</div>
-	</div>
-	</article>
-	</div>
-	</div>
-	</section>
+                                        <td><img style="width: 10rem;" src="<?php echo $afiliados_imagen ?>"></img></td>
+                                        <td><?php echo $afiliado->username ?></td>
+                                        <td><?php echo $afiliado->nombre ?></td>
+                                        <td><?php echo $afiliado->apellido ?></td>
+                                        <td><?php echo $afiliado->email ?></td>
+                                        <td><?php echo $afiliado->descripcion ?></td>
+                                        <td>
+
+                                            <?php if ($afiliado->estatus == 'Desactivado') { ?>
+                                        <a title="Desbloquear" style='cursor: pointer;' 
+                                                   onclick="estado_afiliado(1,<?= $afiliado->id ?>)" class="txt-color-gray">
+                                                    <i class="fa fa-lock fa-3x"></i></a>
+                                            <?php } else { ?>
+                                        <a title="Bloquear" style='cursor: pointer;' 
+                                                   onclick="estado_afiliado(2,<?= $afiliado->id ?>)" class="txt-color-gray">
+                                                    <i class="fa fa-unlock fa-3x"></i></a>
+                                            <?php } ?>
+                                        <a title="Editar" style='cursor: pointer;' 
+                                               onclick="modificar_afiliado(<?php echo $afiliado->id; ?>)" class="txt-color-blue">
+                                                <i class="fa fa-pencil fa-3x"></i></a>
+                                    </td>
+
+                                          </tr>
+                                          <?php } ?>
+                            </tbody>
+                        </table>
+                                        </div>
+                                </div>
+                        </article>
+                </div>
+          </div>
+        </section>
 </div>
 <script src="/template/js/plugin/morris/raphael.min.js"></script>
 		<script src="/template/js/plugin/morris/morris.min.js"></script>
@@ -501,3 +505,4 @@ function Actualizar_Tabla(){
 
 }
 </script>
+

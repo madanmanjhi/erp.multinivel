@@ -56,7 +56,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<? foreach ($redes as $red) {?>
+			<?php foreach ($redes as $red) {?>
 				<tr>
 					<td><?= $red->id;?></td>
 					<td><?= $red->nombre;?></td>
@@ -77,7 +77,7 @@
 					</a>
 					</td>
 				</tr>
-			<? } ?>
+			<?php } ?>
 		</tbody>
 	</table>
 	</div>
@@ -188,3 +188,4 @@ function estado(estatus, id)
 	}
 
 </script>
+

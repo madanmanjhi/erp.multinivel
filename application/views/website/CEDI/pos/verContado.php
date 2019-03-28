@@ -27,9 +27,9 @@ Puntos : <strong><?=$puntos;?></strong>
 			<label class="select">
 				<select id="user" required name="user">
 					<option value="">Elije un Cliente</option>
-	            <?foreach ($users as $key){?>
+	            <?php foreach ($users as $key){?>
 					<option value="<?=$key->id?>"><?=$key->nombre." ".$key->apellido." (".$key->red.")"?></option>
-				<?}?>
+				<?php }?>
 				</select>
 			</label>
 		</section>
@@ -90,3 +90,4 @@ function enviar(){
 
 
 </script>
+

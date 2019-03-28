@@ -11,6 +11,7 @@ class compras extends CI_Controller
 		$this->load->library('security');
 		$this->load->library('tank_auth');
 		$this->load->library('cart');
+        $this->load->library('config');
 		$this->lang->load('tank_auth');
 		$this->load->model('ov/general');
 		$this->load->model('ov/modelo_compras');
@@ -27,7 +28,8 @@ class compras extends CI_Controller
 		$this->load->model('model_carrito_temporal');
 		$this->load->model('model_servicio');
 		$this->load->model('bo/modelo_pagosonline');
-			
+        $this->load->model('bo/modelo_logistico');
+        $this->load->model('cemail');
 		$this->load->model('ov/model_web_personal_reporte');
 	}
 	
@@ -118,7 +120,6 @@ function index()
 			$this->carritoTipoMercancia($validacionCompraMercancia);
 			return true;
 		}
-			
 		
 		$usuario = $this->general->get_username($id);
 		$grupos = $this->model_mercancia->CategoriasMercancia();
@@ -179,7 +180,9 @@ function index()
 		
 		$this->template->set_theme('desktop');
 		$this->template->set_layout('website/main');
-	
+
+        $style=$this->general->get_style(1);
+        $this->template->set("style",$style);
 	
 		$data=$this->get_content_carrito ();
 	
@@ -335,7 +338,8 @@ function index()
 		
 		$contenidoCarrito=$this->get_content_carrito ();
 
-		if(!$contenidoCarrito['compras'])
+
+        if(!$contenidoCarrito['compras'])
 			redirect('/ov/compras/carrito');
 		
 		$cartItem = array(); 
@@ -355,6 +359,9 @@ function index()
 		$payulatam  = $this->modelo_pagosonline->val_payulatam();
 		$tucompra  = $this->modelo_pagosonline->val_tucompra();
 		$compropago  = $this->modelo_pagosonline->val_compropago();
+
+        $blockchain  = $this->modelo_pagosonline->val_blockchain();
+        $this->template->set('blockchain',$blockchain[0]);
 
 		$this->template->set('puntos',$puntos);
 		$this->template->set('paypal',$paypal);
@@ -441,8 +448,280 @@ function index()
 				</div>';
 		}	
 	}
-	
-	function RegistrarVentaTucompra(){ //WOWCONEXION
+
+	/** Virtual */
+
+    function pagarVentaBlockchain(){
+
+        if (!$this->tank_auth->is_logged_in())
+        {																		// logged in
+            redirect('/auth');
+        }
+
+        $id = $this->tank_auth->get_user_id();
+        $usuario=$this->general->get_username($id);
+
+        if(!$this->cart->contents()){
+            echo "<script>window.location='/ov/compras/carrito';</script>";
+            echo "La compra no puedo ser registrada";
+            return 0;
+        }
+
+        $contenidoCarrito=$this->get_content_carrito ();
+        $totalCarrito=$this->get_valor_total_contenido_carrito($contenidoCarrito);
+
+        $wallet = $this->modelo_pagosonline->get_wallet_blockchain();
+        $blockchain = $this->modelo_pagosonline->get_datos_blockchain();
+        $api_key = $blockchain[0]->apikey;
+
+        $isWallets = false;#TODO: (sizeof($wallet) > 1);
+        $POST_wallet = isset($_POST['wx']) ? $_POST['wx'] : false;
+
+        if($isWallets)
+            $isWallets = !($POST_wallet);
+
+        if($isWallets){
+            $this->template->set("providers",$wallet);
+            $this->template->build('website/ov/compra_reporte/blockchain/explorar');
+            return false;
+        }
+
+        if($POST_wallet) {
+            $where = "AND id = $POST_wallet";
+            $wallet = $this->modelo_pagosonline->get_wallet_blockchain(1, $where);
+        }
+
+        $content = json_encode($contenidoCarrito);
+        $xpub = $wallet[0]->hashkey;
+
+        if(strlen($xpub)<111){
+            echo "<!> Blockchain esta en modo TEST . Por favor, comuniquese con el administrador e sitio. !!!";
+            return false;
+        }
+
+        list($response,$id_proceso) = $this->setPeticionBlockchain($id, $xpub, $content,$totalCarrito);
+
+        $address = isset($response->address) ? $response->address : false;
+        if(!$response||!$address){
+            echo "<abbr title='".$response->description."'>?</abbr> Blockchain no generó la direción para su pago. Intente más tarde!!!";
+            log_message('DEV',"response : ".json_encode($response));
+            return false;
+        }
+        $this->updateCarritoProceso($id_proceso, $address,"address");
+
+        $filename = $this->setBlockchainQR($id,$address,$id_proceso);
+        $this->template->set("qr",$filename);
+
+        $this->template->set("id",$id);
+        $this->template->set("direccion",$address);
+        $this->template->build('website/ov/compra_reporte/blockchain/Recibo');
+
+    }
+
+    function RegistrarBlockchain(){
+
+        $id_pago = isset($_GET['id']) ? $_GET['id'] : false;
+        $code = isset($_GET['k']) ? $_GET['k'] : false;
+
+        if($code && $id_pago){
+
+            $to = "BTC";$currency = "USD";
+            $estado = "ACT";
+            $metodo_pago = 'BLOCKCHAIN';
+            $fecha = date("Y-m-d");
+
+            $proceso = $this->getCarritoProceso($id_pago);
+            $id = $proceso[0]->id_usuario;
+            $email = $this->general->get_email($id);
+            $email = $email[0]->email;
+            $referencia = json_encode($proceso[0]->carrito);
+
+            $contenido_carrito_proceso=$this->modelo_compras->getContenidoCarritoPagoOnlineProceso($id_pago);
+
+            $contenidoCarrito=json_decode($contenido_carrito_proceso[0]->contenido,true);
+            $carrito=json_decode($contenido_carrito_proceso[0]->carrito,true);
+
+            $firma = isset($carrito[0]->firma) ? $carrito[0]->firma : $carrito[0]["firma"];
+            $address = isset($carrito[0]->address) ? $carrito[0]->address : $carrito[0]["address"];
+            if($firma != $code || !$address){
+                $error = "Blockchain: id:$id p:$id_pago f::e:$firma] r:[$code] a:[$address]";
+                echo "ERROR -> ".$error;
+                log_message('DEV', $error);
+                return false;
+            }
+            unset($carrito[0]);
+            $id_venta = $this->modelo_compras->registrar_venta_pago_online($id,$metodo_pago,$fecha);
+
+            $this->modelo_compras->registrar_pago_online
+            ($id_venta,$id,$code,$fecha,$address,$metodo_pago,$estado, $referencia,$currency,$to);
+
+            $this->registrarFacturaDatosDefaultAfiliado($id,$id_venta);
+            $this->registrarFacturaMercanciaPagoOnline ( $contenidoCarrito,$carrito ,$id_venta);
+
+            $this->modelo_logistico->setPedidoOnline($id_venta);
+
+            $this->pagarComisionVenta($id_venta,$id);
+
+            $typesec = $this->typeSERVER();
+            $SERVER_NAME = $_SERVER["SERVER_NAME"];
+            $view = "$typesec://$SERVER_NAME/ov/compras/respuestaBlockchain?id=$id";
+            $view = "<h2>COMPRA EXITOSA</h2><hr/><br/><h3># venta : $id_venta</h3>";
+
+            $this->cemail->sendPHPmail($email,$metodo_pago,$view);
+            echo "OK";
+            return true;
+        }
+        echo "FAIL";
+        return false;
+
+    }
+
+    function comprobarBlockchain(){
+
+        $code = isset($_POST['code']) ? $_POST['code'] : false;
+
+        $query = "SELECT * FROM pago_online_transaccion 
+                          WHERE reference_sale = '$code' AND payment_method_id = 'BLOCKCHAIN'";
+        $q = $this->db->query($query);
+        $q = $q->result();
+
+        if(!$q){
+            echo "FAIL";
+            return false;
+        }
+
+        echo $q[0]->id_usuario;
+    }
+
+    function RespuestaBlockchain(){
+
+        $id = isset($_GET['id']) ? $_GET['id'] : $_POST['id'];
+        if ($this->tank_auth->is_logged_in() && !$id)
+        {																		// logged in
+            $id=$this->tank_auth->get_user_id();
+        }
+
+        if ($id) {
+            $this->cart->destroy();
+            $usuario=$this->general->get_username($id);
+            $style=$this->general->get_style(1);
+
+            $this->template->set("style",$style);
+            $this->template->set("usuario",$usuario);
+
+            $this->template->set_theme('desktop');
+            $this->template->set_layout('website/main');
+            $this->template->set_partial('header', 'website/ov/header',array("id"=>$id));
+            $this->template->set_partial('footer', 'website/ov/footer');
+            $this->template->build('website/ov/compra_reporte/transaccionExitosa');
+            return true;
+        }
+        redirect('/');
+    }
+
+    function consultarBlockchain(){
+
+        if (!$this->tank_auth->is_logged_in())
+        {																		// logged in
+            redirect('/auth');
+        }
+
+        if(!$this->cart->contents()){
+            echo "<script>window.location='/ov/compras/carrito';</script>";
+            echo "La compra no puedo ser registrada";
+            return 0;
+        }
+
+        $contenidoCarrito=$this->get_content_carrito ();
+        $totalCarrito=$this->get_valor_total_contenido_carrito($contenidoCarrito);
+
+        $blockchain = $this->modelo_pagosonline->get_datos_blockchain();
+        $api_key = $blockchain[0]->apikey;
+
+        $link = getcwd()."/BlockchainSdk/exec/rates.php";
+
+        require_once $link;
+
+        if(!$myAPI){
+            echo "<b>.::: Blockchain En desarrollo :::.</b>";
+            exit();
+        }
+
+        $currency = "USD";$to="BTC";
+        $amount = $myAPI->convertTo($totalCarrito,$currency,$to);
+        $rates = $myAPI->getRates($currency);
+
+        $this->template->set("amount","$amount");
+        $this->template->set("rates",$rates);
+        $this->template->set("xe",$to);
+        $this->template->set("currency",$currency);
+        $this->template->set("value","$totalCarrito");
+
+        $this->template->build('website/ov/compra_reporte/blockchain/consultar');
+
+    }
+
+
+    public function setPeticionBlockchain($id, $xpub, $content,$total)
+    {
+        $blockchain = $this->modelo_pagosonline->get_datos_blockchain();
+        $api_key = $blockchain[0]->apikey;
+
+        $firma = $this->setFirmaProceso($id, $api_key, $content, $total);
+
+        $id_proceso = $this->cargarProcesoOnline($id, $content, $firma);
+
+        $callback = $this->setCallback($firma, $id_proceso);
+
+        $url = "https://api.blockchain.info/v2/receive";
+        $url .= "?xpub=$xpub&callback=$callback&key=$api_key&gap_limit=1000";
+        $command = 'curl "' . $url . '"';
+        #TODO: echo $command;exit();
+        $cargar = shell_exec($command);
+        $response = json_decode($cargar);
+
+        return array($response,$id_proceso);
+    }
+
+    public function setCallback($firma, $id_proceso)
+    {
+        $site = $_SERVER['SERVER_NAME'];
+        $link = "/ov/compras/RegistrarBlockchain";
+        $site .= $link;
+        $params = "?k=$firma&id=$id_proceso";
+        #$params.= "&seclink=$link";#TODO:
+        $typesec = $this->typeSERVER();
+        $uri = $site.$params;
+        $callback = "$typesec://$uri";
+        log_message('DEV',"callback : $callback");
+        $callback = urlencode($callback);
+
+        return $callback;
+    }
+
+    public function cargarProcesoOnline($id, $content, $firma)
+    {
+        $carritoCompras = $this->cart->contents();
+        $carritoCompras[0]["firma"] = $firma;
+        $carrito = json_encode($carritoCompras);
+        $id_proceso = $this->modelo_compras->registrar_pago_online_proceso($id, $content, $carrito);
+        return $id_proceso;
+    }
+
+    public function setFirmaProceso($id, $key, $content, $total)
+    {
+        $currency = "USD";
+        $to = "BTC";
+        $time = time();
+        $sistema = $this->config->item('website_name', 'tank_auth');
+        $usuario = $this->general->username($id);
+
+        $codigoAutorizacion = md5($sistema . $time . $usuario[0]->username);
+        $firma = md5($key . "-" . $codigoAutorizacion . "-" . $currency . "-" . $content . "-" . $total);
+        return $firma;
+    }
+
+    function RegistrarVentaTucompra(){ //WOWCONEXION
 	
 		$id = $_POST['campoExtra1'];
 		$id_pago = $_POST['campoExtra2'];
@@ -753,7 +1032,7 @@ function index()
 		$v2=$key[1];
 		$v3=$key[2]; 		
 
-		$order_info = [
+		$order_info = array(
 		    'order_id' => $id_venta,
 		    'order_name' => $orders,
 		    'order_price' => $totalCarrito,
@@ -762,7 +1041,7 @@ function index()
 		    'payment_type' => $payment_type,
 		    'currency' => $compropago[0]->moneda,
 		    'expiration_time' => null
-		];
+        );
  
 
 		$link = getcwd()."/CompropagoSdk/exec/newCharge.php";
@@ -1531,10 +1810,15 @@ function index()
 	
 	private function getCantidadDeAfiliadosPorPatas($patas,$id_afiliado,$red){
 		$frontalidad=$red->frontal;
+		$usuario=new $this->afiliado;
+		
 		if($red->profundidad==0)
 			$profundidad=0;
 		else
 			$profundidad=($red->profundidad-1);
+		 $usuario->getAfiliadosDebajoDe($id_afiliado,1,"RED",1,1);
+		if($frontalidad==0)
+			$frontalidad =  sizeof($usuario->getIdAfiliadosRed());
 		
 		for ($i=1;$i<=$frontalidad;$i++){
 		
@@ -1555,7 +1839,7 @@ function index()
 			$usuario=new $this->afiliado;
 			$puntosHijo=$usuario->getPuntosTotalesPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0","2016-01-01","2026-01-01");
 			$puntosRedHijo=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,"2016-01-01","2026-01-01",$profundidad,"0","0","PUNTOS");
-			$puntosTotales=$puntosHijo[0]->total+$puntosRedHijo;
+			$puntosTotales=$puntosHijo+$puntosRedHijo;
 				
 			$calculador=new $this->calculador_bono;
 		
@@ -1566,13 +1850,13 @@ function index()
 			$usuario=new $this->afiliado;
 			$puntosHijoMes=$usuario->getPuntosTotalesPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0",$inicioMes,$finMes);
 			$puntosRedHijoMes=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,$inicioMes,$finMes,$profundidad,"0","0","PUNTOS");
-			$puntosTotalesMes=$puntosHijoMes[0]->total+$puntosRedHijoMes;
+			$puntosTotalesMes=$puntosHijoMes+$puntosRedHijoMes;
 		
 			//ventas Totales
 			$usuario=new $this->afiliado;
 			$ventasHijo=$usuario->getValorTotalDelasComprasPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0","2016-01-01","2026-01-01");
 			$ventasRedHijo=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,"2016-01-01","2026-01-01",$profundidad,"0","0","COSTO");
-			$ventasTotales=$ventasHijo[0]->total+$ventasRedHijo;
+			$ventasTotales=$ventasHijo+$ventasRedHijo;
 				
 			$calculador=new $this->calculador_bono;
 		
@@ -1584,7 +1868,7 @@ function index()
 			$ventasHijoMes=$usuario->getValorTotalDelasComprasPersonalesIntervalosDeTiempo($id_hijo,$red->id,"0","0",$inicioMes,$finMes);
 				
 			$ventasRedHijoMes=$usuario->getVentasTodaLaRedEquilibrada($id_hijo,$red->id,0,$profundidad,$inicioMes,$finMes,$profundidad,"0","0","COSTO");
-			$ventasTotalesMes=$ventasHijoMes[0]->total+$ventasRedHijoMes;
+			$ventasTotalesMes=$ventasHijoMes+$ventasRedHijoMes;
 		
 			$pata = array(
 					'id_red' => $red->id,
@@ -2100,21 +2384,12 @@ function index()
 			}
 		
 			echo "<tr>
-			<td class='sorting_1'></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td class='sorting_1'></td> <td></td> <td></td>
+			<td></td> <td></td> <td></td> <td></td> <td></td>
 			</tr>";
 				
 			echo "<tr>
-			<td class='sorting_1'><b>TOTALES</b></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td class='sorting_1'><b>TOTALES</b></td> <td></td> <td></td> <td></td>
 			<td><b> $	".number_format($total_costo, 2, '.', '')."</b></td>
 			<td><b> $	".number_format($total_impuesto, 2, '.', '')."</b></td>
 			<td><b> $	".number_format($total_venta, 2, '.', '')."</b></td>
@@ -2123,74 +2398,7 @@ function index()
 		}
 		echo "</tbody>
 		</table><tr class='odd' role='row'>";
-	/*
-		$id=$this->tank_auth->get_user_id();
-		$id=2;
-		$inicio = $_POST['inicio'];
-		$fin = $_POST['fin'];
-		
-		$productos = $this->modelo_compras->traer_mis_compras_productos($id, $inicio, $fin);
-		$servicios = $this->modelo_compras->traer_mis_compras_servicios($id, $inicio, $fin);
-		$combinados = $this->modelo_compras->traer_mis_compras_combinados($id, $inicio, $fin);
-		
-		echo
-		"<table id='datatable_fixed_column1' class='table table-striped table-bordered table-hover' width='100%'>
-				<thead id='tablacabeza'>
-					
-					<th >Red</th>
-					<th data-class='expand'>Nombre</th>
-					<th>Costo unidad</th>
-					<th data-hide='phone'>Cantidad</th>
-					<th data-hide='phone,tablet'>Costo Total</th>
-				</thead>
-				<tbody>";
-		$costo_total = 0;
-		foreach ($productos as $producto)
-		{
-			echo "<tr>
-					
-					<td>".$producto->red."</td>
-					<td>".$producto->nombre."</td>
-					<td>$ ".$producto->costo_unitario."</td>
-					<td>".$producto->cantidad."</td>
-					<td>$ ".$producto->costo."</td>
-				</tr>";
-			$costo_total = $costo_total + $producto->costo;
-		}
-		foreach ($servicios as $servicio)
-		{
-			echo "<tr>
-					<td>".$servicio->red."</td>
-					<td>".$servicio->nombre."</td>
-					<td>$ ".$servicio->costo_unitario."</td>
-					<td>".$servicio->cantidad."</td>
-					<td>$ ".$servicio->costo."</td>
-				</tr>";
-			$costo_total = $costo_total + $servicio->costo;
-		}
-		foreach ($combinados as $combinado)
-		{
-			echo "<tr>
-					<td>".$combinado->red."</td>
-					<td>".$combinado->nombre."</td>
-					<td>$ ".$combinado->costo_unitario."</td>
-					<td>".$combinado->cantidad."</td>
-					<td>$ ".$combinado->costo."</td>
-				</tr>";
-			$costo_total = $costo_total + $combinado->costo;
-		}
-		
-		echo "<tr>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td><b>TOTAL</b></td>
-					<td><b>$ ".$costo_total."</b></td>
-				</tr>
-				</tbody>
-			</table><tr class='odd' role='row'>";
-	
-	*/
+
 	}
         
         function reporte_compras_personales_cedi()
@@ -2252,27 +2460,16 @@ function index()
 			}
 		
 			echo "<tr>
-			<td class='sorting_1'></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td class='sorting_1'></td> <td></td> <td></td> <td></td> <td></td>
+			<td></td> <td></td> <td></td> <td></td>
                         </tr>";
 				
 			echo "<tr>
-			<td class='sorting_1'><b>TOTALES</b></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td class='sorting_1'><b>TOTALES</b></td> <td></td> <td></td> <td></td>
 			<td><b> $ ".number_format($total_costo, 2)."</b></td>
 			<td><b> $ ".number_format($total_impuesto, 2)."</b></td>
 			<td><b> $ ".number_format($total_venta, 2)."</b></td>
-                        <td><b> ".$total_comision."</b></td>
-			<td></td>
+                        <td><b> ".$total_comision."</b></td> <td></td>
 			</tr>";
 		
 		echo "</tbody>
@@ -2871,20 +3068,9 @@ function index()
 					."</tr>";
 			}
 		}
-	
-		/*	<td class='sorting_1'></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			</tr>";*/
-		
+
 		echo "<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
+			<td></td> <td></td> <td></td> <td></td>
 			<td class='sorting_1'><b>TOTAL:</b></td>
 			<td><b> $	".number_format($total, 2)."</b></td>
 			</tr>";
@@ -2902,123 +3088,7 @@ function index()
 		$tipoMercancia=$data['tipo'];
 		
 		$this->printDetalleMercancia($tipoMercancia, $id);
-	/*	
-		switch($data['tipo'])
-		{
-			case 1:
-				$detalles=$this->modelo_compras->detalles_productos_red($id);
-				echo "	<div class='col-lg-6 col-md-6 col-xs-6 col-sm-6'>
-							<h3 class='text-primary'>".$detalles[0]->nombre."</h3>
-					";
-							if($detalles[0]->costo_publico)
-							{
-								echo"
-									<p class='font-sm'>Precio Publico: ".$detalles[0]->costo_publico."</p>";
-							}
-							if($detalles[0]->costo)
-							{
-								echo"
-									<p class='font-sm'>Precio Afiliado: ".$detalles[0]->costo."</p>";
-							}
-							/*if($detalles[0]->puntos_comisionables)
-							{
-								echo"
-									<p class='font-sm'>Puntos: ".$detalles[0]->puntos_comisionables."</p>";
-							}
-							if($detalles[0]->descripcion)
-							{
-								echo"
-									<p> descripción: <br>".$detalles[0]->descripcion."</p>";
-							}
 
-				break;
-			case 2:
-				$detalles=$this->modelo_compras->detalles_servicios_red($id);
-				
-						echo "	<div class='col-lg-6 col-md-6 col-xs-6 col-sm-6'>
-							<h3 class='text-primary'>".$detalles[0]->nombre."</h3>
-					";
-							if($detalles[0]->costo_publico)
-							{
-								echo"
-									<p class='font-sm'>Precio Publico: ".$detalles[0]->costo_publico."</p>";
-							}
-							if($detalles[0]->costo)
-							{
-								echo"
-									<p class='font-sm'>Precio Afiliado: ".$detalles[0]->costo."</p>";
-							}
-							/*if($detalles[0]->puntos_comisionables)
-							{
-								echo"
-									<p class='font-sm'>Puntos: ".$detalles[0]->puntos_comisionables."</p>";
-							}
-							if($detalles[0]->descripcion)
-							{
-								echo"
-									<p> descripción: <br>".$detalles[0]->descripcion."</p>";
-							}
-				break;
-			case 3:
-				$detalles=$this->modelo_compras->detalles_combinados($id);
-				$comb=$this->modelo_compras->comb_espec($id);
-				echo "	<div class='col-lg-6 col-md-6 col-xs-6 col-sm-6'>
-							<h3 class='text-primary'>".$comb[0]->nombre."</h3>
-							
-							<p class='font-sm'>".$comb[0]->descripcion."</p><br>";
-				foreach($detalles as $det)
-				{
-					echo "		<p class='font-sm'><strong>".$det["merc"]."(".$det["qty"].")</strong></p>";
-				}
-				break;
-			case 4:
-				$detalles=$this->modelo_compras->detalles_paquete($id);
-				$comb=$this->modelo_compras->comb_paquete($id);
-				echo "	<div class='col-lg-6 col-md-6 col-xs-6 col-sm-6'>
-							<h3 class='text-primary'".$comb[0]->nombre."</h3>
-							<p class='font-sm'>Descripcion: <br>".$comb[0]->Descripcion."</p><br>";
-				echo "<h4>Contenido: </h4>";
-				foreach($detalles as $det)
-				{
-					echo "		<p class='font-sm'><strong>".$det["merc"]."(".$det["qty"].")</strong></p>";
-				}
-				break;
-			case 5:
-				$detalles=$this->modelo_compras->detalles_prom_serv($id);
-				echo "	<div class='col-lg-6 col-md-6 col-xs-6 col-sm-6'>
-							<h3 class='text-primary'>".$detalles[0]->nombre."</h3>
-							
-							<p class='font-sm'>".$detalles[0]->descripcion."</p></br>
-							<p class='font-sm'>".$detalles[0]->servicio."</p>";
-							if($detalles[0]->fecha_inicio)
-							{
-								echo"
-									<p class='font-sm'>Fecha Inicio: ".$detalles[0]->fecha_inicio."</p>";
-							}
-							if($detalles[0]->fecha_fin)
-							{
-								echo"
-									<p class='font-sm'>Fecha Fin: ".$detalles[0]->fecha_fin."</p><br>";
-							}
-				break;
-			case 6:
-				$detalles=$this->modelo_compras->detalles_prom_comb($id);
-				echo "	<div class='col-lg-6 col-md-6 col-xs-6 col-sm-6'>
-							<h3 class='text-primary'>".$detalles[0]->nombre."</h3>
-							
-							<p class='font-sm'>".$detalles[0]->descripcion."</p></br>
-							<p class='font-sm'><strong>".$detalles[0]->combinado."</strong></p></br>
-							<p class='font-sm'>".$detalles[0]->producto."</p><p>+</p>
-							<p class='font-sm'>".$detalles[0]->servicio."</p>";
-							
-				break;
-			default:
-				echo 'EL REGISTRO HA SIDO BORRADO';
-				break;
-		}
-			echo"
-			</div> 
-		</div>";*/
 	}
 
 	function printDetalleMercancia($id_tipo_mercancia,$id_mercancia){
@@ -3130,290 +3200,6 @@ function index()
 		);
 	
 		$this->cart->insert($add_cart);
-		
-/*		
-		$id = $data['id'];
-		$cantidad = 0;
-		$cantidad_carrito_temporal =0;
-
-		if ($data['tipo'] == '1'){
-			
-			$cantidad_disp = $this->modelo_compras->get_cantidad_almacen($id);
-			$cantidad_carrito_temporal = $this->modelo_compras->get_cantidad_carrito_temporal($id);
-			$limites=$this->modelo_compras->get_limite_prod($id);
-			$min=$limites[0]->min_venta;
-			$max=$limites[0]->max_venta;
-			
-			if (isset($cantidad_disp[0]->cantidad)){
-				if (isset($cantidad_carrito_temporal[0]->cantidad)){
-					$cantidad = $cantidad_disp[0]->cantidad - $cantidad_carrito_temporal[0]->cantidad;
-				}
-				else $cantidad = $cantidad_disp[0]->cantidad ;
-			}else{
-				$cantidad = 0;
-			}
-			
-			if ($cantidad < $data['qty']*1){
-				echo "Error";
-				exit();
-			}
-		}
-			
-			$descuento_por_nivel_actual=$this->modelo_compras->get_descuento_por_nivel_actual($id_user);
-			if ($descuento_por_nivel_actual!=null){
-				$calcular_descuento=(100-$descuento_por_nivel_actual[0]->porcentage_venta)/100;
-			}else{
-				$calcular_descuento=1;
-			}
-			
-
-				switch($data['tipo'])
-				{
-					case 1:
-						$detalles=$this->modelo_compras->detalles_productos($id);
-						$costo_ini=($detalles[0]->costo*$calcular_descuento);
-						$costo_total=$costo_ini;
-					
-						$add_cart = array(
-				           'id'      => $id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => 0, 'time' => time())
-			        		);
-						break;
-						
-					case 2:
-						$detalles=$this->modelo_compras->detalles_servicios($id);
-						$costo_ini=($detalles[0]->costo*$calcular_descuento);
-						$costo_total=$costo_ini;
-			
-						$add_cart = array(
-				           'id'      => $id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => 0, 'time' => time())
-			        		);
-						break;
-						
-					case 3:
-						$detalles=$this->modelo_compras->detalles_combinados($id);
-						$comb=$this->modelo_compras->comb_espec($id);
-						$costo_q=$this->modelo_compras->costo_merc($id);
-						$costo_ini=$costo_q[0]->costo - (($costo_q[0]->costo * $data['desc'])/100);
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-				           'id'      => $id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => 0, 'time' => time())
-			        		);
-						break;
-					case 4:
-						$detalles=$this->modelo_compras->detalles_paquete($id);
-						$comb=$this->modelo_compras->comb_paquete($id);
-						$costo_q=$this->modelo_compras->costo_merc($id);
-						$costo_ini=$costo_q[0]->costo - (($costo_q[0]->costo * $data['desc'])/100);
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-								'id'      => $id,
-								'qty'     => $data['qty'],
-								'price'   => $costo_total,
-								'name'    => $data['tipo'],
-								'options' => array(	'prom_id' => 0, 'time' => time())
-						);
-						break;
-					case 5:
-						$detalles=$this->modelo_compras->detalles_prom_serv($id);
-						$costo_ini=$detalles[0]->costo*(1-($detalles[0]->prom_costo/100));
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-				           'id'      => $detalles[0]->id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    =>	$data['tipo'],
-				           'options' => array(	'prom_id' => $detalles[0]->id_promocion, 'time' => time())
-			        		);
-						break;
-					case 6:
-						$detalles=$this->modelo_compras->detalles_prom_comb($id);
-						$costo_ini=$detalles[0]->costo*(1-($detalles[0]->prom_costo/100));
-						$costo_total=$costo_ini;
-						
-						$add_cart = array(
-				           'id'      => $detalles[0]->id,
-				           'qty'     => $data['qty'],
-				           'price'   => $costo_total,
-				           'name'    => $data['tipo'],
-				           'options' => array(	'prom_id' => $detalles[0]->id_promocion, 'time' => time())
-			        		);
-						break;
-					default:
-						echo 'LA MERCANCIA YA NO ESTA DISPONIBLE';
-						break;
-				}
-				$this->cart->insert($add_cart);
-				echo ' <div class="navbar-header">
-					      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="sr-only"> Toggle navigation </span> <span class="icon-bar"> </span> <span class="icon-bar"> </span> <span class="icon-bar"> </span> </button>
-					      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-cart"> <i class="fa fa-shopping-cart colorWhite fa-2x"> </i> <span class="cartRespons colorWhite"> Cart (<?php echo $this->cart->total_items(); ?> ) </span> </button>
-					      <a style="color :#263569; margin-left:3rem;" class="navbar-brand titulo_carrito" href="/ov/dashboard" > <i class="fa fa-home"></i> Menu &nbsp;</a> 
-					      
-					      <!-- this part for mobile -
-					      <div class="search-box pull-right hidden-lg hidden-md hidden-sm">
-					        <div class="input-group">
-					          <button class="btn btn-nobg getFullSearch" type="button"> <i class="fa fa-search"> </i> </button>
-					        </div>
-					        <!-- /input-group --
-					        
-					      </div> -->
-					    </div>';
-				echo '<div class="navbar-cart  collapse">
-					      <div class="cartMenu  hidden-lg col-xs-12 hidden-md hidden-sm">
-					        <div class="w100 miniCartTable scroll-pane">
-					          <table  >
-					            <tbody>';
-		            	 
-		                  	if($this->cart->contents())
-							{ 
-								foreach ($this->cart->contents() as $items) 
-								{
-									$total=$items['qty']*$items['price'];	
-									$imgn=$this->modelo_compras->get_img($items['id']);
-									switch($items['name'])
-									{
-										case 1:
-											$detalles=$this->modelo_compras->detalles_productos($items['id']);
-											break;
-										case 2:
-											$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-											break;
-										case 3:
-											$detalles=$this->modelo_compras->comb_espec($items['id']);
-											break;
-										case 4:
-											$detalles=$this->modelo_compras->comb_paquete($items['id']);
-											break;
-										case 5:
-											$detalles=$this->modelo_compras->detalles_prom_serv($items['id']);
-											break;
-										case 6:
-											$detalles=$this->modelo_compras->detalles_prom_comb($items['id']);
-											break;
-									}
-									echo '<tr class="miniCartProduct"> 
-											<td style="width:20%" class="miniCartProductThumb"><div> <a href="#"> <img src="'.$imgn[0]->url.'" alt="img"> </a> </div></td>
-											<td style="width:40%"><div class="miniCartDescription">
-						                        <h4> <a href="product-details.html"> '.$detalles[0]->nombre.'</a> </h4>
-						                        <div class="price"> <span>$ '.$items['price'].' </span> </div>
-						                      </div></td>
-						                    <td  style="width:10%" class="miniCartQuantity"><a > X '.$items['qty'].' </a></td>
-						                    <td  style="width:15%" class="miniCartSubtotal"><span>'.$total.'</span></td>
-						                    <td  style="width:5%" class="delete"><a onclick="quitar_producto(\''.$items['rowid'].'\')"> x </a></td>
-										</tr>'; 
-								} 
-							}            
-		         echo   '</tbody>
-		          </table>
-		        </div>
-		        <!--/.miniCartTable-->
-		        
-		        <div class="miniCartFooter  miniCartFooterInMobile text-right">
-		          <h3 class="text-right subtotal"> Subtotal: $'.$this->cart->total().' </h3>
-		          <a class="btn btn-sm btn-danger" onclick="ver_cart()"> <i class="fa fa-shopping-cart"> </i> VER CARRITO </a> <a class="btn btn-sm btn-primary" onclick="a_comprar()"> COMPRAR! </a> </div>
-		        <!--/.miniCartFooter--> 
-		        
-		      </div>';
-				echo '</div>
-		    <!--/.navbar-cart-->
-		    
-		    <div class="navbar-collapse collapse">
-		      
-		      <!--- this part will be hidden for mobile version -->
-		      <div class="nav navbar-nav navbar-right hidden-xs" >
-		        <div class="dropdown  cartMenu "> <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
-		        	<i class="fa fa-shopping-cart"> </i> 
-		        	<span class="cartRespons"> Cart ('.$this->cart->total_items().') 
-		        	</span> <b class="caret"> </b> </a>
-		          	<div class="dropdown-menu col-lg-4 col-xs-12 col-md-4 ">
-		            	<div class="w100 miniCartTable scroll-pane">
-			              	<table>
-			                	<tbody>';
-			                  
-			                 	foreach ($this->cart->contents() as $items) 
-								{
-									$total=$items['qty']*$items['price'];	
-									$imgn=$this->modelo_compras->get_img($items['id']);
-									if(isset($imgn[0]->url))
-									{
-										$imagen=$imgn[0]->url;
-									}
-									else
-									{
-										$imagen="";
-									}
-									switch($items['name'])
-									{
-										case 1:
-											$detalles=$this->modelo_compras->detalles_productos($items['id']);
-											break;
-										case 2:
-											$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-											break;
-										case 3:
-											$detalles=$this->modelo_compras->comb_espec($items['id']);
-											break;
-										case 4:
-											$detalles=$this->modelo_compras->comb_paquete($items['id']);
-											break;
-										case 5:
-											$detalles=$this->modelo_compras->detalles_prom_serv($items['id']);
-											break;
-										case 6:
-											$detalles=$this->modelo_compras->detalles_prom_comb($items['id']);
-											break;
-									}
-									echo '<tr class="miniCartProduct"> 
-											<td style="width:20%" class="miniCartProductThumb"><div> <a href="#"> <img src="'.$imagen.'" alt="img"> </a> </div></td>
-											<td style="width:40%"><div class="miniCartDescription">
-						                        <h4> <a href="product-details.html"> '.$detalles[0]->nombre.'</a> </h4>
-						                        <div class="price"> <span> '.($items['price']).' </span> </div>
-						                      </div></td>
-						                    <td  style="width:10%" class="miniCartQuantity"><a > X '.$items['qty'].' </a></td>
-						                    <td  style="width:15%" class="miniCartSubtotal"><span>'.$total.'</span></td>
-						                    <td  style="width:5%" class="delete"><a onclick="quitar_producto(\''.$items['rowid'].'\')"> x </a></td>
-										</tr>'; 
-								} 
-			                  
-			                echo '</tbody>
-			              </table>
-		            	</div>
-		            <!--/.miniCartTable-->
-		            
-			            <div class="miniCartFooter text-right">
-			              <h3 class="text-right subtotal"> Subtotal: $ '.$this->cart->total().' </h3>
-			              <a class="btn btn-sm btn-danger" onclick="ver_cart()"> <i class="fa fa-shopping-cart"> </i> VER CARRITO </a> <a class="btn btn-sm btn-primary" onclick="a_comprar()"> COMPRAR! </a> </div>
-			            <!--/.miniCartFooter--> 
-		            
-		          		</div>
-		          <!--/.dropdown-menu--> 
-		        	</div> 
-		        <!--/.cartMenu--> 
-		        
-		        <div class="search-box">
-		          <div class="input-group"> 
-		            <button class="btn btn-nobg getFullSearch" type="button"> <i class="fa fa-search"> </i> </button>
-		          </div>
-		          <!-- /input-group --> 
-		          
-		        </div>
-		        <!--/.search-box --> ';
-			
-		*/
 		
 	}
 	
@@ -3576,7 +3362,7 @@ function index()
 		}
 	
 		$pais = $this->general->get_pais($id);
-		$paisUsuario=$pais[0]->pais;
+		$paisUsuario=$this->general->issetVar($pais,"pais","AAA");
 	
 		$productos=1;
 		$servicios=2;
@@ -3613,7 +3399,7 @@ function index()
 			}
 		
 			$pais = $this->general->get_pais($id);
-			$paisUsuario=$pais[0]->pais;
+			$paisUsuario=$this->general->issetVar($pais,"pais","AAA");
 		
 			$tipoMercancia = $_GET['tipoMercancia'];
 		
@@ -3890,95 +3676,7 @@ function index()
 		$this->cart->update($data);
 		if(!$this->cart->contents())
 			echo 'NO HAY PRODUCTOS EN EL CARRITO';
-/*		{
-		echo '
-					<div class="col-lg-12 col-md-12 col-sm-12">
-				      <div class="row userInfo">
-				        <div class="col-xs-12 col-sm-12">
-				          <div class="cartContent w100">
-				            <table class="cartTable table-responsive" style="width:100%">
-				              <tbody>
-				              
-				                <tr class="CartProduct cartTableHeader">
-				                  <td style="width:15%"  > Product </td>
-				                  <td style="width:40%"  >Details</td>
-				                  <td style="width:10%"  class="delete">&nbsp;</td>
-				                  <td style="width:10%" >QNT</td>
-				                  <td style="width:10%" >Discount</td>
-				                  <td style="width:15%" >Total</td>
-				                </tr>';
-				               foreach ($this->cart->contents() as $items) 
-								{
-									
-									$total=$items['qty']*$items['price'];	
-									$imgn=$this->modelo_compras->get_img($items['id']);
-									if(isset($imgn[0]->url))
-									{
-										$imagen=$imgn[0]->url;
-									}
-									else
-									{
-										$imagen="";
-									}
-									switch($items['name'])
-									{
-										case 1:
-											$detalles=$this->modelo_compras->detalles_productos($items['id']);
-											break;
-										case 2:
-											$detalles=$this->modelo_compras->detalles_servicios($items['id']);
-											break;
-										case 3:
-											$detalles=$this->modelo_compras->comb_espec($items['id']);
-											break;
-										case 4:
-											$detalles=$this->modelo_compras->comb_paquete($items['id']);
-											break;
-										case 5:
-											$detalles=$this->modelo_compras->detalles_prom_serv($items['id']);
-											break;
-										case 6:
-											$detalles=$this->modelo_compras->detalles_prom_comb($items['id']);
-											break;
-									}
-									echo '<tr class="CartProduct">
-											<td  class="CartProductThumb">
-												<div> 
-													<a href="#"><img src="'.$imagen.'" alt="img"></a> 
-												</div>
-											</td>
-											<td >
-												<div class="CartDescription">
-							                      <h4> <a href="product-details.html">'.$detalles[0]->nombre.'</a> </h4>
-							                   
-							                      <div class="price"> <span>$'.$items['price'].'</span></div>
-							                    </div>
-							                </td>
-							                <td class="delete"><a title="Delete" onclick="quitar_producto(\''.$items['rowid'].'\')"> <i class="glyphicon glyphicon-trash fa-2x"></i></a></td>
-							                <td >'.$items['qty'].'</td>
-							                <td >0</td>
-							                <td class="price">$'.$total.'</td>
-											
-										</tr>';
-								}
-				                
-				               echo ' </tbody>
-						            </table>
-						          </div>
-						          <!--cartContent-->
-						          
-						        </div>
-						      </div>
-						      <!--/row end--> 
-						      
-						    </div>
-						   ';
-				
-			}						
-		else
-		{
-				
-		}*/
+
 	}
 	function actualizar_nav()
 	{
@@ -4203,18 +3901,9 @@ function index()
 	
 	function verificar_carro()
 	{
-	/*	$prod=0;
-		foreach($this->cart->contents() as $items)
-		{
-			$prod++;
-		}
-		if($prod>0)		
-		{
-			echo 'si';
-		}
-		else {
-			echo 'no';
-		}*/
+		$prod=sizeof($this->cart->contents());
+		echo ($prod>0) ? 'si' : 'no';
+
 	}
 	
 	function actualizar_comprador(){
@@ -4357,77 +4046,7 @@ function index()
 		
 		$this->template->build('website/ov/compra_reporte/prueba');
 	}
-	/*
-	function registrarVenta(){
-		$estado = $_POST['state_pol'];
-		$productos = $this->cart->contents();
-		$referencia = $_POST['reference_sale'];
-		$id_usuario = $_POST['extra2'];
-		$extra1 = explode("-", $_POST['extra1']);
-		$id_mercancia = $extra1[0];
-		$cantidad = $extra1[1];
-		$metodo_pago = $_POST['payment_method_id'];
-		$respuesta = $_POST['response_code_pol'];
-		$fecha = $_POST['transaction_date'];
-		$moneda = $_POST['currency'];
-		$email = $_POST['email_buyer'];
-		$direcion_envio = $_POST['shipping_address'];
-		$telefono = $_POST['phone'];
-		$identificado_transacion = $_POST['transaction_id'];
-		$medio_pago = $_POST['payment_method_name'];
-		
-		$id_transacion = $_POST['transaction_id'];
-		$firma = $_POST['sign'];
-		
-		$costo = $cantidad*$this->modelo_compras->CostoMercancia($id_mercancia);
-		
-		$impuestos = $this->modelo_compras->ImpuestoMercancia($id_mercancia, $costo);
-		
-		if($estado == 4){
-			
-			$venta = $this->modelo_compras->registrar_venta($id_usuario, $costo, $metodo_pago, $id_transacion, $firma, $fecha, $impuestos);
-			
-			$this->modelo_compras->registrar_envio("1".$venta, $id_usuario, $direcion_envio , $telefono, $email);
-			$this->modelo_compras->registrar_factura($venta, $id_usuario, $direcion_envio , $telefono, $email);
-			
-			$puntos = $this->modelo_compras->registrar_venta_mercancia($id_mercancia, $venta, $cantidad);
-			$total = $this->modelo_compras->registrar_impuestos($id_mercancia);
-			$this->modelo_compras->registrar_movimiento($id_usuario, $id_mercancia, $cantidad, $costo+$impuestos, $total, $venta, $puntos);
-			$producto_continua = array();
-			foreach ($productos as $producto){
-				if($producto['id'] == $id_mercancia){
-					
-					$this->cart->destroy();
-				}else{
-					$add_cart = array(
-							'id'      => $producto['id'],
-							'qty'     => $producto['qty'],
-							'price'   => $producto['price'],
-							'name'    => $producto['name'],
-							'options' => $producto['options']
-					);
-					$producto_continua[] = $add_cart;
-				}
-			}
-			$this->cart->insert($producto_continua);
-			
-			#$id_red_mercancia = $this->modelo_compras->ObtenerCategoriaMercancia($id_mercancia);
-			
-			//$red = $this->modelo_compras->Red($id_red_mercancia);
-			
-			//$valor_puntos = $puntos * $red[0]->valor_punto;
-			$id_categoria_mercancia = $this->modelo_compras->ObtenerCategoriaMercancia($id_mercancia);
-			$costo_comision = $this->modelo_compras->ValorComision($id_categoria_mercancia);
-			
-			$id_red = $this->modelo_compras->ConsultarIdRedMercancia($id_categoria_mercancia);
-			$capacidad_red = $this->model_tipo_red->CapacidadRed($id_red);
-			$id_afiliado = $this->model_perfil_red->ConsultarIdPadre( $id_usuario, $id_red);
-			
-			$this->CalcularComision2($id_afiliado, $venta, $id_categoria_mercancia ,$costo_comision, $capacidad_red, 1, $puntos);
-			return "Regsitro Corecto";
-		}	
-	}
-	*/
+
 	function registrarVenta(){
 		
 		$estado = $_POST['state_pol'];
@@ -4473,35 +4092,10 @@ function index()
 	}
 
 	
-	function CalcularComision2($id_venta, $id_categoria_mercancia,$config_comision, $capacidad_red ,$contador, $costo_mercancia){
-		
-		
-		
-		$this->DarComision($id_venta, $id_afiliado, $valor_comision, $porcentaje, $id_categoria_mercancia);
-	/*   $this->bonoMes234($id_afiliado, $id_venta, $id_categoria_mercancia, $config_comision, $capacidad_red ,$contador, $costo_mercancia);
-		$productos_venta=$this->modelo_compras->get_productos_venta($id_venta);
-		$consultar_user_venta=$this->modelo_compras->get_user_venta($id_venta);
-		$id_padre_nivel_tres=$this->Encontrar_a_padre_niveltres($consultar_user_venta[0]->id_user,$capacidad_red[0]->id);
-		
-		
-		foreach ($productos_venta  as $row){
-			
-		 $porcentage_comision_user_actual=$this->modelo_compras->get_descuento_por_nivel_actual($consultar_user_venta[0]->id_user);
-		 $porcentage_comision_user_padre=$this->modelo_compras->get_descuento_por_nivel_actual($id_padre_nivel_tres);
-		 $porcentage_a_pagar= (($porcentage_comision_user_padre[0]->porcentage_venta)-($porcentage_comision_user_actual[0]->porcentage_venta))/100;
-		 
-		 if ($porcentage_a_pagar!=0){
-			 $valor_de_producto=$this->modelo_compras->get_datos_producto($row->id_mercancia);
-			 $valor_a_consiganar=((($valor_de_producto[0]->costo)*($porcentage_a_pagar)));
-			      
-				 if ($valor_de_producto[0]->id_tipo_mercancia!='4')
-					       $this->modelo_compras->set_comision_bono_afiliacion($id_venta,
-						   $id_padre_nivel_tres,$capacidad_red[0]->id,
-						   "0",($valor_a_consiganar)*($row->cantidad));
-				}
-			}
-	    
-		return 0;*/
+	function CalcularComision2($id_afiliado,$id_venta, $id_categoria_mercancia,$valor_comision, $capacidad_red ,$contador, $costo_mercancia){
+
+		$this->DarComision($id_venta, $id_afiliado, $valor_comision, $capacidad_red, $id_categoria_mercancia);
+
 	}
 	
 	function Encontrar_a_padre_niveltres($user,$id_red){
@@ -4625,9 +4219,6 @@ function index()
 		}
 	}
 	
-	
-	
-	
 	public function calcularComisionAfiliado($id_venta,$id_red_mercancia,$costoVenta,$id_afiliado){
 	
 		$valor_comision_por_nivel = $this->modelo_compras->ValorComision($id_red_mercancia);
@@ -4653,5 +4244,75 @@ function index()
 		}
 	
 	}
-	
+
+    public function updateCarritoProceso($id_proceso, $dato,$type = "code")
+    {
+        $q = $this->getCarritoProceso($id_proceso);
+
+        $dato_carrito = json_decode($q[0]->carrito);
+        foreach ($dato_carrito as $datos){
+            $datos->$type = $dato;
+        }
+        $carritoDato = json_encode($dato_carrito);
+
+        $this->db->query("UPDATE pago_online_proceso SET carrito = '$carritoDato' WHERE id = $id_proceso");
+    }
+
+    public function getCarritoProceso($id_proceso)
+    {
+        $q = $this->db->query("SELECT * FROM pago_online_proceso WHERE id = $id_proceso");
+        $q = $q->result();
+        return $q;
+    }
+
+    private function typeSERVER()
+    {
+        require(APPPATH . "config/config.php");
+        $ssl = $config["enable_hooks"];
+        $typesec = ($ssl) ? "https" : "http";
+        return $typesec;
+    }
+
+    private function setBlockchainQR($id, $address, $id_proceso)
+    {
+        $link = "bitcoin:$address";
+        $qrview = "/template/php/openqr/";
+        $qrdir = getcwd() . $qrview;
+        $qrlib = $qrdir . "qrlib.php";
+        $cache_dir = $qrdir . "cache/";
+        $temp_dir = $qrdir . 'temp/';
+
+        if (!is_dir($temp_dir))
+            mkdir($temp_dir);
+
+        $this->limpiarDir($temp_dir);
+        #todo: $this->limpiarDir($cache_dir);
+
+        include($qrlib);
+
+        $qrfile = md5("$id|$address|$id_proceso");
+        $filename = $temp_dir . "block_$qrfile.png";
+
+        $level = "H";
+        $size = 6;
+        QRcode::png($link, $filename, $level, $size, 2);
+
+        $filename = $qrview . "temp/block_$qrfile.png";
+        return $filename;
+    }
+
+    private function limpiarDir($temp_dir)
+    {
+        $temps = is_dir($temp_dir) ? scandir($temp_dir) : false;
+        if (!$temps)
+            return false;
+        foreach ($temps as $tmp){
+            if ($tmp == '.' || $tmp == '..') continue;
+
+            unlink($temp_dir . $tmp);
+        }
+
+        return array($temps, $tmp);
+    }
+
 }

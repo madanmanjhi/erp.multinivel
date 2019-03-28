@@ -95,7 +95,7 @@
                                         País
                                         <label class="select">
                                             <select id="pais" required name="pais">
-                                                <? foreach ($pais as $key) { ?>
+                                                <?php foreach ($pais as $key) { ?>
                                                     <?php if ($key->Code == $empresa[0]->pais) { ?>
                                                         <option selected value="<?= $key->Code ?>">
                                                             <?= $key->Name ?>
@@ -104,7 +104,7 @@
                                                         <option value="<?= $key->Code ?>">
                                                             <?= $key->Name ?>
                                                         </option>
-                                                    <? }
+                                                    <?php }
                                                 } ?>
                                             </select>
                                         </label>
@@ -210,3 +210,4 @@
 
 
 </script>
+

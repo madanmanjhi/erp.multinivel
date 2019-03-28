@@ -50,9 +50,9 @@
 																<label class="col-lg-6 col-sm-6 col-md-12 col-xs-12">Año
 																	<select id="año" onChange="buscar()" class="form-control">
 																		<option value="" selected>Selecione año</option>
-																	<? foreach ($años as $key) {?>
+																	<?php foreach ($años as $key) {?>
 																			<option value="<?=$key->año?>"><?=$key->año?></option>
-																	<?}?>
+																	<?php }?>
 																	</select>
 																</label>
 																<label class="col-lg-6 col-sm-6 col-md-12 col-xs-12">Mes
@@ -246,3 +246,4 @@ function buscar(){
 		jQuery('input').trigger(e);
 	}
 </script>
+

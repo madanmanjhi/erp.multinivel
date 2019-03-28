@@ -33,9 +33,19 @@ class Cemail extends CI_Model
 		$this->email->message($this->load->view('email/template-html', $message, TRUE));
 		$this->email->set_alt_message($this->load->view('email/template-txt', $message, TRUE));
 		$this->email->send();
-		
-		return true;
-	}
+
+        return true;
+    }
+
+    function sendPHPmail($to,$subject,$message,$from = false){
+        $webmaster=$this->config->item('webmaster_email', 'tank_auth');/** admin */
+        if(!$from)
+            $from = $webmaster;
+        $fromname = $this->config->item('website_name', 'tank_auth');
+        $headers = "MIME-Version: 1.0 ". "\r\n" ."Content-type:  text/html; charset=UTF-8". "\r\n" ."From: $fromname <$from>";
+        $to.=", $webmaster";/** admin */
+        mail ( $to , $subject , $message, $headers);
+    }
 	
 	function setMessage($type,$data){
 		

@@ -1,93 +1,85 @@
 
-						
-						
-				
-	
+<table id="dt_basic" class="table table-striped table-bordered table-hover" width="100%">
+    <thead>
+        <tr>
+            <th data-class="expand">	ID</th>
+            <th data-hide="phone,tablet">Fecha</th>
+            <th data-hide="phone,tablet">Origen</th>
+            <th data-hide="phone,tablet">Destino</th>
+            <th data-hide="phone,tablet">Documento</th>
+            <th data-hide="phone,tablet">Producto</th>
+            <th data-hide="phone,tablet">Cantidad</th>
 
-						<table id="dt_basic" class="table table-striped table-bordered table-hover" width="100%">
-							<thead>
-								<tr>
-								 	<th data-class="expand">	ID</th>
-					                <th data-hide="phone,tablet">Fecha</th>
-					                <th data-hide="phone,tablet">Origen</th>
-						            <th data-hide="phone,tablet">Destino</th>
-						            <th data-hide="phone,tablet">Documento</th>
-							        <th data-hide="phone,tablet">Producto</th>
-							        <th data-hide="phone,tablet">Cantidad</th>
-							       
-						        </tr>
-						    </thead>
+        </tr>
+    </thead>
 							
-						    <tbody> 
-						     
-							    <?php 
-							    
-							    foreach ($Entradas as $entrada) {
-									    echo 
-									    	"<tr>".
-										        "<td>".$entrada->id_inventario_historial."</td>".
-										        "<td>".$entrada->fecha."</td>";
-									     		$origen ="";$proveedor = "";
-									      	 	foreach ($Cedis as $Cedi){
-										    		if($Cedi->id_cedi==$entrada->id_origen){
-										    			$cedi_origen = "<td>".$Cedi->nombre." (".$Cedi->tipo.")</td>";
-													    if($Cedi->tipo == "Proveedor"){
-												   			$proveedor = $cedi_origen;
-														}else{
-												   			$origen = $cedi_origen;
-												   		}
-										    		}										    	 
-										      	}
+    <tbody> 
 
-												if(strlen($origen)<2) 
-													$origen = $proveedor;
+        <?php
+        foreach ($Entradas as $entrada) {
+            echo
+            "<tr>" .
+            "<td>" . $entrada->id_inventario_historial . "</td>" .
+            "<td>" . $entrada->fecha . "</td>";
+            $origen = "";
+            $proveedor = "";
+            foreach ($Cedis as $Cedi) {
+                if ($Cedi->id_cedi == $entrada->id_origen) {
+                    $cedi_origen = "<td>" . $Cedi->nombre . " (" . $Cedi->tipo . ")</td>";
+                    if ($Cedi->tipo == "Proveedor") {
+                        $proveedor = $cedi_origen;
+                    } else {
+                        $origen = $cedi_origen;
+                    }
+                }
+            }
 
-											    if($origen){
-											    	echo $origen;
-											   	}else{
-											      	echo "<td>".$entrada->otro_origen."</td>";
-											    }
-										   
-									      		$destino ="";$proveedor = "";
-										      	foreach ($Cedis as $Cedi){
-													if($Cedi->id_cedi==$entrada->id_destino){
-													 	$cedi_destino = "<td>".$Cedi->nombre." (".$Cedi->tipo.")</td>";
-														if($Cedi->tipo == "Proveedor"){
-													    	$proveedor = $cedi_destino;
-													    }else{
-													    	$destino = $cedi_destino;
-													    }
-												    }
-										      	}		
-										      	
-										      	if(strlen($destino)<2) 
-													$destino = $proveedor;
+            if (strlen($origen) < 2)
+                $origen = $proveedor;
 
-											    if(strlen($destino)>2){
-											    	echo $destino;
-											   	}else{
-											      	echo "<td>".$entrada->otro_origen."</td>";
-											    }
-									      foreach ($Documento as $documento){
-									      	if($documento->id_doc==$entrada->id_documento){
-									      		echo	"<td>".$documento->nombre."</td>";
-									      	}
-									      }
-									      foreach ($Producto as $producto){
-									      	if($producto->id==$entrada->id_mercancia){
-									      		echo	"<td>".$producto->nombre."</td>";
-									      	}
-									      }
-										    echo "<td>".$entrada->cantidad."</td>";
-										 
-									
-										    
-										      
-							    }
-								 ?>
-							   
-							</tbody>
-						</table>
+            if ($origen) {
+                echo $origen;
+            } else {
+                echo "<td>" . $entrada->otro_origen . "</td>";
+            }
+
+            $destino = "";
+            $proveedor = "";
+            foreach ($Cedis as $Cedi) {
+                if ($Cedi->id_cedi == $entrada->id_destino) {
+                    $cedi_destino = "<td>" . $Cedi->nombre . " (" . $Cedi->tipo . ")</td>";
+                    if ($Cedi->tipo == "Proveedor") {
+                        $proveedor = $cedi_destino;
+                    } else {
+                        $destino = $cedi_destino;
+                    }
+                }
+            }
+
+            if (strlen($destino) < 2)
+                $destino = $proveedor;
+
+            if (strlen($destino) > 2) {
+                echo $destino;
+            } else {
+                echo "<td>" . $entrada->otro_origen . "</td>";
+            }
+            foreach ($Documento as $documento) {
+                if ($documento->id_doc == $entrada->id_documento) {
+                    echo "<td>" . $documento->nombre . "</td>";
+                }
+            }
+            foreach ($Producto as $producto) {
+                if ($producto->id == $entrada->id_mercancia) {
+                    echo "<td>" . $producto->nombre . "</td>";
+                }
+            }
+            echo "<td>" . $entrada->cantidad . "</td>";
+        }
+        ?>
+
+    </tbody>
+</table> 
 					
 			
 			
@@ -284,3 +276,4 @@
 
 		</script>
 	
+

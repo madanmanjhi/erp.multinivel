@@ -55,9 +55,10 @@
                                 </div>
 																</li>
 																<li>
-																	<p class="text-muted">
-																		<i class="fa fa-phone"></i>&nbsp;&nbsp;(<span class="txt-color-darken"><?=$telefono?></span>)</span>
-																	</p>
+																	<h5 class="text-muted">
+																		<i class="fa fa-globe"></i> LINK PERSONAL:<br/></h5>
+																		<a href="<?=$link_personal;?>" ><?=$link_personal;?></a>
+																	<hr/>
 																</li>
 																<li>
 																	<p class="text-muted">

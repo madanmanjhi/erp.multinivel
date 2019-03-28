@@ -76,11 +76,11 @@
 											<label class="select">
 													<label class="label">Seleccione un tipo de usuario</label>
 													<select name="tipo" id="tipo" required="">
-													<?foreach ($tiposUsuario as $tipo) {?>
+													<?php foreach ($tiposUsuario as $tipo) {?>
 														<option value="<?php echo $tipo->id_tipo_usuario; ?>">
 															<?php echo $tipo->descripcion; ?>
 														</option>
-													<?}?>
+													<?php }?>
 													</select>
 											</label><br>
 											<table>
@@ -178,3 +178,4 @@ function new_user()
 }
 </style>
 			
+

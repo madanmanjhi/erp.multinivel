@@ -90,7 +90,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = FALSE;#TODO: if SSL Cert exist - ssl-for-free
 
 
 /*
@@ -359,3 +359,4 @@ $config['proxy_ips'] = '';
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
+

@@ -88,7 +88,7 @@
                                             <label class="select">País
                                                 <select id="pais" required name="pais" onChange="CiudadesPais()">
                                                     <option value="-" selected>-- Seleciona un país --</option>
-                                                    <? foreach ($paises as $key) { ?>
+                                                    <?php foreach ($paises as $key) { ?>
                                                         <option value="<?= $key->Code ?>"><?= $key->Name ?></option>
 <?php } ?>
                                                 </select>
@@ -436,11 +436,11 @@
                                                                                                             + 'País'
                                                                                                             + '<label class="select">'
                                                                                                             + '<select id="pais2" required name="pais" onChange="Departamentos2()">'
-                                                                                                            + '<? foreach ($paises as $key) { ?>'
+                                                                                                            + '<?php foreach ($paises as $key) { ?>'
                                                                                                                 + '<option value="<?= $key->Code ?>">'
                                                                                                                 + '<?= $key->Name ?>'
                                                                                                                 + '</option>'
-                                                                                                                + '<? } ?>'
+                                                                                                                + '<?php } ?>'
                                                                                                             + '</select>'
                                                                                                             + '</label>'
                                                                                                             + '</section>'
@@ -516,9 +516,9 @@
                                                                                                             + '<section class="col col-6">'
                                                                                                             + 'País<label class="select">'
                                                                                                             + '<select id="pais" required name="pais">'
-                                                                                                            + '<? foreach ($paises as $key) { ?>'
+                                                                                                            + '<?php foreach ($paises as $key) { ?>'
                                                                                                                 + '<option value="<?= $key->Code ?>"><?= $key->Name ?></option>'
-                                                                                                                + '<? } ?>'
+                                                                                                                + '<?php } ?>'
                                                                                                             + '</select>'
                                                                                                             + '</label>'
                                                                                                             + '</section>'
@@ -639,3 +639,4 @@
                                                                                                         });
                                                                                             }
 </script>
+

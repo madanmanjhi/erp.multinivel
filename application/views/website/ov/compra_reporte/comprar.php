@@ -215,9 +215,13 @@
 															<a onclick="consignacion()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
 																<img src="/template/img/payment/deposito-bancario.jpg" alt="Banco" height="60" width="240">
 															</a>
-															<?php if($payulatam[0]->estatus=='ACT') {?>
+                                                            <?php if($blockchain[0]->estatus=='ACT') {?>
+                                                                <a onclick="blockchain()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
+                                                                    <img src="/template/img/payment/blockchain.png" alt="blockchain" height="60" >
+                                                                </a>
+                                                            <?php } if($payulatam[0]->estatus=='ACT') {?>
 															<a onclick="payuLatam()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
-																<img src="/template/img/payment/payu.jpg" alt="american express" height="60" width="100">
+																<img src="/template/img/payment/payu.jpg" alt="payu" height="60" width="100">
 															</a>
 															<?php } if($paypal[0]->estatus=='ACT') {?>
 															<a onclick="payPal()" style="margin-left: 1rem;" class="btn btn-success txt-color-blueLight">
@@ -255,7 +259,18 @@
 
 										</div>
 </div>
+<style>
+    .payment-methods .btn.btn-success.txt-color-blueLight {
+        padding: 1px;
+        border-radius: 0.4em;
+        background: none;
+        border: thin solid;
+    }
+    .payment-methods .btn.btn-success.txt-color-blueLight:hover {
+        border: thin solid #009148;
+    }
 
+</style>
 <script>
     paceOptions = {
       elements: true
@@ -385,6 +400,59 @@
 			}
 		});	
 	}
+
+    function blockchain(){
+        iniciarSpinner();
+        $.ajax({
+            type:"POST",
+            url:"consultarBlockchain",
+            success: function(msg){
+                FinalizarSpinner();
+                bootbox.dialog({
+                    message: msg,
+                    title: "Cotizar Blockchain",
+                    className: "",
+                    buttons: {
+                        danger: {
+                            label: "Cancelar",
+                            className: "btn-danger",
+                            callback: function() {
+                            }
+                        },
+                        success: {
+                            label: "Continuar",
+                            className: "btn-success",
+                            callback: function() {
+
+                                iniciarSpinner();
+                                $.ajax({
+                                    type:"POST",
+                                    url:"pagarVentaBlockchain",
+                                    success: function(msg){
+                                        FinalizarSpinner();
+                                        bootbox.dialog({
+                                            message: msg,
+                                            title: "Pago Blockchain",
+                                            className: "",
+                                            buttons: {
+                                                danger: {
+                                                    label: "Cerrar",
+                                                    className: "btn-danger",
+                                                    callback: function() {
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                })
+            }
+        });
+    }
 
 	function payuLatam(){
 		iniciarSpinner();

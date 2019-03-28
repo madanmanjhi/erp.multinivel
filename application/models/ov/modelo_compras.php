@@ -687,7 +687,8 @@ where a.id_paquete = e.id_paquete and d.sku= a.id_paquete and d.estatus="ACT" an
 		$i=0;
 		foreach($res_imp as $imp)
 		{
-			$q2=$this->db->query("Select porcentaje from cat_impuesto where id_impuesto=".$imp->id_impuesto);
+            $id_impuesto = intval($imp->id_impuesto);
+            $q2=$this->db->query("Select porcentaje from cat_impuesto where id_impuesto=". $id_impuesto);
 			$res2=$q2->result();
 			$impuestos[$i]=$res2[0]->porcentaje;
 			$i++;
@@ -704,9 +705,10 @@ where a.id_paquete = e.id_paquete and d.sku= a.id_paquete and d.estatus="ACT" an
 		$subtotal=$costo*$qty;
 		$q=$this->db->query("Select id_impuesto from cross_merc_impuesto where id_mercancia=".$id);
 		$res_imp=$q->result();
-		foreach($res_imp as $imp)
+		foreach($res_imp as $i => $imp)
 		{
-			$q2=$this->db->query("Select porcentaje from cat_impuesto where id_impuesto=".$imp->id_impuesto);
+            $id_impuesto = intval($imp->id_impuesto);
+            $q2=$this->db->query("Select porcentaje from cat_impuesto where id_impuesto=". $id_impuesto);
 			$res2=$q2->result();
 			$impuestos[$i]=$res2[0]->porcentaje;
 			$i++;
@@ -788,197 +790,7 @@ where a.id_paquete = e.id_paquete and d.sku= a.id_paquete and d.estatus="ACT" an
 	
 	function hacer_compra()
 	{
-/*
-		if(!isset($_GET["usr"]))
-		{
-			$id_user=$this->tank_auth->get_user_id();
-		}
-		else
-		{
-			$id_user=$_GET["usr"];
-		}
-		$dato_venta=array(
-			"id_user" 			=> $id_user,
-			"id_estatus"		=> 3,
-			"costo" 			=> $this->cart->total(),
-			"id_metodo_pago" 	=> $_POST["pago"]
-		);
-		$this->db->insert("venta",$dato_venta);
-		$venta = $this->db->insert_id();
-		if($_GET["tipo"]==3)
-		{
-			$this->db->query("insert into autocompra (fecha,id_usuario) values ('".$_POST['startdate']."',".$id_user.")");
-		}
 
-		$dato_envio=array(
-			"id_venta"	=> $venta,
-			"nombre" 	=> $_POST["nombre_envio"],
-			"apellido" 	=> $_POST["apellido_envio"],
-			"cp" 		=> $_POST["cp_envio"],
-			"id_pais" 	=> $_POST["pais_envio"],
-			"estado" 	=> $_POST["estado_envio"],
-			"municipio"	=> $_POST["municipio_envio"],
-			"colonia" 	=> $_POST["colonia_envio"],
-			"calle" 	=> $_POST["calle_envio"],
-			"correo" 	=> $_POST["correo_envio"],
-			"compania" 	=> $_POST["compania_envio"],
-			"celular" 	=> $_POST["celular_envio"],
-			"info_ad"	=> $_POST["info_envio"]
-		);
-		
-		$this->db->insert("cross_venta_envio",$dato_envio);
-		
-		$dato_fact=array(
-			"id_venta"	=> $venta,
-			"nombre" 	=> $_POST["nombre_fac"],
-			"apellido" 	=> $_POST["apellido_fac"],
-			"rfc"		=> $_POST["rfc_fac"],
-			"cp" 		=> $_POST["cp_fac"],
-			"id_pais" 	=> $_POST["pais_fac"],
-			"estado" 	=> $_POST["estado_fac"],
-			"municipio"	=> $_POST["municipio_fac"],
-			"colonia" 	=> $_POST["colonia_fac"],
-			"calle" 	=> $_POST["calle_fac"],
-			"correo" 	=> $_POST["correo_fac"],
-			"compania" 	=> $_POST["compania_fac"],
-			"celular" 	=> $_POST["celular_fac"]
-		);
-		$this->db->insert("cross_venta_factura",$dato_fact);
-		$puntos=0;
-		foreach($this->cart->contents() as $items)
-		{
-			$dato_cross_venta=array(
-				"id_mercancia" 	=> $items['id'],
-				"id_venta"		=> $venta,
-				"cantidad"		=> $items['qty'],
-				"id_promocion"	=> $items['options']['prom_id']
-			);
-			$this->db->insert("cross_venta_mercancia",$dato_cross_venta);
-			$puntos_q=$this->db->query("select puntos_comisionables from mercancia where id=".$items['id']);
-			$puntos_res=$puntos_q->result();
-			$puntos=$puntos+($puntos_res[0]->puntos_comisionables*$items['qty']);
-			$inventario_q=$this->db->query("SELECT a.id_inventario, a.cantidad FROM inventario a, almacen b 
-			WHERE a.id_mercancia=".$items['id']." and a.id_almacen=b.id_almacen and b.web=1");
-			$inventario_res=$inventario_q->result();
-			$id_inventario=$inventario_res[0]->id_inventario;
-			$actual=($inventario_res[0]->cantidad)*1;
-			$restantes=$actual-$items['qty'];
-			$this->db->query("update inventario set cantidad=".$restantes." where id_inventario=".$id_inventario);
-			$q=$this->db->query("SELECT costo from mercancia where id=".$items['id']);
-			$res_q=$q->result();
-			$costo=$res_q[0]->costo;
-			$importe=$costo;
-			$total=$costo;
-			$subtotal=$costo*$items['qty'];
-			$q=$this->db->query("Select id_impuesto from cross_merc_impuesto where id_mercancia=".$items['id']);
-			$res_imp=$q->result();
-			$i=0;
-			foreach($res_imp as $imp)
-			{
-				$q2=$this->db->query("Select porcentaje from cat_impuesto where id_impuesto=".$imp->id_impuesto);
-				$res2=$q2->result();
-				$impuestos[$i]=$res2[0]->porcentaje;
-				$i++;
-			}
-			foreach($impuestos as $desc)
-			{
-				$mas=($desc*$costo)/100;
-				$total=$total+$mas;
-			}
-			$q_alm=$this->db->query("SELECT id_almacen from almacen where web=1");
-			$alm_res=$q_alm->result();
-			$origen=$alm_res[0]->id_almacen;
-			$q_user=$this->db->query("SELECT username from users where id=".$id_user);
-			$user_res=$q_user->result();
-			$usuario=$user_res[0]->username;
-			$clave="VENTA".$id_user.$usuario;
-			$dato_mov=array(
-				"id_tipo"		=> 2,
-				"entrada"		=> 0,
-				"keyword"		=> $clave,
-				"origen"		=> $origen,
-				"destino"		=> $usuario,
-				"id_mercancia"	=> $items['id'],
-				"cantidad"		=> $items['qty'],
-				"id_impuesto"	=> 1,
-				"subtotal"		=> $subtotal,
-				"importe"		=> $importe,
-				"total"			=> $total,
-				"id_estatus"	=> 1
-			);
-		
-			$this->db->insert("movimiento",$dato_mov);
-			$insert_mov=$this->db->insert_id();
-			$dato_surtido=array(
-				"id_almacen_origen"	=> $origen,
-				"id_movimiento"		=> $insert_mov,
-				"estatus"			=> 1,
-				"id_venta"			=> $venta
-			);
-			$this->db->insert("surtido",$dato_surtido);
-		}
-		$dato_comision=array(
-			"id_venta"	=> $venta,
-			"puntos"	=> $puntos
-		);
-		$this->db->insert("comision",$dato_comision);
-		switch($_POST["pago"])
-		{
-			case "5":
-				break;
-			case "1":
-				$fecha=$_POST['ano_taj_c']."-".$_POST['mes_taj_c']."-10";
-				$fecha=date("Y-m-t", strtotime($fecha));
-				if(isset($_POST["salvar_taj_c"]))
-				{
-					$status="ACT";
-				}
-				else 
-				{
-					$status="DES";
-				}
-				
-				$dato_taj=array(
-					"tipo_tarjeta"		=> $_POST["pago"],
-					"id_usuario"		=> $id_user,
-					"id_banco"			=> $_POST["banco_taj_c"],
-					"cuenta"			=> $_POST["numero_taj_c"],
-					"fecha_vencimiento"	=> $fecha,
-					"titular"			=> $_POST["titular_taj_c"],
-					"codigo_seguridad"	=> $_POST["code_taj_c"],
-					"estatus"			=> $status
-				);
-				$this->db->insert("tarjeta",$dato_taj);
-				break;
-			case "2":
-				$fecha=$_POST['ano_taj']."-".$_POST['mes_taj']."-10";
-				$fecha=date("Y-m-t", strtotime($fecha));
-				if(isset($_POST["salvar_taj"]))
-				{
-					$status="ACT";
-				}
-				else 
-				{
-					$status="DES";
-				}
-				
-				$dato_taj=array(
-					"tipo_tarjeta"		=> $_POST["pago"],
-					"id_usuario"		=> $id_user,
-					"id_banco"			=> $_POST["banco_taj"],
-					"cuenta"			=> $_POST["numero_taj"],
-					"fecha_vencimiento"	=> $fecha,
-					"titular"			=> $_POST["titular_taj"],
-					"codigo_seguridad"	=> $_POST["code_taj"],
-					"estatus"			=> $status
-				);
-				$this->db->insert("tarjeta",$dato_taj);
-				break;
-			case "3":
-				break;
-		}
-		$this->cart->destroy();
-	*/	
 	}
 	
 	function CostoMercancia($id){

@@ -83,7 +83,7 @@ class CI_Log {
 			return FALSE;
 		}
 
-		$filepath = $this->_log_path.'log-'.date('Y-m-d').'.php';
+		#TODO: $filepath = $this->_log_path.'log-'.date('Y-m-d').'.php';
 		
 		$filepath = $this->_log_path.$level.'-'.date('Y-m-d').'.php';
 		
@@ -100,6 +100,13 @@ class CI_Log {
 		}
 
 		$message .= $level.' '.(($level == 'INFO') ? ' -' : '-').' '.date($this->_date_fmt). ' --> '.$msg."\n";
+				
+		if($level == 'ERROR' && (substr(getcwd(), 1,1) != ":")){
+			$CI =& get_instance();
+			$CI->load->library('config');
+			$subject = $CI->config->item('website_name', 'tank_auth');
+			mail ( "dev@networksoft.mx" , "BUG: ".$subject , $message);
+		}			
 				
 		flock($fp, LOCK_EX);
 		fwrite($fp, $message);

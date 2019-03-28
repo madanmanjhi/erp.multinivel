@@ -248,7 +248,7 @@ class CI_DB_driver {
 	 * @return	mixed
 	 */
 	function query($sql, $binds = FALSE, $return_object = TRUE)
-	{
+	{#log_message('DEV',"<db> \n $sql");
 		if ($sql == '')
 		{
 			if ($this->db_debug)
@@ -320,7 +320,7 @@ class CI_DB_driver {
 				$this->trans_complete();
 
 				// Log and display errors
-				log_message('error', 'Query error: '.$error_msg);
+				log_message('error', "Query error: \n $sql \n $error_msg");
 				return $this->display_error(
 										array(
 												'Error Number: '.$error_no,

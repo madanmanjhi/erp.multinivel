@@ -151,18 +151,16 @@ class logistico2 extends CI_Controller
 		
 		$data=$_GET["info"];
 		$data=json_decode($data,true);
-		$fecha_ini=str_replace('.', '-', $data['inicio']);
-		$fecha_fin=str_replace('.', '-', $data['fin']);
-		$ano_ini=substr($fecha_ini, 6);
-		$mes_ini=substr($fecha_ini, 3,2);
-		$dia_ini=substr($fecha_ini, 0,2);
-		$ano_fin=substr($fecha_fin, 6);
-		$mes_fin=substr($fecha_fin, 3,2);
-		$dia_fin=substr($fecha_fin, 0,2);
-		$inicio=$ano_ini.'-'.$mes_ini.'-'.$dia_ini;
-		$fin=$ano_fin.'-'.$mes_fin.'-'.$dia_fin;
+        $inicio = $data['inicio'];
+        $fin = $data['fin'];
+
+        if(!$inicio)
+            $inicio = date('Y-m-d');
+
+        if(!$fin)
+            $fin = date('Y-m-d H:i:s');
 		
-		$surtidos = $this->modelo_logistico->get_embarcados($data['inicio'], $data['fin']);
+		$surtidos = $this->modelo_logistico->get_embarcados($inicio, $fin);
 		
 		echo "<table id='datatable_fixed_column1' class='table table-striped table-bordered table-hover' style='width: 100%;'>
 							<thead id='tablacabeza' style='width: 90%;'>
@@ -288,17 +286,17 @@ class logistico2 extends CI_Controller
 		
 		$style=$this->modelo_dashboard->get_style(1);	
 		$this->template->set("style",$style);
-		
-		$productos = "";
+
 		$servicios = array();
 		$combinados = array();
 		$paquetes = array();
 		
 		$productos = $this->modelo_logistico->getDetalleProductoPendiente($id_surtido);
-		#$servicios = $this->modelo_logistico->getDetalleVentaServicio($id_surtido);
-		#$combinados = $this->modelo_logistico->getDetalleVentaCombinado($id_surtido);
-		#$paquetes = $this->modelo_logistico->getDetalleVentaPaquete($id_surtido);
-		
+		/*TODO:
+		$servicios = $this->modelo_logistico->getDetalleVentaServicio($id_surtido);
+		$combinados = $this->modelo_logistico->getDetalleVentaCombinado($id_surtido);
+		$paquetes = $this->modelo_logistico->getDetalleVentaPaquete($id_surtido);
+		*/
 		$this->template->set("productos",$productos);
 		$this->template->set("servicios",$servicios);
 		$this->template->set("combinados",$combinados);
@@ -325,17 +323,17 @@ class logistico2 extends CI_Controller
 	
 		$style=$this->modelo_dashboard->get_style(1);
 		$this->template->set("style",$style);
-	
-		$productos = "";
+
 		$servicios = array();
 		$combinados = array();
 		$paquetes = array();
 	
 		$productos = $this->modelo_logistico->getDetalleProductoTransito($id_surtido);
-		#$servicios = $this->modelo_logistico->getDetalleVentaServicio($id_surtido);
-		#$combinados = $this->modelo_logistico->getDetalleVentaCombinado($id_surtido);
-		#$paquetes = $this->modelo_logistico->getDetalleVentaPaquete($id_surtido);
-	
+		/*TODO:
+		$servicios = $this->modelo_logistico->getDetalleVentaServicio($id_surtido);
+		$combinados = $this->modelo_logistico->getDetalleVentaCombinado($id_surtido);
+		$paquetes = $this->modelo_logistico->getDetalleVentaPaquete($id_surtido);
+	    */
 		$this->template->set("productos",$productos);
 		$this->template->set("servicios",$servicios);
 		$this->template->set("combinados",$combinados);
@@ -663,9 +661,7 @@ class logistico2 extends CI_Controller
 		}
 		
 		$subtotal = $item->valor_total-$item->iva;
-		$direccion = $empresa[0]->provincia.", ".$empresa[0]->ciudad;		
-		
-		$dialogo = '';
+		$direccion = $empresa[0]->provincia.", ".$empresa[0]->ciudad;
 		
 		if($venta){
 		
@@ -803,4 +799,17 @@ class logistico2 extends CI_Controller
 	
 		$this->template->build('website/bo/logistico2/reportes/factura');
 	}
+
+    /**
+     * @param $fecha_ini
+     */
+    public function getFechaPart($fecha_ini)
+    {
+        $ano_ini = substr($fecha_ini, 6);
+        $mes_ini = substr($fecha_ini, 3, 2);
+        $dia_ini = substr($fecha_ini, 0, 2);
+        $fecha_ini = $ano_ini . '-' . $mes_ini . '-' . $dia_ini;
+
+        return $fecha_ini;
+    }
 }

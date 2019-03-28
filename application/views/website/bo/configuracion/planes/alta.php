@@ -188,7 +188,7 @@ function enviar() {
 								}
 							}					
 						}
-					})
+					});
 				});//fin Done ajax
 			}else{			
 				alert(msg);
@@ -259,3 +259,4 @@ function delete_bono(id)
 }
 </style>
 			
+

@@ -93,11 +93,11 @@ if ($this->session->flashdata ( 'error' )) {
 											</section>
 											<section class="col col-3">
 												Categoria <label class="select"> <select name="red">
-																<?foreach ($grupos as $grupo){?>
+																<?php foreach ($grupos as $grupo){?>
 																	<option value="<?=$grupo->id_grupo?>">
 																	<?= $grupo->descripcion." (".$grupo->red.")"?>
 																	</option>
-																<?}?>
+																<?php }?>
 																</select>
 												</label>
 											</section>
@@ -168,11 +168,11 @@ if ($this->session->flashdata ( 'error' )) {
 								<section class="col col-3">
 									Proveedor <label class="select"> <select name="proveedor"
 										id="proveedor_select" required>
-															<?foreach ($proveedores as $key){?>
+															<?php foreach ($proveedores as $key){?>
 																<option value="<?=$key->user_id?>">
 																	<?=$key->nombre." ".$key->apellido?>
 																</option>
-															<?}?>
+															<?php }?>
 															</select>
 									</label> <a style="cursor: pointer;" onclick="add_proveedor()">Agregar
 										Proveedor<i class="fa fa-plus"></i>
@@ -193,10 +193,10 @@ if ($this->session->flashdata ( 'error' )) {
 											País del servicio <label class="select"> <select id="pais"
 												name="pais" onChange="select_pais()" required="required">
 													<option value="-" selected>-- Seleciona un pais --</option>
-															<?foreach ($pais as $key){?>
+															<?php foreach ($pais as $key){?>
 																<option value="<?=$key->Code?>">
 																<?=$key->Name?></option>
-															<?}?>
+															<?php }?>
 															</select>
 											</label>
 										</section>
@@ -639,3 +639,4 @@ ImpuestosPais();
 }
 
 </script>
+

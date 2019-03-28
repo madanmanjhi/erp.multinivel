@@ -1,4 +1,5 @@
 <!-- PAGE FOOTER -->
+<<<<<<< HEAD
 		<div class="page-footer" style="height: 6rem;margin-bottom: -4rem;">
 			<div class="row">
 				<div class="col-xs-12 col-sm-12">
@@ -9,6 +10,31 @@
 					<span class="txt-color-white">
 				Copyright © <?=date('Y')?> EMPRESA Todos los derechos reservados.
 		<a href="http://www.networksoft.com.mx/" target="_BLANK">NetworkSoft MLM</a></span>
+=======
+<?php $ci = &get_instance();
+$ci->load->model("bo/model_admin");
+$empresa=$ci->model_admin->val_empresa_multinivel();
+$nombre_empresa = $ci->general->issetVar($empresa,"nombre","NetworkSoft");
+$web = $ci->general->issetVar($empresa,"web","/");
+$style=$ci->general->get_style(1);
+$style = array(
+    $ci->general->issetVar($style,"bg_color","#00B4DC"),
+    $ci->general->issetVar($style,"btn_1_color","#17222d"),
+    $ci->general->issetVar($style,"btn_2_color","#17222d")
+);
+?>
+
+<div class="page-footer" style="height: 6rem;margin-bottom: -4rem;">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12">
+            <?if(isset($nombre))
+            {?>
+                <span class="pull-right txt-color-white">Hola: <?=$nombre?> tu última sesión fue: <?=$sesion?></span>
+            <?}?>
+            <span class="txt-color-white">
+			Copyright © <?=date('Y');?> <?=$nombre_empresa?> Todos los derechos reservados.
+		<a href="<?=$web?>" target="_BLANK"><?=$nombre_empresa?></a></span>
+>>>>>>> e67edc61595d5b3fd8830422932b8ebc3571eff6
 				</div>
 			</div>
 		</div>
@@ -25,8 +51,9 @@
 			
 			var pathname = window.location.pathname;
 			var ruta = pathname.split("/");
-			
-			if(ruta[2]=="compras")
+
+            var rutaElement = ruta[2];
+            if(rutaElement=="compras")
 				return false;	
 
 			var footer = $( "#page-footer" ).height();			

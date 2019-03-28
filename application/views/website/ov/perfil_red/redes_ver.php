@@ -12,7 +12,7 @@
         <fieldset>
             <legend>Red</legend>
             <div class="row">
-                <? foreach ($redes as $red) { ?>
+                <?php foreach ($redes as $red) { ?>
                     <div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
                         <a href="/ov/red/mi_red?id=<?= $red->id ?>">
                             <div
@@ -28,3 +28,4 @@
         </fieldset>
     </div>
 </div>
+

@@ -1,43 +1,33 @@
+<table id="datatable_fixed_column" class="table table-striped table-bordered table-hover" width="100%">
+    <thead>
+        <tr>
+            <th data-class="expand">ID</th>
+            <th data-hide="phone">No. guia</th>
+            <th data-hide="phone">Origen/Almacen</th>
+            <th data-hide="phone">Usuario/Destino</th>
+            <th data-hide="phone,tablet">Dirección de envío</th>
+            <th data-hide="phone,tablet">Telefono</th>
+            <th data-hide="phone,tablet">Email Usuario</th>
+            <th data-hide="phone,tablet">Fecha</th> 
+        </tr>
+    </thead>
+    <tbody>
 
-						
-						
-				
-	
-	<table id="datatable_fixed_column" class="table table-striped table-bordered table-hover" width="100%">
-																			<thead>
-																					<tr>
-																						<th data-class="expand">ID</th>
-																						<th data-hide="phone">No. guia</th>
-																						<th data-hide="phone">Origen/Almacen</th>
-																						<th data-hide="phone">Usuario/Destino</th>
-																						<th data-hide="phone,tablet">Dirección de envío</th>
-																						<th data-hide="phone,tablet">Telefono</th>
-																						<th data-hide="phone,tablet">Email Usuario</th>
-																						<th data-hide="phone,tablet">Fecha</th>
-																					
-																						
-																					</tr>
-																				</thead>
-																				<tbody>
-																					
-																					<?php foreach ($surtidos as $surtido){ ?>
-																						<tr>
-																							<td><?php echo $surtido->id; ?></td>
-																							<td><?php echo $surtido->n_guia; ?></td>
-																							<td><?php echo $surtido->origen; ?></td>
-																							<td><?php echo $surtido->usuario; ?></td>
-																							<td><?php echo $surtido->direccion; ?></td>
-																							<td><?php echo $surtido->celular; ?></td>
-																							<td><?php echo $surtido->correo; ?></td>
-																							<td><?php echo $surtido->fecha_entrega; ?></td>
-																					</tr>
-																				<?php } ?>
-																					
-																				</tbody>
-																			</table>
+        <?php foreach ($surtidos as $surtido) { ?>
+            <tr>
+                <td><?php echo $surtido->id; ?></td>
+                <td><?php echo $surtido->n_guia; ?></td>
+                <td><?php echo $surtido->origen; ?></td>
+                <td><?php echo $surtido->usuario; ?></td>
+                <td><?php echo $surtido->direccion; ?></td>
+                <td><?php echo $surtido->celular; ?></td>
+                <td><?php echo $surtido->correo; ?></td>
+                <td><?php echo $surtido->fecha_entrega; ?></td>
+            </tr>
+        <?php } ?>
 
-			
-			
+    </tbody>
+</table>
 
 <!-- PAGE RELATED PLUGIN(S) -->
 		<script src="/template/js/plugin/datatables/jquery.dataTables.min.js"></script>
@@ -231,3 +221,4 @@
 
 		</script>
 	
+

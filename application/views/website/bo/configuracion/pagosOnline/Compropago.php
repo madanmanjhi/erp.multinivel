@@ -177,10 +177,11 @@ function enviar()
 							}
 						}
 					}
-				})//fin done ajax
+				});//fin done ajax
 
 					});//Fin callback bootbox
 }
 
 
 </script>
+

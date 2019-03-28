@@ -100,9 +100,9 @@
                                   <label class="select">Almacen / CEDI
                                     <select id="id_cedi" required type="text" name="id_cedi" onChange="mercanciaDeCedis()">
                                                 <option selected value="0">-- Seleciona un Almacen / CEDI --</option>
-												<?foreach ($cedis as $cedi){?>
+												<?php foreach ($cedis as $cedi){?>
 													<option value="<?=$cedi->id_cedi?>"><?=$cedi->nombre." ".$cedi->Name." ".$cedi->pais?></option>
-												<?}?>
+												<?php }?>
 												
 												    </select>
                                   </label>
@@ -229,5 +229,6 @@ function CiudadesPais(){
 	});
 }
 </script>
+
 
 

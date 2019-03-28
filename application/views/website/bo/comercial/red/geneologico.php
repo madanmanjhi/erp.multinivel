@@ -53,52 +53,58 @@
                     
                                              <!-- widget content -->
                                              <div class="widget-body">
-												<ul id="myTab1" class="nav nav-tabs bordered">
-													<?php foreach ($redes as $red ) { ?>
-													<li>
-														<a href="#s<?php echo $red->id; ?>" data-toggle="tab"><?php echo $red->nombre; ?></a>
-													</li>
-													<?php } ?>
-												</ul>
-												<div id="myTabContent1" class="tab-content padding-10">
-													<?php foreach ($redes as $red ) {?>
-													
-														<div class="tab-pane fade" id="s<?php echo $red->id ?>">
-														<div class="row">
-															<div class="tree1">
-																<ul>
-																	<li>
-																		<a style="background: url('<?=$img_perfil?>'); background-size: cover; background-position: center;" href="#"><div class="nombre">Tú</div></a>
-																		<ul>
-																		<?
-																		$aux=0;
-																		
-																		foreach ($afiliadostree[$red->id] as $key) 
-					                                                    {
-					                                                    	$aux++;
-					                                                    	$key->img ? $img=$key->img : $img="/template/img/empresario.jpg";
-					                                                        if($key->debajo_de==$id)
-					                                                        {?>
-																			<li id="t<?=$key->id_afiliado?>">
-																				<a class="quitar" style="background: url('<?=$img?>'); background-size: cover; background-position: center;" onclick="subtree(<?=$key->id_afiliado?>, <?php echo $red->id; ?>)" href="#"></a>
-																				<div onclick="detalles(<?=$key->id_afiliado?>)" class="<?=($key->directo==0) ? 'todo' : 'todo1'?>"><?=$key->afiliado?> <?=$key->afiliado_p?><br />Detalles</div>
-																			</li>
-																			<?}
-																		}
-																		for ( $i = $aux ; $i < $red_frontales[0]->frontal ; $i++){ ?>
-																			<li>
-																				<a href="#">Sin afiliados</a>
-																			</li>
-																		<?} ?>
-																		</ul>
-																	</li>
-																</ul>
-															</div>
-														</div>
-													</div>
-													<?php } ?>
-												</div>
-											</div>
+                                                    <ul id="myTab1" class="nav nav-tabs bordered">
+                                                            <?php foreach ($redes as $red ) { ?>
+                                                            <li>
+                                                                    <a href="#s<?php echo $red->id; ?>" data-toggle="tab"><?php echo $red->nombre; ?></a>
+                                                            </li>
+                                                            <?php } ?>
+                                                    </ul>
+                                                    <div id="myTabContent1" class="tab-content padding-10">
+                                                            <?php foreach ($redes as $red ) {?>
+
+                                                        <div class="tab-pane fade" id="s<?php echo $red->id ?>">
+                                                                <div class="row">
+                                                                    <div class="tree1">
+                                                                        <ul>
+                                                                            <li>
+                                                                                <a style="background: url('<?= $img_perfil ?>'); background-size: cover; background-position: center;" href="#">
+                                                                                    <div class="nombre">Tú</div></a>
+                                                                                <ul>
+                                                                                        <?php
+                                                                                        $aux = 0;
+
+                                                                                        foreach ($afiliadostree[$red->id] as $key) {
+                                                                                            $aux++;
+                                                                                            $img = file_exists(getcwd().$key->img) ? $key->img : "/template/img/avatars/male.png";
+                                                                                            if ($key->debajo_de == $id) {
+                                                                                                ?>
+                                                                                                <li id="t<?= $key->id_afiliado ?>">
+                                                                                                    <a class="quitar" style="background: url('<?= $img ?>'); background-size: cover; background-position: center;" 
+                                                                                                       onclick="subtree(<?= $key->id_afiliado ?>, <?php echo $red->id; ?>)" href="#"></a>
+                                                                                                    <div onclick="detalles(<?= $key->id_afiliado ?>)" 
+                                                                                                         class="<?= ($key->directo == 0) ? 'todo' : 'todo1' ?>">
+                                                                                                               <?= $key->afiliado ?> <?= $key->afiliado_p ?><br />Detalles
+                                                                                                    </div>
+                                                                                                </li>
+                                                                                                <?php
+                                                                                            }
+                                                                                        }
+                                                                                        for ($i = $aux; $i < $red_frontales[0]->frontal; $i++) {
+                                                                                            ?>
+                                                                                            <li>
+                                                                                                <a href="#">Sin afiliados</a>
+                                                                                            </li>
+                                                                                        <?php } ?>
+                                                                                </ul>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                            </div>
+                                                            <?php } ?>
+                                                    </div>
+                                            </div>
                                              <!-- end widget content -->
                                         </div>
                                         <!-- end widget div -->
@@ -365,3 +371,7 @@ function detalles(id)
 	});
 }
     </script>
+
+
+
+

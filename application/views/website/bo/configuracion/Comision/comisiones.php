@@ -148,7 +148,7 @@ function enviar(){
 					}
 				}
 			}
-		})
+		});
 	});//fin Done ajax
 }
 
@@ -166,3 +166,4 @@ function enviar(){
 	text-decoration: none !important;
 }
 </style>
+

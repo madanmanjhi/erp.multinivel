@@ -78,7 +78,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<?foreach ($bonos as $bono) {?>
+												<?php foreach ($bonos as $bono) {?>
 													<tr>
 														<td><?php echo $bono->id; ?></td>
 														<td><?php echo $bono->nombre; ?></td>
@@ -137,7 +137,7 @@
 															<a title="Eliminar"  class="txt-color-red" onclick="eliminar('<?php echo $bono->id; ?>');"><i class="fa fa-trash-o fa-3x"></i></a>
 														</td>
 													</tr>
-												<?}?>
+												<?php }?>
 											</tbody>
 										</table>
 								</div>
@@ -345,3 +345,4 @@ function estado(estatus, id)
 			})
 	}
 </script>
+

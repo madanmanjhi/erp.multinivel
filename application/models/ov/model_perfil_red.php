@@ -388,7 +388,8 @@ class model_perfil_red extends CI_Model
 			(select apellido from user_profiles where user_id=id_afiliado) afiliado_p,
 			(select nombre from user_profiles where user_id=debajo_de) debajo_de_n,
 			(select apellido from user_profiles where user_id=debajo_de) debajo_de_p,
-			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = id_afiliado) img
+			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a 
+				where id_user = id_afiliado order by a.id_img desc limit 1) img
 			from afiliar where id_red=".$id." and debajo_de=".$id_afiliado." order by lado");
 		return $q->result();
 	}
@@ -400,7 +401,8 @@ class model_perfil_red extends CI_Model
 			(select apellido from user_profiles where user_id=id_afiliado) afiliado_p,
 			(select nombre from user_profiles where user_id=directo) directo_n,
 			(select apellido from user_profiles where user_id=directo) directo_p,
-			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = id_afiliado) img
+			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a 
+				where id_user = id_afiliado order by a.id_img desc limit 1) img
 			from afiliar where id_red=".$id." and directo=".$id_afiliado." order by lado");
 		return $q->result();
 	}
@@ -412,7 +414,8 @@ class model_perfil_red extends CI_Model
 			(select apellido from user_profiles where user_id=id_afiliado) afiliado_p,
 			(select nombre from user_profiles where user_id=debajo_de) debajo_de_n,
 			(select apellido from user_profiles where user_id=debajo_de) debajo_de_p,
-			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a where id_user = id_afiliado) img
+			(select (select url from cat_img b where a.id_img=b.id_img) url from cross_img_user a 
+				where id_user = id_afiliado order by a.id_img desc limit 1) img
 			from afiliar where id_red=".$id." and debajo_de=".$id_afiliado." and lado=".$lado." order by lado");
 		return $q->result();
 	}
@@ -698,12 +701,40 @@ order by (U.id);");
 		$q=$this->db->query("select * from cross_dir_user where id_user=".$id);
 		return $q->result();
 	}
+
+	function new_img_user($id){
+		$dato_img=array(
+			          "url"   => "/template/img/empresario.jpg",
+			          "nombre_completo"   => "empresario.jpg",
+			          "nombre"    => "empresario",
+			          "extencion"   => "jpg",
+			          "estatus"   => "ACT",
+			      );
+			      
+			      $this->db->insert("cat_img",$dato_img);
+			      $id_img = $this->db->insert_id();
+			      
+			      $dato_cross=array(
+			          "id_user" => $id,
+			          "id_img"  => $id_img
+			      );
+			      $this->db->insert("cross_img_user",$dato_cross);
+
+			      return $id_img;
+	}
+
 	function img_user($id,$data)
 	{
 		
 		$q = $this->db->query("select ci.id_img from cat_img ci, cross_img_user ciu where ci.id_img = ciu.id_img and ciu.id_user = ".$id);
 		$id_img = $q->result();
 		
+		if(!$id_img){
+			$img_id = $this->new_img_user($id);
+		}else{
+			$img_id = $id_img[0]->id_img;
+		}
+
 		$explode=explode(".",$data["file_name"]);
 		$nombre=$explode[0];
 		$extencion=$explode[1];
@@ -714,7 +745,7 @@ order by (U.id);");
                 "extencion"			=>	$extencion,
                 "estatus"			=>	"ACT"
             );
-		$this->db->update("cat_img",$dato_img,"id_img = ".$id_img[0]->id_img);
+		$this->db->update("cat_img",$dato_img,"id_img = ".$img_id);
 	}
 
   	function img_user_tomar($id)
@@ -722,6 +753,13 @@ order by (U.id);");
 
 		$q = $this->db->query("select ci.id_img from cat_img ci, cross_img_user ciu where ci.id_img = ciu.id_img and ciu.id_user = ".$id);
 		$id_img = $q->result();
+
+		if(!$id_img){
+			$img_id = $this->new_img_user($id);
+		}else{
+			$img_id = $id_img[0]->id_img;
+		}
+
 		$dato_img=array(
                 "url"				=>	"/media/".$id."/user.png",
                 "nombre_completo"	=> "user.png",
@@ -729,7 +767,7 @@ order by (U.id);");
                 "extencion"			=>	"png",
                 "estatus"			=>	"ACT"
             );
-		$this->db->update("cat_img",$dato_img,"id_img = ".$id_img[0]->id_img);
+		$this->db->update("cat_img",$dato_img,"id_img = ".$img_id);
 
 	}
 	function del($id,$tipo)

@@ -46,13 +46,11 @@
 							<label class="select">
 								<select id="sexo" required name="sexo">
 									
-									<?	foreach ($tiposDeSexo as $key)
-										{		?>
+									<?php foreach ($tiposDeSexo as $key) { ?>
 												<option value="<?=$key->id_sexo?>" >
 													<?= $key->descripcion;?>	
 												</option>
-										<?  
-										}
+										<?php }
 									?>
 		
 								</select>
@@ -72,14 +70,11 @@
 							<label class="select">
 								<select id="estadoCivil"  name="estadoCivil">
 		
-									<?	foreach ($tiposDeEstadoCivil as $key)
-										{
-											?>
+									<?php foreach ($tiposDeEstadoCivil as $key) { ?>
 												<option value="<?=$key->id_edo_civil?>" >
 													<?= $key->descripcion;?>	
 												</option>
-										<?  
-										}
+										<?php }
 									?>
 		
 								</select>
@@ -92,7 +87,7 @@
 							<label class="hide">
 								<select id="tipoUsuario"  name="tipoUsuario">
 									
-									<?	/*foreach ($tiposDeUsuario as $key)
+									<?php /*foreach ($tiposDeUsuario as $key)
 										{
 											?>
 												<option value="<?=$key->id_tipo_usuario?>" >
@@ -113,14 +108,11 @@
 							<label class="select">
 								<select id="estudio"  name="estudio">
 									
-									<?	foreach ($tiposDeEstudio as $key)
-										{
-											?>
+									<?php foreach ($tiposDeEstudio as $key) { ?>
 												<option value="<?=$key->id_estudio?>" >
 													<?= $key->descripcion;?>	
 												</option>
-										<?  
-										}
+										<?php }
 									?>
 		
 								</select>
@@ -133,14 +125,11 @@
 							<label class="select">
 								<select id="ocupacion"  name="ocupacion">
 									
-									<?	foreach ($tiposDeOcupacion as $key)
-										{
-											?>
+									<?php foreach ($tiposDeOcupacion as $key) { ?>
 												<option value="<?=$key->id_ocupacion?>" >
 													<?= $key->descripcion;?>	
 												</option>
-										<?  
-										}
+										<?php }
 									?>
 		
 								</select>
@@ -153,13 +142,11 @@
 							<label class="select">
 								<select id="tiempoDedicado"  name="tiempoDedicado">
 									
-									<?	foreach ($tiposDeTiempoDedicacion as $key)
-										{?>
+									<?php foreach ($tiposDeTiempoDedicacion as $key) {?>
 												<option value="<?=$key->id_tiempo_dedicado?>" >
 													<?= $key->descripcion;?>	
 												</option>
-										<?  
-										}
+										<?php }
 									?>
 		
 								</select>
@@ -172,14 +159,12 @@
 							<label class="select">
 								<select id="estadoAfiliado"  name="estadoAfiliado">
 									
-									<?	foreach ($tiposDeEstadosAfiliado as $key)
-										{									?>
+									<?php foreach ($tiposDeEstadosAfiliado as $key) { ?>
 											
 												<option value="<?=$key->id_estatus?>" >
 													<?= $key->descripcion;?>	
 												</option>
-										<?  
-										}
+										<?php }
 									?>
 		
 								</select>
@@ -285,3 +270,5 @@ and UP.id_tiempo_dedicado = CTD.id_tiempo_dedicado and UP.id_estatus = CEA.id_es
 
  group by (U.id);
  -->
+
+

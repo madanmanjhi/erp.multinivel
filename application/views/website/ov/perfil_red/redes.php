@@ -14,7 +14,7 @@
         <fieldset>
             <legend>Red</legend>
             <div class="row">
-                <? foreach ($redes as $red) { ?>
+                <?php foreach ($redes as $red) { ?>
                     <div class="col-lg-4 col-sm-4 col-md-4 col-xs-12">
                         <?php if ($_GET['tipo'] == 1) { ?>
                             <a href="/ov/perfil_red/nuevo_afilido?id=<?= $red->id ?>">
@@ -39,3 +39,4 @@
         </fieldset>
     </div>
 </div>
+

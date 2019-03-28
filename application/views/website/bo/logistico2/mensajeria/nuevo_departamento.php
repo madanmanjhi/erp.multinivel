@@ -5,9 +5,9 @@
 			<section class="col col-6">
 				País<label class="select">
 					<select id="pais" required name="pais">'
-						<?foreach ($paises as $key){?>'
+						<?php foreach ($paises as $key){?>'
 							<option value="<?=$key->Code?>"><?=$key->Name?></option>
-						<?}?>
+						<?php }?>
 					</select>
 				</label>
 			</section>
@@ -21,3 +21,4 @@
 		</div>
 	</fieldset>
 </form>
+

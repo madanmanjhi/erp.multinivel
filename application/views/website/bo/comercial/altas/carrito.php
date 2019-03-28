@@ -113,8 +113,8 @@
 												</tr>
 											</thead>
 											<tbody>
-											<?$contadorImpuestos=0;?>
-												<?foreach ($productos as $key) {?>
+											<?php $contadorImpuestos=0;?>
+												<?php foreach ($productos as $key) {?>
 												<tr>
 													<td><?=$key->id?></td>
 													<td><?=$key->nombre?></td>
@@ -133,7 +133,7 @@
 													</td>
 													<td><?=$key->descripcion?></td>
 													<td><?=$key->puntos_comisionables?></td>
-													<td><?
+													<td><?php 
 													foreach ($imp_merc as $key_1) {
 														if($key->id==$key_1->id_mercancia){
 																echo '-'.$key_1->descripcion.'&nbsp'.$key_1->porcentaje.'&#37</br>';
@@ -151,16 +151,16 @@
 													<td class="text-center">
 														<a title="Editar"  style="cursor: pointer;" onclick="editar(<?=$key->id?>, '<?=$key->Code?>')" class="txt-color-blue"><i class="fa fa-pencil fa-3x"></i></a>
 														<a title="Eliminar" style="cursor: pointer;" onclick="eliminar(<?=$key->id?>)" class="txt-color-red"><i class="fa fa-trash-o fa-3x"></i></a>
-														<?if($key->estatus=='DES'){?>
+														<?php if($key->estatus=='DES'){?>
 															<a title="Activar" style="cursor: pointer;" onclick="estatus(1,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
-														<?}else{?>
+														<?php }else{?>
 															<a title="Desactivar" style="cursor: pointer;" onclick="estatus(2,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
-														<?}?>
+														<?php }?>
 													</td>
 												</tr>
-												<?}?>
+												<?php }?>
 												
-												<?foreach ($servicios as $key) {?>
+												<?php foreach ($servicios as $key) {?>
 												<tr>
 													<td><?=$key->id?></td>
 													<td><?=$key->nombre?></td>
@@ -179,7 +179,7 @@
 													</td>													<td><?=$key->descripcion?></td>
 													<td><?=$key->puntos_comisionables?></td>
 													<td>
-														<?
+														<?php 
 													foreach ($imp_merc as $key_1) {
 														if($key->id==$key_1->id_mercancia){
 																echo '-'.$key_1->descripcion.'&nbsp'.$key_1->porcentaje.'&#37</br>';
@@ -197,16 +197,16 @@
 													<td><?=$key->costo_publico?></td>
 													<td class="text-center"><a title="Editar" style="cursor: pointer;" onclick="editar(<?=$key->id?>, '<?=$key->Code?>')" class="txt-color-blue"><i class="fa fa-pencil fa-3x"></i></a>
 														<a title="Eliminar" style="cursor: pointer;" onclick="eliminar(<?=$key->id?>)" class="txt-color-red"><i class="fa fa-trash-o fa-3x"></i></a>
-														<?if($key->estatus=='DES'){?>
+														<?php if($key->estatus=='DES'){?>
 															<a title="Activar" style="cursor: pointer;" onclick="estatus(1,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
-														<?}else{?>
+														<?php }else{?>
 															<a title="Desactivar" style="cursor: pointer;" onclick="estatus(2,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
-														<?}?>
+														<?php }?>
 													</td>
 												</tr>
-												<?}?>
+												<?php }?>
 												
-												<?foreach ($combinados as $key) {?>
+												<?php foreach ($combinados as $key) {?>
 												<tr>
 													<td><?=$key->id?></td>
 													<td><?=$key->nombre?></td>
@@ -226,7 +226,7 @@
 													<td><?=$key->descripcion?></td>
 													<td><?=$key->puntos_comisionables?></td>
 													<td>
-														<?
+														<?php 
 													foreach ($imp_merc as $key_1) {
 														if($key->id==$key_1->id_mercancia){
 																echo '-'.$key_1->descripcion.'&nbsp'.$key_1->porcentaje.'&#37</br>';
@@ -244,16 +244,16 @@
 													<td><?=$key->costo_publico?></td>
 													<td class="text-center"><a title="Editar" style="cursor: pointer;" onclick="editar(<?=$key->id?>, '<?=$key->Code?>')" class="txt-color-blue"><i class="fa fa-pencil fa-3x"></i></a>
 														<a title="Eliminar" style="cursor: pointer;" onclick="eliminar(<?=$key->id?>)" class="txt-color-red"><i class="fa fa-trash-o fa-3x"></i></a>
-														<?if($key->estatus=='DES'){?>
+														<?php if($key->estatus=='DES'){?>
 															<a title="Activar" style="cursor: pointer;" onclick="estatus(1,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
-														<?}else{?>
+														<?php }else{?>
 															<a title="Desactivar" style="cursor: pointer;" onclick="estatus(2,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
-														<?}?>
+														<?php }?>
 													</td>
 												</tr>
-												<?}?>
+												<?php }?>
 												
-												<?foreach ($paquetes as $key) {?>
+												<?php foreach ($paquetes as $key) {?>
 												<tr>
 													<td><?=$key->id ?></td>
 													<td><?=$key->nombre?></td>
@@ -273,7 +273,7 @@
 													<td><?=$key->descripcion?></td>
 													<td><?=$key->puntos_comisionables?></td>
 													<td>
-														<?
+														<?php 
 													foreach ($imp_merc as $key_1) {
 														if($key->id==$key_1->id_mercancia){
 																echo '-'.$key_1->descripcion.'&nbsp'.$key_1->porcentaje.'&#37</br>';
@@ -291,15 +291,15 @@
 													<td><?=$key->costo_publico?></td>
 													<td class="text-center"><a title="Editar" style="cursor: pointer;" onclick="editar(<?=$key->id?>, '<?=$key->Code?>')" class="txt-color-blue"><i class="fa fa-pencil fa-3x"></i></a>
 														<a title="Eliminar" style="cursor: pointer;" onclick="eliminar(<?=$key->id?>)" class="txt-color-red"><i class="fa fa-trash-o fa-3x"></i></a>
-														<?if($key->estatus=='DES'){?>
+														<?php if($key->estatus=='DES'){?>
 															<a title="Activar" style="cursor: pointer;" onclick="estatus(1,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
-														<?}else{?>
+														<?php }else{?>
 															<a title="Desactivar" style="cursor: pointer;" onclick="estatus(2,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
-														<?}?>
+														<?php }?>
 													</td>
 												</tr>
-												<?}?>
-												<?foreach ($membresias as $key) {?>
+												<?php }?>
+												<?php foreach ($membresias as $key) {?>
 												<tr>
 													<td><?=$key->id?></td>
 													<td><?=$key->nombre?></td>
@@ -318,7 +318,7 @@
 													</td>													<td><?=$key->descripcion?></td>
 													<td><?=$key->puntos_comisionables?></td>
 													<td>
-														<?
+														<?php 
 													foreach ($imp_merc as $key_1) {
 														if($key->id==$key_1->id_mercancia){
 																echo '-'.$key_1->descripcion.'&nbsp'.$key_1->porcentaje.'&#37</br>';
@@ -336,14 +336,14 @@
 													<td><?=$key->costo_publico?></td>
 													<td class="text-center"><a title="Editar" style="cursor: pointer;" onclick="editar(<?=$key->id?>, '<?=$key->Code?>')" class="txt-color-blue"><i class="fa fa-pencil fa-3x"></i></a>
 														<a title="Eliminar" style="cursor: pointer;" onclick="eliminar(<?=$key->id?>)" class="txt-color-red"><i class="fa fa-trash-o fa-3x"></i></a>
-														<?if($key->estatus=='DES'){?>
+														<?php if($key->estatus=='DES'){?>
 															<a title="Activar" style="cursor: pointer;" onclick="estatus(1,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-square-o fa-3x"></i></a>
-														<?}else{?>
+														<?php }else{?>
 															<a title="Desactivar" style="cursor: pointer;" onclick="estatus(2,<?=$key->id?>)" class="txt-color-green"><i class="fa fa-check-square-o fa-3x"></i></a>
-														<?}?>
+														<?php }?>
 													</td>
 												</tr>
-												<?}?>
+												<?php }?>
 												
 											</tbody>
 										</table>
@@ -595,3 +595,4 @@ function estatus(tipo,id)
 }
 
 </script>
+

@@ -1,5 +1,4 @@
-<?php
-if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 class modelo_pagosonline extends CI_Model
 {
 	function val_compropago()
@@ -41,8 +40,21 @@ class modelo_pagosonline extends CI_Model
 		}
 		return $payulatam;
 	}
-	
-	function val_paypal()
+
+    function val_blockchain()
+    {
+        $blockchain=$this->get_datos_blockchain();
+        if(!$blockchain)
+            $blockchain=$this->initBlockchain();
+
+        $wallets=$this->get_wallet_blockchain();
+        if(!$wallets)
+            $wallets = $this->initWallet();
+
+        return array($blockchain,$wallets);
+    }
+
+    function val_paypal()
 	{
 		$payulatam=$this->get_datos_paypal();
 		if(!$payulatam){
@@ -50,7 +62,7 @@ class modelo_pagosonline extends CI_Model
 					"email" =>	"seonetworksoft-facilitator@gmail.com"
 			);
 			$this->db->insert("paypal",$dato);
-			$payulatam=$this->get_datos_payulatam();
+			$payulatam=$this->get_datos_paypal();
 		}
 		return $payulatam;
 	}
@@ -75,7 +87,18 @@ class modelo_pagosonline extends CI_Model
 		$payulatam = $q->result();
 		return $payulatam;
 	}
-	
+	function get_datos_blockchain()
+	{
+		$q=$this->db->query("select * from blockchain");
+		$blockchain = $q->result();
+		return $blockchain;
+	}
+    function get_wallet_blockchain($id = 1,$where = "")
+    {
+        $q=$this->db->query("select * from blockchain_wallet where id_usuario in ($id) $where");
+        $wallets = $q->result();
+        return $wallets;
+    }
 	function get_datos_paypal()
 	{
 		$q=$this->db->query("select * from paypal");
@@ -185,7 +208,39 @@ class modelo_pagosonline extends CI_Model
 	
 				return true;
 	}
-	
+
+    function actualizar_blockchain()
+    {
+        $test=0;
+        $estado='DES';
+
+        if(isset($_POST['test']))
+            $test=1;
+
+        if(isset($_POST['estatus']))
+            $estado='ACT';
+
+        $dato = array(
+            "apikey" => $_POST['key'],
+            "currency" => $_POST['moneda'],
+            "test" => $test,
+            "estatus" => $estado
+        );
+
+        $this->db->where('id', $_POST['id']);
+        $this->db->update('blockchain', $dato);
+
+        $dato=array(
+            "hashkey"     => $_POST['wallet'],
+            "porcentaje"       		=> $_POST['wallet_per'],
+        );
+
+        $this->db->where('id_usuario', 1);
+        $this->db->update('blockchain_wallet', $dato);
+
+        return true;
+    }
+
 	function actualizar_paypal()
 	{
 	
@@ -207,9 +262,28 @@ class modelo_pagosonline extends CI_Model
 	
 		$this->db->where('email', $_POST['id']);
 		$this->db->update('paypal', $dato);
-	
+
 		return true;
 	}
+
+    private function initBlockchain()
+    {
+        $dato = array(
+            "apikey" => "78d9ce16-e1d6-47f7-acf1-f456409715f5"
+        );
+        $this->db->insert("blockchain", $dato);
+        return $this->get_datos_blockchain();
+    }
+
+    private function initWallet()
+    {
+        $dato = array(
+            "id_usuario" => 1,
+            "hashkey" => "2c303dc6-3817-4759-b0b1-a55369a56028"
+        );
+        $this->db->insert("blockchain_wallet", $dato);
+        return $this->get_wallet_blockchain();
+    }
 }
 
 ?>

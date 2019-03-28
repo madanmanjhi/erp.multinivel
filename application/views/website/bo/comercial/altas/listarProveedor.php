@@ -99,7 +99,7 @@
 											</thead>
 											<tbody>
 												
-												<?foreach ($proveedor as $row) {?>
+												<?php foreach ($proveedor as $row) {?>
 													<tr>
 													    <td><?php echo $row->id_proveedor; ?></td>
 														<td><?php echo $row->nombre; ?></td>
@@ -119,7 +119,7 @@
 											               <?php } ?>
 										                </td>
 													</tr>
-												<?}?>
+												<?php }?>
 											</tbody>
 										</table>
 								</div>
@@ -372,3 +372,4 @@ function estado(estatus, id)
 }
 </style>
 			
+

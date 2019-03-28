@@ -133,7 +133,7 @@ function enviar() {
 							}
 						}
 					}
-				})
+				});
 			});//fin Done ajax			
 		}else{
 			alert("Ha repetido algun Bono del Plan");
@@ -189,3 +189,4 @@ function delete_bono1(id)
 }
 
 </script>
+

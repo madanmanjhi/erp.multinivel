@@ -113,7 +113,7 @@ function enviar(){
 					}
 				}
 			}
-		})
+		});
 	});//fin Done ajax
 }
 
@@ -133,3 +133,4 @@ function enviar(){
 }
 </style>
 			
+
