@@ -1,11 +1,8 @@
 /application/config/database.php
 reset.sh
 /nbproject
-<<<<<<< HEAD
 /application/logs
-=======
 /.projectKnowledge
 /media
 /application/logs
 /.idea
->>>>>>> e67edc61595d5b3fd8830422932b8ebc3571eff6

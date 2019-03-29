@@ -11,11 +11,8 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-<<<<<<< HEAD
 						<img style="height: 4em; witdh: auto; padding: 1rem;" src="/logo.png" alt="Networksoft">
-=======
-						<img style="height:4em; width: auto; padding: 1rem;" src="/logo.png" alt="Networksoft">
->>>>>>> e67edc61595d5b3fd8830422932b8ebc3571eff6
+
 					</div>
 
 					<!-- Collect the nav links, forms, and other content for toggling -->

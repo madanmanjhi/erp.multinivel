@@ -1,16 +1,5 @@
 <!-- PAGE FOOTER -->
-<<<<<<< HEAD
-		<div class="page-footer" style="height: 6rem;margin-bottom: -4rem;">
-			<div class="row">
-				<div class="col-xs-12 col-sm-12">
-					<?if(isset($nombre))
-					{?>
-					<span class="pull-right txt-color-white">Hola: <?=$nombre?> tu última sesión fue: <?=$sesion?></span>
-					<?}?>
-					<span class="txt-color-white">
-				Copyright © <?=date('Y')?> EMPRESA Todos los derechos reservados.
-		<a href="http://www.networksoft.com.mx/" target="_BLANK">NetworkSoft MLM</a></span>
-=======
+
 <?php $ci = &get_instance();
 $ci->load->model("bo/model_admin");
 $empresa=$ci->model_admin->val_empresa_multinivel();
@@ -34,7 +23,6 @@ $style = array(
             <span class="txt-color-white">
 			Copyright © <?=date('Y');?> <?=$nombre_empresa?> Todos los derechos reservados.
 		<a href="<?=$web?>" target="_BLANK"><?=$nombre_empresa?></a></span>
->>>>>>> e67edc61595d5b3fd8830422932b8ebc3571eff6
 				</div>
 			</div>
 		</div>

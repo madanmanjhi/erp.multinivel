@@ -20,13 +20,9 @@ $style = array(
     <div class="row">
         <div class="col-xs-8 col-sm-8">
 					<span class="txt-color-white">
-<<<<<<< HEAD
-			Copyright © <?=date('Y')?> EMPRESA Todos los derechos reservados.
-		<a href="http://www.networksoft.com.mx/" target="_BLANK">NetworkSoft MLM</a></span>
-=======
+
 			Copyright © <?=date('Y');?> <?=$nombre_empresa?> Todos los derechos reservados.
 		<a href="<?=$web?>" target="_BLANK"><?=$nombre_empresa?></a></span>
->>>>>>> e67edc61595d5b3fd8830422932b8ebc3571eff6
 				</div>
 				<div class="col-xs-4 col-sm-4">
 					<span class="txt-color-white">
