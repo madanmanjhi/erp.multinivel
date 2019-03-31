@@ -62,6 +62,16 @@
                                         <input required type="url" name="web" value="<?= $empresa[0]->web; ?>">
                                     </label>
                                 </section>
+                                <section id="imagenes" class="col col-3">
+                                    <label class="label">Logo</label>
+                                    <div class="input input-file">
+                                        <span class="button"><input id="img" name="img"
+                                            onchange="this.parentNode.nextSibling.value = this.value" type="file" multiple>
+                                        Buscar</span><input id="imagen_mr"
+                                            placeholder="Agregar alguna imágen" type="text" required>
+                                    </div>
+                                    <small> <cite title="Source Title">Para ver los archivos que va a cargar, deje el puntero sobre el boton de "Buscar"</cite></small>
+                                </section>
                                 <section id="usuario" class="col col-3">
                                     <label class="textarea">Resolución
                                         <textarea required type="text" name="resolucion" value=""><?= $empresa[0]->resolucion; ?></textarea>
@@ -183,10 +193,20 @@
     {
 
 
+        var dataF = new FormData($("#form_empresa")[0]);
+        // dataF.append('imgCount', countImg);
+
+        for (var pair of dataF.entries()) {
+            console.log(pair[0]+ ': [' + pair[1] + ']');
+        }
+
         $.ajax({
+            data: dataF,
+            cache: false,
+            contentType: false,
+            processData: false,
             type: "POST",
-            url: "/bo/admin/empresa_multinivel",
-            data: $("#form_empresa").serialize()
+            url: "/bo/admin/empresa_multinivel"
         })
                 .done(function (msg)
                 {

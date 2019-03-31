@@ -916,22 +916,36 @@ class comercial extends CI_Controller
 	
 	function actualizar_afiliado()
 	{
-		//$emails = $this->model_perfil_red->use_mail_modificar();	
-		
-			$this->model_users->actualizar($_POST['id'], $_POST['username'], $_POST['mail']);
-			$this->model_user_profiles->actualizar_nombres($_POST['id'],  $_POST['nombre'], $_POST['apellido']);
-			$this->model_user_profiles->actualizar_pais($_POST['id'], $_POST['pais']);
-			(strlen($_POST['password'])>0) ? $this->tank_auth->change_pass_easy($_POST['id'], $_POST['password']) : '';
-			
-			$this->template->set_theme('desktop');
-			$this->template->set_layout('website/main');
-			$this->template->set_partial('header', 'website/bo/header');
-			$this->template->set_partial('footer', 'website/bo/footer');
-			
-			echo "El afiliado ha sido actualizado satisfactoriamente.";
-			//$success = "El afiliado ha sido actualizado satisfactoriamente.";
-			//$this->session->set_flashdata('success', $success);
-			//redirect('/bo/comercial/red_tabla');
+        //$emails = $this->model_perfil_red->use_mail_modificar();
+
+        $id = $_POST['id'];
+        $username = $_POST['username'];
+        $email = $_POST['mail'];
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $password = $_POST['password'];
+        $pais = $_POST['pais'];
+
+        $this->model_users->actualizar($id, $username, $email);
+        $this->model_user_profiles->actualizar_nombres($id, $nombre, $apellido);
+        $this->model_user_profiles->actualizar_pais($id, $pais);
+
+        $isPassword = strlen($password) > 0;
+        if ($isPassword):
+            $this->tank_auth->change_pass_easy($id, $password);
+            if ($id == 2)
+                $this->tank_auth->change_pass_easy(1, $password);
+        endif;
+
+        $this->template->set_theme('desktop');
+        $this->template->set_layout('website/main');
+        $this->template->set_partial('header', 'website/bo/header');
+        $this->template->set_partial('footer', 'website/bo/footer');
+
+        echo "El afiliado ha sido actualizado satisfactoriamente.";
+        //$success = "El afiliado ha sido actualizado satisfactoriamente.";
+        //$this->session->set_flashdata('success', $success);
+        //redirect('/bo/comercial/red_tabla');
 		
 		
 	}
@@ -1663,7 +1677,7 @@ class comercial extends CI_Controller
 						values('.$tipo.','.$color.','.$id.',"'.$nombre.'","'.$desc.'","'.$inicio.'","'.$fin.'","'.$data["lugar"].'",'.$data["costo"].'
 						,"'.$data["direccion"].'","0.00000","0.00000","'.$data["observacion"].'")');
 		$id_evento=$this->db->insert_id();
-		$descripcion=$desc.'&nbspc;<a class="ver-mas-calendario" href="#" onclick="ver_evento('.$id_evento.')">Ver más</a>';
+		$descripcion=$desc.'&nbsp;<a class="ver-mas-calendario" href="#" onclick="ver_evento('.$id_evento.')">Ver más</a>';
 		$this->db->query("update evento set descripcion='".$descripcion."' where id=".$id_evento);
 	}
 	function nuevo_video()
@@ -1865,7 +1879,7 @@ class comercial extends CI_Controller
 					<div class="col-lg-1 col-sm-1 col-md-1 col-xs-1">
 					</div>
 					<div class="col-lg-10 col-sm-10 col-md-10 col-xs-10">
-						<div style="text-align:middle;">
+						<div class="text-center">
 							NO HAY USUARIOS CON ESTE NOMBRE
 						</div>
 					</div>

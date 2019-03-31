@@ -1,18 +1,52 @@
-<header style="height: 60px;background-color: #FAFAFA;">
-<article class="col-sm-12" style="z-index: 1000;">
+<?php $ci = &get_instance();
+$ci->load->model("bo/model_admin");
+$empresa=$ci->model_admin->val_empresa_multinivel();
+$logo = $ci->general->issetVar($empresa,"logo","/logo.png");
+$nombre= $ci->general->issetVar($empresa,"nombre","logo");
+$style=$ci->general->get_style(1);
+$style = array(
+    $ci->general->issetVar($style,"bg_color","#FAFAFA"),
+    $ci->general->issetVar($style,"btn_1_color","#000000"),
+    $ci->general->issetVar($style,"btn_2_color","#C0C0C0")
+);
+?>
 
-			<div class="navbar navbar-default" style="border-color: rgb(255, 255, 255);">
-				
-					<!-- Brand and toggle get grouped for better mobile display -->
-					<div class="navbar-header">
-						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<img style="width: 18rem; height: auto; padding: 1rem;" src="/logo.png" alt="Networksoft">
-					</div>
+<style>
+    .navbar-default .navbar-nav>li>a{
+        color: <?=$style[1]?>;
+    }
+    .navbar-default .navbar-nav>li>a:focus,
+    .navbar-default .navbar-nav>li>a:hover{
+        color: <?=$style[2]?>;
+        text-shadow: 1px 2px 0px <?=$style[1]?>;
+    }
+    .navbar-default .navbar-nav>.active>a {
+        color: <?=$style[2]?>;
+        background-color: <?=$style[1]?>;
+    }
+    .navbar-default .navbar-nav>.active>a:focus,
+    .navbar-default .navbar-nav>.active>a:hover {
+        color: <?=$style[0]?>;
+        background-color: <?=$style[2]?>;
+    }
+</style>
+<header style="height: 60px;background-color: <?=$style[0]?>;
+        border:1px solid <?=$style[1]?>;">
+    <article class="col-sm-12" style="z-index: 1000;">
+
+        <div class="navbar navbar-default"
+             style="background-color: <?=$style[0]?>;border:none">
+
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img style="height: 6em; width: auto; padding: 1rem;" src="<?=$logo?>" alt="<?=$nombre?>">
+            </div>
 
 					<!-- Collect the nav links, forms, and other content for toggling -->
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

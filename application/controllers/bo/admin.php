@@ -241,10 +241,81 @@ class admin extends CI_Controller
 		$empresa = $this->model_admin->new_empresa();
 		echo json_encode($empresa);
 	}
+
+    function archivo_subir( $link = "/", $fileID = 'img',$nombre = 'logo') {
+        if (! $this->tank_auth->is_logged_in ()) { // logged in
+            redirect ( '/auth' );
+        }
+
+        // Checamos si el directorio existe, si no, se crea
+
+        $filedir = getcwd() . $link;
+        if (! is_dir ($filedir)) {
+            mkdir ( $filedir, 0777 );
+        }
+        // echo $nombre;
+
+        $ruta = $link ;
+        $url = getcwd() . $ruta;
+
+
+        $contenido = scandir($url);
+        if (sizeof($contenido) > 0) {
+            for ($i = 2; $i < sizeof($contenido); $i++) {
+                $cadena = explode(".", $contenido[$i]);
+                $extRow = sizeof($cadena) - 1;
+                unset($cadena[$extRow]);
+                $cadena = implode(".",$cadena);
+                if ($cadena == $nombre) {
+                    unlink($url. $contenido[$i]);
+
+                }
+            }
+        }
+
+
+        // definimos la ruta para subir la imagen
+
+        $config ['upload_path'] = $url;
+        $config ['allowed_types'] = 'gif|jpg|png|jpeg';
+        $config['file_name'] = $nombre;
+        $config ['max_width'] = '4096';
+        $config ['max_height'] = '3112';
+
+        // Cargamos la libreria con las configuraciones de arriba
+        $this->load->library ( 'upload', $config );
+
+        // Preguntamos si se pudo subir el archivo "foto" es el nombre del input del dropzone
+        if (! $this->upload->do_upload ( $fileID )) {
+            echo $this->upload->display_errors ();
+        } else {
+            $data = array (
+                'upload_data' => $this->upload->data ()
+            );
+        }
+    }
 	
 	function empresa_multinivel()
-	{	
+	{
 		$empresa = $this->model_admin->empresa_multinivel();
+
+        $logo = isset($_FILES ['img'] ["name"]) ? $_FILES ['img'] ["name"] : false;
+        if ($logo) {
+            log_message('DEV',"new logo :: $logo");
+            $url = '/template/img/';
+            $this->archivo_subir($url);
+
+            $logo = explode(".",$logo);
+            $extRow = sizeof($logo) - 1;
+            $extension = $logo[$extRow];
+            $logo = "logo.$extension" ;
+
+            $dato=array('logo' =>  $url.$logo);
+            $id = $_POST['id_tributaria'];
+            $this->db->where('id_tributaria', $id);
+            $this->db->update('empresa_multinivel', $dato);
+        }
+
 		echo $empresa 
 		? "Se ha actualizado los datos de la Empresa Multinivel" 
 		: "No se ha podido actualizar los datos de la Empresa Multinivel";

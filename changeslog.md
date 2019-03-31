@@ -3,6 +3,15 @@ erp.multinivel
 _ERP BASE MLM - Versión: 3.9 - 
 [NetworkSoft DEV](http://network-soft.com)_
 
+31-10-2019
+-
+### logo in empresa_multinivel
+```mysql
+ALTER TABLE empresa_multinivel 
+ADD logo varchar(100) 
+DEFAULT '/logo.png' NULL;
+```
+
 24-10-2018
 -
 ### update hashkey
